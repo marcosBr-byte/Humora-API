@@ -32,8 +32,7 @@ public class Diario {
 
     }
 
-    public Diario(Long id,Emocoes emocoes,Aluno aluno,LocalDateTime dataExpiracao) {
-        this.id = id;
+    public Diario(Emocoes emocoes,Aluno aluno,LocalDateTime dataExpiracao) {
         this.emocoes = emocoes;
         this.aluno = aluno;
         this.dataExpiracao = dataExpiracao;

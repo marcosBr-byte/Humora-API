@@ -9,6 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -57,7 +58,17 @@ public class DiarioService {
 
     }
     public List<Diario> findAllByDiario(Aluno aluno) {
-        return diarioRepositories.findAllDiarioByAluno(aluno);
+        List<Diario> diarios = diarioRepositories.findAllDiarioByAluno(aluno);
+        for (Diario diario : diarios) {
+            validarDiario(diario);
+        }
+        return diarios;
+    }
+
+    public void validarDiario(Diario diario) {
+        if((diario.getDataExpiracao().isBefore(LocalDateTime.now()) || diario.getDataExpiracao().isEqual(LocalDateTime.now()))) {
+            delete(diario.getId());
+        }
     }
 
 

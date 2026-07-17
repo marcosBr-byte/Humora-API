@@ -91,6 +91,7 @@ public class AuthController {
             aluno.setNome(alunoDTO.getNome());
             aluno.setEmail(alunoDTO.getEmail());
             aluno.setTurma(alunoDTO.getTurma());
+            aluno.setSerie(alunoDTO.getSerie());
 
             alunoService.create(aluno);
 
