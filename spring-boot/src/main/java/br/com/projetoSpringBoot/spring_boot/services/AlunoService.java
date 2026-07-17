@@ -5,6 +5,7 @@ import br.com.projetoSpringBoot.spring_boot.repositories.AlunoRepositories;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -17,6 +18,14 @@ public class AlunoService {
 
     @Autowired
     private final AlunoRepositories alunoRepositories;
+
+    public Optional<UserDetails> findUserDatilsByEmail(String email){
+        return alunoRepositories.findByEmail(email);
+    }
+
+    public Optional<Aluno> findByEmail(String email){
+        return alunoRepositories.findAlunoByEmail(email);
+    }
 
     public List<Aluno> findAll(){
         return alunoRepositories.findAll();
