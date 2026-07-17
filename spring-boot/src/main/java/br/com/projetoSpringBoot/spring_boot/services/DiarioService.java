@@ -56,7 +56,6 @@ public class DiarioService {
 
     }
 
-    public Diario save(Diario diario) {return this.diarioRepositories.save(diario);}
 
 }
 

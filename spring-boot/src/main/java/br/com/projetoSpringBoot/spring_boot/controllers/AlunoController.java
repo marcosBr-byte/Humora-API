@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/aluno")
-public class AlunoControllers {
+public class AlunoController {
     private final AlunoService alunoService;
     
     @GetMapping
@@ -29,6 +29,17 @@ public class AlunoControllers {
         return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.save(aluno));
 
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity delete(@PathVariable Long id){
+        return  ResponseEntity.status(HttpStatus.ACCEPTED).body("O Aluno foi deletado com sucesso");
+    }
+
+    @PutMapping("{id}")
+    public  ResponseEntity update(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("O Aluno foi modificado com sucesso")  ;
+    }
+
 
 
 }
