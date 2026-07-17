@@ -4,7 +4,9 @@ import br.com.projetoSpringBoot.spring_boot.config.TokenConfig;
 import br.com.projetoSpringBoot.spring_boot.dto.AlunoDTO;
 import br.com.projetoSpringBoot.spring_boot.dto.LoginRequestDTO;
 import br.com.projetoSpringBoot.spring_boot.dto.LoginResponseDTO;
+import br.com.projetoSpringBoot.spring_boot.dto.ProfessorDTO;
 import br.com.projetoSpringBoot.spring_boot.model.Aluno;
+import br.com.projetoSpringBoot.spring_boot.model.Professor;
 import br.com.projetoSpringBoot.spring_boot.repositories.AlunoRepositories;
 import br.com.projetoSpringBoot.spring_boot.repositories.ProfessorRepositories;
 import br.com.projetoSpringBoot.spring_boot.services.AlunoService;
@@ -21,6 +23,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/auth")
@@ -52,6 +56,22 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
+    @PostMapping("/login/professor")
+    public ResponseEntity logarProfessor(@RequestBody LoginRequestDTO login){
+        try {
+            System.out.println("Professor recebido");
+            UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(login.email(), login.senha());
+            Authentication authentication = authenticationManager.authenticate(userAndPass);
+
+            Professor professor = (Professor) authentication.getPrincipal();
+            String token = tokenConfig.generateToken(professor);
+            return ResponseEntity.ok(new LoginResponseDTO(token));
+        } catch (Exception e){
+            System.out.println("Erro no login "+ e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+        }
+    }
     @PostMapping("/register/aluno")
     public ResponseEntity reistrarAluno(@Valid @RequestBody AlunoDTO alunoDTO){
         try {
@@ -59,7 +79,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().body("Email já cadastrado como aluno");
             }
 
-            if(professorService.findProfessorByEmail(alunoDTO.getEmail()) != null) {
+            if(professorService.findProfessorByEmail(alunoDTO.getEmail()).isPresent()) {
                 return ResponseEntity.badRequest().body("Email já cadastrado como professor. Use outro email.");
             }
 
@@ -72,11 +92,31 @@ public class AuthController {
             aluno.setEmail(alunoDTO.getEmail());
             aluno.setTurma(alunoDTO.getTurma());
 
-            alunoService.save(aluno);
+            alunoService.create(aluno);
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Aluno criado com sucesso!");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erro ao registrar aluno: "+e);
+        }
+    }
+
+    @PostMapping("/register/professor")
+    public ResponseEntity registrarProfessor(@Valid @RequestBody ProfessorDTO professorDTO){
+        try {
+            Professor professor = new Professor(
+                    0L,
+                    professorDTO.getNome(),
+                    professorDTO.getEmail(),
+                    passwordEncoder.encode(professorDTO.getSenha()),
+                    professorDTO.getMateria()
+            );
+            professor.setId(null);
+
+            professorService.create(professor);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("Professor criado com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao registrar professor: "+e);
         }
     }
 
