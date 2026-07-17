@@ -37,12 +37,6 @@ public class Aluno implements UserDetails {
     @Enumerated(EnumType.STRING)
         private Turma turma;
 
-    @CreationTimestamp
-    private LocalDateTime dataCriacao;
-
-    @UpdateTimestamp
-    private LocalDateTime dataAtualizacao;
-
     public Aluno() {
 
     }
