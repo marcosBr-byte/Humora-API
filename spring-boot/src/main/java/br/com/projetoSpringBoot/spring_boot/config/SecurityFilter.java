@@ -28,8 +28,8 @@ public class SecurityFilter extends OncePerRequestFilter {
         String authorizeHeader = request.getHeader("Authorization");
 
 
-        if (Strings.isNotEmpty(authorizeHeader) && authorizeHeader.startsWith("Bearer ")) {  // ← Espaço depois de Bearer
-            String token = authorizeHeader.substring(7);  // Remove "Bearer "
+        if (Strings.isNotEmpty(authorizeHeader) && authorizeHeader.startsWith("Bearer ")) {
+            String token = authorizeHeader.substring(7);
             Optional<JWTUserData> optUser = tokenConfig.validateToken(token);
 
             if (optUser.isPresent()) {

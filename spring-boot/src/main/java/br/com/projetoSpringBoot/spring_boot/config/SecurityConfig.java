@@ -35,10 +35,15 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/auth/login/aluno").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login/professor").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register/aluno").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register/professor").permitAll()
+
+                        .requestMatchers("/aluno/**").hasRole("ALUNO")
+                        .requestMatchers("/professor/**").hasRole("PROFESSOR")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

@@ -11,10 +11,12 @@ public class JWTUserData implements UserDetails {
 
     private Long userId;
     private String email;
+    private String role;
 
-    public JWTUserData(Long userId, String email) {
+    public JWTUserData(Long userId, String email, String role) {
         this.userId = userId;
         this.email = email;
+        this.role = role;
     }
 
     public Long getUserId() {
@@ -25,9 +27,13 @@ public class JWTUserData implements UserDetails {
         return email;
     }
 
+    public String getRole() {
+        return role;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_ALUNO"));
+        return List.of(new SimpleGrantedAuthority(role));
     }
 
     @Override
