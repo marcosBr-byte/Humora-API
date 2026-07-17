@@ -25,7 +25,7 @@ public class ProfessorController {
     }
 
     @PostMapping
-    public ResponseEntity<Professor> save(@RequestBody Professor professor){
+    public ResponseEntity<Professor> create(@RequestBody Professor professor){
         return ResponseEntity.status(HttpStatus.CREATED).body(professorService.create(professor));
     }
 
@@ -34,7 +34,7 @@ public class ProfessorController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("O Professor foi deletado com sucesso.");
     }
 
-    @PutMapping()
+    @PutMapping("/{id}")
    public ResponseEntity update(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("O Professor foi modificado com sucesso.");
     }

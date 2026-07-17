@@ -1,5 +1,6 @@
 package br.com.projetoSpringBoot.spring_boot.services;
 
+import br.com.projetoSpringBoot.spring_boot.model.Aluno;
 import br.com.projetoSpringBoot.spring_boot.model.Diario;
 import br.com.projetoSpringBoot.spring_boot.repositories.DiarioRepositories;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,9 @@ public class DiarioService {
             );
         }
 
+    }
+    public List<Diario> findAllByDiario(Aluno aluno) {
+        return diarioRepositories.findAllDiarioByAluno(aluno);
     }
 
 
