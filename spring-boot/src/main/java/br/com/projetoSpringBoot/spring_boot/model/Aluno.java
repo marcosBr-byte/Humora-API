@@ -31,12 +31,6 @@ public class Aluno {
     @Enumerated(EnumType.STRING)
         private Turma turma;
 
-    @CreationTimestamp
-    private LocalDateTime dataCriacao;
-
-    @UpdateTimestamp
-    private LocalDateTime dataAtualizacao;
-
     public Aluno() {
 
     }
