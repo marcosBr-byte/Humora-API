@@ -26,6 +26,11 @@ public class ProfessorService {
                 "Professor não encontrado"
         ));
     }
+
+    public Professor findProfessorByEmail(String email){
+        return professorRepositories.findProfessorByEmail(email);
+    }
+
     @Transactional
     public Professor create(Professor obj){
         obj = professorRepositories.save(obj);

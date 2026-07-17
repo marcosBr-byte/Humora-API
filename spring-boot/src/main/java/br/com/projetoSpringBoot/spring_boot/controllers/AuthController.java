@@ -54,15 +54,30 @@ public class AuthController {
 
     @PostMapping("/register/aluno")
     public ResponseEntity reistrarAluno(@Valid @RequestBody AlunoDTO alunoDTO){
-        Aluno aluno = new Aluno();
-        aluno.setSenha(passwordEncoder.encode(alunoDTO.getSenha()));
-        aluno.setNome(alunoDTO.getNome());
-        aluno.setEmail(alunoDTO.getEmail());
-        aluno.setTurma(alunoDTO.getTurma());
+        try {
+            if (alunoService.findByEmail(alunoDTO.getEmail()).isPresent()){
+                return ResponseEntity.badRequest().body("Email já cadastrado como aluno");
+            }
 
-        alunoService.save(aluno);
+            if(professorService.findProfessorByEmail(alunoDTO.getEmail()) != null) {
+                return ResponseEntity.badRequest().body("Email já cadastrado como professor. Use outro email.");
+            }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Aluno criado com sucesso!");
+            if (! alunoDTO.getEmail().contains("@")){
+                return ResponseEntity.badRequest().body("Email invalido");
+            }
+            Aluno aluno = new Aluno();
+            aluno.setSenha(passwordEncoder.encode(alunoDTO.getSenha()));
+            aluno.setNome(alunoDTO.getNome());
+            aluno.setEmail(alunoDTO.getEmail());
+            aluno.setTurma(alunoDTO.getTurma());
+
+            alunoService.save(aluno);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("Aluno criado com sucesso!");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao registrar aluno: "+e);
+        }
     }
 
 
