@@ -27,7 +27,7 @@ public class ProfessorService {
         ));
     }
 
-    public Professor findProfessorByEmail(String email){
+    public Optional<Professor> findProfessorByEmail(String email){
         return professorRepositories.findProfessorByEmail(email);
     }
 
