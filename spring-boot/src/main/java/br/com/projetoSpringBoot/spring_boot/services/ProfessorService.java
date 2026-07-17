@@ -60,6 +60,4 @@ public class ProfessorService {
         }
 
     }
-
-    public Professor save(Professor professor){return professorRepositories.save(professor);}
 }

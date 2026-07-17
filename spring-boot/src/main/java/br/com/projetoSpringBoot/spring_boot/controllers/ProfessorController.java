@@ -26,7 +26,7 @@ public class ProfessorController {
 
     @PostMapping
     public ResponseEntity<Professor> save(@RequestBody Professor professor){
-        return ResponseEntity.status(HttpStatus.CREATED).body(professorService.save(professor));
+        return ResponseEntity.status(HttpStatus.CREATED).body(professorService.create(professor));
 
     }
 }

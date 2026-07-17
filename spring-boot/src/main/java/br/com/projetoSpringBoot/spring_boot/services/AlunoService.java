@@ -64,8 +64,4 @@ public class AlunoService {
             );
         }
     }
-
-    public Aluno save (Aluno aluno){
-        return this.alunoRepositories.save(aluno);
-    }
 }
