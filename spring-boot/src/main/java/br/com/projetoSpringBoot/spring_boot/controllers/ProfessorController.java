@@ -19,17 +19,17 @@ public class ProfessorController {
         List<Professor> professores = professorService.findAll();
         return ResponseEntity.ok(professores);
     }
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Professor> findById(@PathVariable Long id){
         return ResponseEntity.ok(professorService.findById(id));
     }
 
     @PostMapping
     public ResponseEntity<Professor> save(@RequestBody Professor professor){
-        return ResponseEntity.status(HttpStatus.CREATED).body(professorService.save(professor));
+        return ResponseEntity.status(HttpStatus.CREATED).body(professorService.create(professor));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("O Professor foi deletado com sucesso.");
     }
