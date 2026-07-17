@@ -10,5 +10,5 @@ public interface ProfessorRepositories extends JpaRepository<Professor, Long> {
 
     Optional<UserDetails> findByEmail(String email);
 
-    Professor findProfessorByEmail(String email);
+    Optional<Professor> findProfessorByEmail(String email);
 }
