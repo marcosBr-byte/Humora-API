@@ -18,6 +18,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Table(name = "professortabela")
 public class Professor  implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
