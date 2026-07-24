@@ -4,7 +4,6 @@ import br.com.projetoSpringBoot.spring_boot.dto.CriarDiarioDTO;
 import br.com.projetoSpringBoot.spring_boot.dto.DiarioDTO;
 import br.com.projetoSpringBoot.spring_boot.model.Aluno;
 import br.com.projetoSpringBoot.spring_boot.model.Diario;
-import br.com.projetoSpringBoot.spring_boot.repositories.AlunoRepositories;
 import br.com.projetoSpringBoot.spring_boot.services.AlunoService;
 import br.com.projetoSpringBoot.spring_boot.services.DiarioService;
 import lombok.RequiredArgsConstructor;

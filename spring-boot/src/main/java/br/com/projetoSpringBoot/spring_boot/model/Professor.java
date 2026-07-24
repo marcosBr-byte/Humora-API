@@ -44,11 +44,12 @@ public class Professor  implements UserDetails {
 
     }
 
-    public Professor(Long id, String nome, String email, String senha, Materia materia) {
+    public Professor(Long id, String nome, String email, String senha,Materia materia) {
         this.id = id;
         this.nome = nome;
         this.email = email;
         this.senha = senha;
+
         this.materia = materia;
 
 

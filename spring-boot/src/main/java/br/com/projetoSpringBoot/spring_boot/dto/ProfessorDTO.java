@@ -20,6 +20,9 @@ public class ProfessorDTO {
     @Size(min = 8, message = "A senha deve conter no minimo 8 caracteres")
     private String senha;
 
+    @NotEmpty(message = "A chave de acesso é obrigatorio")
+    private String chaveAcesso;
+
     @NotNull(message = "Materia não pode ser vazia")
     private Materia materia;
 

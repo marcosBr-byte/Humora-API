@@ -7,8 +7,6 @@ import br.com.projetoSpringBoot.spring_boot.dto.LoginResponseDTO;
 import br.com.projetoSpringBoot.spring_boot.dto.ProfessorDTO;
 import br.com.projetoSpringBoot.spring_boot.model.Aluno;
 import br.com.projetoSpringBoot.spring_boot.model.Professor;
-import br.com.projetoSpringBoot.spring_boot.repositories.AlunoRepositories;
-import br.com.projetoSpringBoot.spring_boot.repositories.ProfessorRepositories;
 import br.com.projetoSpringBoot.spring_boot.services.AlunoService;
 import br.com.projetoSpringBoot.spring_boot.services.ProfessorService;
 import jakarta.validation.Valid;
@@ -23,8 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Locale;
 
 @RestController
 @RequestMapping("/auth")
@@ -72,9 +68,14 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
         }
     }
+
     @PostMapping("/register/aluno")
     public ResponseEntity reistrarAluno(@Valid @RequestBody AlunoDTO alunoDTO){
         try {
+            if (! alunoDTO.getEmail().contains("@")){
+                return ResponseEntity.badRequest().body("Email invalido");
+            }
+
             if (alunoService.findByEmail(alunoDTO.getEmail()).isPresent()){
                 return ResponseEntity.badRequest().body("Email já cadastrado como aluno");
             }
@@ -83,9 +84,7 @@ public class AuthController {
                 return ResponseEntity.badRequest().body("Email já cadastrado como professor. Use outro email.");
             }
 
-            if (! alunoDTO.getEmail().contains("@")){
-                return ResponseEntity.badRequest().body("Email invalido");
-            }
+
             Aluno aluno = new Aluno();
             aluno.setSenha(passwordEncoder.encode(alunoDTO.getSenha()));
             aluno.setNome(alunoDTO.getNome());
@@ -100,16 +99,22 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Erro ao registrar aluno: "+e);
         }
     }
-
+    private static final String chaveAcesso = "profDM2026";
     @PostMapping("/register/professor")
     public ResponseEntity registrarProfessor(@Valid @RequestBody ProfessorDTO professorDTO){
         try {
+            if (!chaveAcesso.equals(professorDTO.getChaveAcesso())){
+                return ResponseEntity.badRequest().body("ChaveAcesso invalido");
+
+            }
+
             Professor professor = new Professor(
                     0L,
                     professorDTO.getNome(),
                     professorDTO.getEmail(),
                     passwordEncoder.encode(professorDTO.getSenha()),
                     professorDTO.getMateria()
+
             );
             professor.setId(null);
 
