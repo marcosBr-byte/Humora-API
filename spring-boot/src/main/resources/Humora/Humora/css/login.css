@@ -1,0 +1,489 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #2e0854 0%, #18032b 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+  color: #ffffff;
+}
+
+/* ========== NUVENS ========== */
+.nuvens-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.nuvem {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 100px;
+  backdrop-filter: blur(8px);
+  box-shadow:
+    inset 0 -8px 20px rgba(255, 255, 255, 0.1),
+    0 15px 40px rgba(0, 0, 0, 0.06);
+  animation: moverNuvens linear infinite;
+}
+
+.nuvem::before,
+.nuvem::after {
+  content: "";
+  position: absolute;
+  background: inherit;
+  border-radius: 50%;
+  box-shadow: inherit;
+}
+
+.nuvem-1 {
+  width: 200px;
+  height: 55px;
+  top: 8%;
+  left: -220px;
+  animation-duration: 35s;
+  opacity: 0.7;
+}
+.nuvem-1::before {
+  width: 90px;
+  height: 90px;
+  top: -45px;
+  left: 30px;
+}
+.nuvem-1::after {
+  width: 65px;
+  height: 65px;
+  top: -30px;
+  left: 95px;
+}
+
+.nuvem-2 {
+  width: 300px;
+  height: 75px;
+  top: 32%;
+  left: -340px;
+  animation-duration: 48s;
+  animation-delay: 7s;
+  opacity: 0.85;
+}
+.nuvem-2::before {
+  width: 140px;
+  height: 140px;
+  top: -70px;
+  left: 50px;
+}
+.nuvem-2::after {
+  width: 100px;
+  height: 100px;
+  top: -50px;
+  left: 150px;
+}
+
+.nuvem-3 {
+  width: 250px;
+  height: 60px;
+  top: 58%;
+  left: -290px;
+  animation-duration: 40s;
+  animation-delay: 14s;
+  opacity: 0.75;
+}
+.nuvem-3::before {
+  width: 110px;
+  height: 110px;
+  top: -55px;
+  left: 40px;
+}
+.nuvem-3::after {
+  width: 80px;
+  height: 80px;
+  top: -40px;
+  left: 120px;
+}
+
+@keyframes moverNuvens {
+  0% {
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    transform: translateX(calc(50vw + 250px)) scale(1.04);
+  }
+  100% {
+    transform: translateX(calc(100vw + 450px)) scale(1);
+  }
+}
+
+/* ========== CONTAINER PRINCIPAL ========== */
+.container {
+  display: flex;
+  width: 900px;
+  max-width: 95%;
+  min-height: 550px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  overflow: hidden;
+}
+
+.apresentacao {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo img {
+  width: 40px;
+  height: 40px;
+}
+
+.logo h1 {
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+.apresentacao h2 {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.apresentacao h2 span {
+  color: #c084fc;
+}
+
+.texto {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.texto .icone {
+  font-size: 1.5rem;
+}
+
+.texto p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.5;
+}
+
+.cerebro {
+  width: 80px;
+  opacity: 0.2;
+  align-self: flex-end;
+}
+
+/* ========== CARD DO FORMULÁRIO ========== */
+.login-card {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-card h1 {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+
+.login-card > p {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 25px;
+  font-size: 0.9rem;
+}
+
+/* ========== INPUTS E SELECTS ========== */
+.login-card input[type="text"],
+.login-card input[type="email"],
+.login-card input[type="password"],
+.login-card select {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  background: rgba(20, 5, 38, 0.8);
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.login-card input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.login-card input:focus,
+.login-card select:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+}
+
+.login-card select option {
+  background: #18032b;
+  color: #fff;
+}
+
+/* ========== LABELS ========== */
+.login-card label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #c084fc;
+  margin-top: 10px;
+  display: block;
+}
+
+.login-card small {
+  color: rgba(255, 255, 255, 0.5);
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+}
+
+/* ========== SELETOR DE TURMAS ========== */
+.turmas-seletor {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px;
+  margin: 10px 0 15px 0;
+  background: rgba(20, 5, 38, 0.9);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  border-radius: 12px;
+}
+
+.turmas-seletor::-webkit-scrollbar {
+  width: 6px;
+}
+
+.turmas-seletor::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.turmas-seletor::-webkit-scrollbar-thumb {
+  background: #a855f7;
+  border-radius: 10px;
+}
+
+/* ========== BOTÕES DAS TURMAS ========== */
+/* 🔧 AGORA CINZA ESCURO QUANDO NÃO SELECIONADO */
+.turmas-seletor .area-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px; /* aumentado de 42px para 48px */
+  padding: 4px 8px; /* pequeno padding vertical para folga */
+  border-radius: 8px;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  background: #2d2d3f;
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.turmas-seletor .area-btn:hover {
+  background: #3d3d5c;
+  border-color: rgba(168, 85, 247, 0.5);
+  color: #e2e8f0;
+}
+
+/* Botão "Todas as Turmas" */
+.turmas-seletor .area-btn.todas {
+  grid-column: span 2;
+  background: #3a3a52;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+.turmas-seletor .area-btn.todas:hover {
+  background: #4a4a6a;
+}
+
+/* ✅ ESTADO SELECIONADO (ROXO) */
+.turmas-seletor .area-btn.selecionado {
+  background: #6f42c1 !important;
+  border-color: #c084fc !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(111, 66, 193, 0.6);
+}
+
+/* TÍTULOS DAS SEÇÕES (1º ANO, 2º ANO...) */
+.turmas-seletor h4 {
+  grid-column: span 2;
+  color: #c084fc;
+  font-size: 0.82rem;
+  margin: 6px 0 2px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+/* ========== SELETOR DE USUÁRIO (LOGIN) ========== */
+.seletor-usuario {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tipo-btn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.tipo-btn.ativo {
+  background: #6f42c1;
+  border-color: #c084fc;
+}
+
+/* ========== BOTÃO PRINCIPAL ========== */
+.login-card button[onclick],
+.login-card > button {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #6f42c1 0%, #a855f7 100%);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    opacity 0.3s ease,
+    transform 0.2s ease;
+  box-shadow: 0 4px 15px rgba(111, 66, 193, 0.4);
+}
+
+.login-card button[onclick]:hover,
+.login-card > button:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+/* ========== ÁREA DE CADASTRO / LINK ========== */
+.cadastro {
+  margin-top: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cadastro p {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 4px;
+}
+
+.cadastro a {
+  color: #c084fc;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.cadastro a:hover {
+  color: #e9d5ff;
+  text-decoration: underline;
+}
+
+.cadastro .btn-cadastro {
+  display: block;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cadastro .btn-espacado {
+  margin-top: 6px;
+}
+
+/* ========== CHAVE DE ACESSO (COMPACTA) ========== */
+.chave-acesso-container {
+  margin: 5px 0 15px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(168, 85, 247, 0.08);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+.chave-acesso-container label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #c084fc;
+  margin: 0 0 6px 0;
+  font-weight: 600;
+}
+
+.chave-acesso-container input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(20, 5, 38, 0.8);
+  color: #fff;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.chave-acesso-container input:focus {
+  border-color: #c084fc;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+}
+
+/* ========== RESPONSIVO ========== */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  .apresentacao {
+    padding: 25px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .login-card {
+    padding: 25px;
+  }
+}

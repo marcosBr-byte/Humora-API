@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Humora | Cadastro Professor</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      html,
+      body {
+        height: 100vh;
+        overflow: hidden;
+        background: linear-gradient(135deg, #2e0854 0%, #18032b 100%);
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+      }
+
+      .container {
+        display: flex;
+        width: 1000px;
+        max-width: 95%;
+        height: 95vh;
+        max-height: 95vh;
+        background: rgba(255, 255, 255, 0.04);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6);
+        overflow: hidden;
+      }
+
+      .left {
+        flex: 1;
+        padding: 45px 35px;
+        background: rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      .left h2 {
+        font-size: 2.3rem;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+
+      .left p {
+        font-size: 1.05rem;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.6;
+      }
+
+      .right {
+        flex: 1;
+        padding: 25px 30px;
+        background: rgba(10, 5, 30, 0.9);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto; /* scroll interno apenas se necessário */
+      }
+
+      .right h1 {
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+      }
+
+      .right > p {
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 18px;
+        font-size: 0.9rem;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 11px 14px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(168, 85, 247, 0.35);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        font-size: 0.9rem;
+        outline: none;
+        transition: 0.2s;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: #a855f7;
+        box-shadow: 0 0 8px rgba(168, 85, 247, 0.5);
+      }
+
+      select option {
+        background: #18032b;
+      }
+
+      label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #c084fc;
+        margin: 10px 0 4px 0;
+        display: block;
+      }
+
+      small {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.75rem;
+      }
+
+      /* GRID DE TURMAS – MAIS AMPLA */
+      .turmas-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        max-height: 360px; /* bem maior que antes */
+        overflow-y: auto;
+        padding: 10px;
+        margin: 10px 0 12px 0;
+        background: rgba(20, 5, 38, 0.95);
+        border: 1px solid rgba(168, 85, 247, 0.45);
+        border-radius: 12px;
+      }
+
+      .turma-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 52px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(168, 85, 247, 0.25);
+        background: #2d2d3f;
+        color: #cbd5e1;
+        font-size: 0.85rem; /* um pouco maior */
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .turma-btn:hover {
+        background: #3d3d5c;
+        border-color: rgba(168, 85, 247, 0.6);
+        color: #e2e8f0;
+      }
+
+      .turma-btn.todas {
+        grid-column: span 2;
+        background: #3a3a52;
+        font-weight: 600;
+        color: #e2e8f0;
+      }
+
+      .turma-btn.selecionado {
+        background: #6f42c1 !important;
+        border-color: #c084fc !important;
+        color: white !important;
+        font-weight: 600;
+        box-shadow: 0 0 12px rgba(111, 66, 193, 0.7);
+      }
+
+      .turmas-grid h4 {
+        grid-column: span 2;
+        color: #c084fc;
+        font-size: 0.82rem;
+        margin: 6px 0 2px 0;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      .chave-box {
+        margin: 8px 0 12px 0;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: rgba(168, 85, 247, 0.08);
+        border: 1px solid rgba(168, 85, 247, 0.3);
+      }
+
+      .chave-box label {
+        margin: 0 0 4px 0;
+        font-size: 0.85rem;
+        color: #c084fc;
+      }
+
+      .chave-box input {
+        margin-bottom: 4px;
+      }
+
+      .btn-cadastrar {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #6f42c1, #a855f7);
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .btn-cadastrar:hover {
+        filter: brightness(1.1);
+      }
+
+      .voltar {
+        text-align: center;
+        margin-top: 15px;
+      }
+
+      .voltar a {
+        color: #c084fc;
+        text-decoration: none;
+      }
+
+      .voltar a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          overflow-y: auto;
+        }
+        .container {
+          flex-direction: column;
+          height: auto;
+          max-height: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">
+        <h2>👨‍🏫 Ajude seus alunos<br />a serem ouvidos.</h2>
+        <p>
+          Cadastre-se para acompanhar o estado emocional da sua turma,
+          identificar dificuldades e desenvolver metodologias que contribuam
+          para um ambiente escolar mais saudável.
+        </p>
+      </div>
+
+      <div class="right">
+        <h1>👨‍🏫 Cadastro Professor</h1>
+        <p>Preencha seus dados.</p>
+
+        <input type="text" id="nome" placeholder="Nome completo" required />
+        <input type="email" id="email" placeholder="E-mail" required />
+        <input
+          type="password"
+          id="senha"
+          placeholder="Senha (mínimo 8 caracteres)"
+          minlength="8"
+          required
+        />
+
+        <select id="area" required>
+          <option value="">Selecione sua área</option>
+          <optgroup label="LINGUAGENS">
+            <option value="PORTUGUES">Português</option>
+            <option value="INGLES">Inglês</option>
+            <option value="ESPANHOL">Espanhol</option>
+            <option value="ARTE">Arte</option>
+            <option value="EDUCACAO_FISICA">Educação Física</option>
+            <option value="EDUCACAO_DIGITAL">Educação Digital</option>
+          </optgroup>
+          <optgroup label="EXATAS E CIÊNCIA DA NATUREZA">
+            <option value="MATEMATICA">Matemática</option>
+            <option value="FISICA">Física</option>
+            <option value="QUIMICA">Química</option>
+            <option value="BIOLOGIA">Biologia</option>
+          </optgroup>
+          <optgroup label="CIÊNCIAS HUMANAS">
+            <option value="HISTORIA">História</option>
+            <option value="GEOGRAFIA">Geografia</option>
+            <option value="FILOSOFIA">Filosofia</option>
+            <option value="SOCIOLOGIA">Sociologia</option>
+          </optgroup>
+          <optgroup label="BASE TÉCNICA">
+            <option value="INFORMATICA">Informática</option>
+            <option value="ANALISES_CLINICAS">Análises Clínicas</option>
+            <option value="AGROECOLOGIA">Agroecologia</option>
+          </optgroup>
+        </select>
+
+        <label>Turmas que você leciona</label>
+        <small>Clique para selecionar quantas quiser</small>
+
+        <div class="turmas-grid" id="turmasGrid">
+          <button type="button" class="turma-btn todas" data-value="Todas">
+            Todas as Turmas
+          </button>
+          <h4>1º ANO</h4>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="1º AGROECOLOGIA - A"
+          >
+            1º AGROECOLOGIA - A
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="1º ANÁLISES CLÍNICAS - B"
+          >
+            1º ANÁLISES CLÍNICAS - B
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="1º ANÁLISES CLÍNICAS - C"
+          >
+            1º ANÁLISES CLÍNICAS - C
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="1º INFORMÁTICA - D"
+          >
+            1º INFORMÁTICA - D
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="1º INFORMÁTICA - E"
+          >
+            1º INFORMÁTICA - E
+          </button>
+
+          <h4>2º ANO</h4>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="2º AGROECOLOGIA - F"
+          >
+            2º AGROECOLOGIA - F
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="2º ANÁLISES CLÍNICAS - G"
+          >
+            2º ANÁLISES CLÍNICAS - G
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="2º INFORMÁTICA - H"
+          >
+            2º INFORMÁTICA - H
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="2º INFORMÁTICA - I"
+          >
+            2º INFORMÁTICA - I
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="2º INFORMÁTICA - J"
+          >
+            2º INFORMÁTICA - J
+          </button>
+
+          <h4>3º ANO</h4>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="3º AGROECOLOGIA - K"
+          >
+            3º AGROECOLOGIA - K
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="3º ANÁLISES CLÍNICAS - L"
+          >
+            3º ANÁLISES CLÍNICAS - L
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="3º ANÁLISES CLÍNICAS - M"
+          >
+            3º ANÁLISES CLÍNICAS - M
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="3º INFORMÁTICA - N"
+          >
+            3º INFORMÁTICA - N
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="3º INFORMÁTICA - O"
+          >
+            3º INFORMÁTICA - O
+          </button>
+          <button
+            type="button"
+            class="turma-btn"
+            data-value="3º INFORMÁTICA - P"
+          >
+            3º INFORMÁTICA - P
+          </button>
+        </div>
+
+        <input type="hidden" id="turmasSelecionadas" value="[]" />
+
+        <div class="chave-box">
+          <label>🔑 Chave de Acesso</label>
+          <input
+            type="password"
+            id="chaveAcesso"
+            placeholder="Digite a chave fornecida pela escola"
+            required
+          />
+          <small style="color: #c084fc; display: block"
+            >⚠️ Necessário para validar seu cadastro</small
+          >
+        </div>
+
+        <button class="btn-cadastrar" onclick="cadastrarProfessor()">
+          Cadastrar
+        </button>
+
+        <div class="voltar">
+          <a href="login.html">← Voltar para Login</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Remove seleção inicial
+      document
+        .querySelectorAll(".turma-btn")
+        .forEach((b) => b.classList.remove("selecionado"));
+      document.getElementById("turmasSelecionadas").value = "[]";
+
+      const botoes = document.querySelectorAll(".turma-btn");
+      const inputHidden = document.getElementById("turmasSelecionadas");
+
+      function atualizarTurmas() {
+        const selecionadas = Array.from(
+          document.querySelectorAll(".turma-btn.selecionado"),
+        ).map((b) => b.dataset.value);
+        if (selecionadas.includes("Todas")) {
+          inputHidden.value = JSON.stringify(["Todas"]);
+        } else {
+          inputHidden.value = JSON.stringify(selecionadas);
+        }
+      }
+
+      botoes.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const valor = btn.dataset.value;
+          if (valor === "Todas") {
+            const jaSelecionado = btn.classList.contains("selecionado");
+            botoes.forEach((b) => b.classList.remove("selecionado"));
+            if (!jaSelecionado) btn.classList.add("selecionado");
+          } else {
+            document
+              .querySelector(".turma-btn.todas")
+              ?.classList.remove("selecionado");
+            btn.classList.toggle("selecionado");
+          }
+          atualizarTurmas();
+        });
+      });
+
+      const API_URL = "http://localhost:8080/api";
+
+      async function cadastrarProfessor() {
+        const nome = document.getElementById("nome").value.trim();
+        const email = document
+          .getElementById("email")
+          .value.trim()
+          .toLowerCase();
+        const senha = document.getElementById("senha").value.trim();
+        const area = document.getElementById("area").value;
+        const chaveAcesso = document.getElementById("chaveAcesso").value.trim();
+        const turmasSelecionadas = JSON.parse(
+          document.getElementById("turmasSelecionadas").value || "[]",
+        );
+
+        if (!nome || !email || !senha || !area)
+          return alert("Preencha todos os campos obrigatórios.");
+        if (senha.length < 8)
+          return alert("A senha deve possuir no mínimo 8 caracteres.");
+        if (!chaveAcesso)
+          return alert("⚠️ A chave de acesso do professor é obrigatória!");
+        if (chaveAcesso !== "HUMORADM2026")
+          return alert("❌ Chave de acesso inválida!");
+        if (turmasSelecionadas.length === 0)
+          return alert("Selecione pelo menos uma turma.");
+
+        try {
+          const response = await fetch(`${API_URL}/auth/cadastro/professor`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              nome,
+              email,
+              senha,
+              area,
+              chaveAcesso,
+              turmas: turmasSelecionadas,
+            }),
+          });
+          const data = await response.json();
+          if (!response.ok)
+            throw new Error(data.message || "Erro ao cadastrar");
+          alert("Professor cadastrado com sucesso! 👨‍🏫");
+          window.location.href = "login.html";
+        } catch (error) {
+          console.warn("API offline, salvando local:", error);
+          let professores = JSON.parse(
+            localStorage.getItem("professoresHumora") || "[]",
+          );
+          if (professores.some((p) => p.email === email))
+            return alert("Já existe um professor cadastrado com este e-mail.");
+          professores.push({
+            nome,
+            email,
+            senha,
+            area,
+            turmas: turmasSelecionadas,
+            dataCadastro: new Date().toLocaleDateString("pt-BR"),
+            anotacoes: [],
+          });
+          localStorage.setItem(
+            "professoresHumora",
+            JSON.stringify(professores),
+          );
+          alert("Professor cadastrado com sucesso! 👨‍🏫");
+          window.location.href = "login.html";
+        }
+      }
+    </script>
+    <script src="js/api.js"></script>
+    <script src="js/cadastroProfessor.js"></script>
+  </body>
+</html>

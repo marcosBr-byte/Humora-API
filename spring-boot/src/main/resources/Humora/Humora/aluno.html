@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Humora | Aluno</title>
+    <link rel="stylesheet" href="css/aluno.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="pagina">
+      <aside class="sidebar">
+        <div class="topo-sidebar">
+          <div class="logo-area"><h1>🧠 Humora</h1></div>
+          <div class="perfil">
+            <div
+              class="avatar"
+              id="avatarAtual"
+              onclick="abrirModalAvatar()"
+              title="Mudar avatar"
+            >
+              😊
+            </div>
+            <div class="perfil-info">
+              <h2 id="nomeAlunoSidebar">Aluno</h2>
+              <p id="turmaAlunoSidebar">Turma</p>
+            </div>
+          </div>
+          <div class="streak-card">
+            <span class="fogo">🔥</span>
+            <div>
+              <strong id="diasStreak">0 Dias</strong
+              ><small>Sequência diária</small>
+            </div>
+          </div>
+          <nav class="menu-sidebar">
+            <button class="menu-item ativo" onclick="trocarTab('inicio', this)">
+              <span class="icone-menu">🏠</span> Início
+            </button>
+            <button class="menu-item" onclick="trocarTab('graficos', this)">
+              <span class="icone-menu">📊</span> Meus Gráficos
+            </button>
+            <button class="menu-item" onclick="trocarTab('diario', this)">
+              <span class="icone-menu">📖</span> Diário
+            </button>
+            <button class="menu-item" onclick="trocarTab('jogos', this)">
+              <span class="icone-menu">🎮</span> Jogos
+            </button>
+            <button class="menu-item" onclick="trocarTab('respiracao', this)">
+              <span class="icone-menu">🧘</span> Respiração
+            </button>
+            <button class="menu-item" onclick="trocarTab('conquistas', this)">
+              <span class="icone-menu">🏆</span> Conquistas
+            </button>
+          </nav>
+          <button
+            class="menu-item menu-item-notif"
+            onclick="abrirModalHistorico()"
+          >
+            <span class="icone-menu">📜</span> Histórico
+          </button>
+          <button
+            class="menu-item menu-item-notif"
+            onclick="abrirModalNotificacoes()"
+          >
+            <span class="icone-menu">🔔</span> Notificações
+            <span id="badgeNotificacao" class="badge-pop" style="display: none"
+              >0</span
+            >
+          </button>
+        </div>
+        <button class="btn-sair" onclick="sair()">🚪 Sair</button>
+      </aside>
+
+      <main class="conteudo">
+        <div id="tab-inicio" class="tab-content ativo">
+          <header class="topo-conteudo">
+            <div>
+              <h1>Olá, <span id="nomeAluno">Aluno</span>!</h1>
+              <p class="subtitulo">Como você está se sentindo hoje?</p>
+            </div>
+          </header>
+          <section id="emocoes" class="emocoes">
+            <div class="emocao" onclick="selecionarEmocao(event, 'feliz')">
+              <span class="emoji">😊</span><span class="rotulo">Feliz</span>
+            </div>
+            <div class="emocao" onclick="selecionarEmocao(event, 'triste')">
+              <span class="emoji">😔</span><span class="rotulo">Triste</span>
+            </div>
+            <div class="emocao" onclick="selecionarEmocao(event, 'cansado')">
+              <span class="emoji">😴</span><span class="rotulo">Cansado</span>
+            </div>
+            <div class="emocao" onclick="selecionarEmocao(event, 'calmo')">
+              <span class="emoji">😌</span><span class="rotulo">Calmo</span>
+            </div>
+            <div class="emocao" onclick="selecionarEmocao(event, 'ansioso')">
+              <span class="emoji">😰</span><span class="rotulo">Ansioso</span>
+            </div>
+            <div class="emocao" onclick="selecionarEmocao(event, 'irritado')">
+              <span class="emoji">😡</span><span class="rotulo">Irritado</span>
+            </div>
+          </section>
+          <div id="motivoContainer" class="card-painel">
+            <p
+              id="emocaoSelecionadaTexto"
+              style="
+                display: none;
+                text-align: center;
+                font-size: 14px;
+                margin-bottom: 10px;
+              "
+            >
+              Você selecionou: <strong id="nomeEmocaoSelecionada"></strong>
+            </p>
+            <div class="intensidade-wrapper">
+              <label
+                >Intensidade (1 a 5):
+                <span id="valorIntensidade">1</span></label
+              >
+              <input
+                type="range"
+                id="intensidadeEmocao"
+                min="1"
+                max="5"
+                value="1"
+                oninput="
+                  document.getElementById('valorIntensidade').innerText =
+                    this.value
+                "
+              />
+            </div>
+            <textarea
+              id="motivo"
+              placeholder="Conte o motivo dessa emoção... (opcional)"
+            ></textarea>
+            <button
+              id="btnEnviarEmocao"
+              class="btn-roxo"
+              onclick="enviarEmocao()"
+              disabled
+            >
+              Enviar Emoção 💜
+            </button>
+          </div>
+          <div
+            id="bloqueioHumora"
+            class="card-painel"
+            style="display: none"
+          ></div>
+        </div>
+
+        <div id="tab-graficos" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>📊 Meus Gráficos</h1>
+              <p class="subtitulo">Acompanhe sua evolução emocional</p>
+            </div>
+          </header>
+          <div class="graficos">
+            <div class="grafico-card">
+              <h2>Evolução dos Últimos 7 Dias</h2>
+              <div class="canvas-container">
+                <canvas id="graficoSemana"></canvas>
+              </div>
+            </div>
+            <div class="grafico-card">
+              <h2>Equilíbrio Emocional</h2>
+              <div class="canvas-container">
+                <canvas id="graficoRadar"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-diario" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>📖 Diário Humorístico</h1>
+              <p class="subtitulo">Escreva livremente sobre o seu dia</p>
+            </div>
+            <button class="btn-roxo-peq" onclick="abrirModalVerDiario()">
+              📋 Ver Registros
+            </button>
+          </header>
+          <section class="card-painel">
+            <textarea
+              id="textoDiario"
+              placeholder="Escreva seu desabafo aqui..."
+              rows="5"
+            ></textarea>
+            <div class="diario-acoes">
+              <label class="checkbox-label"
+                ><input type="checkbox" id="compartilharDiario" /> Permitir que
+                o professor leia</label
+              >
+              <button class="btn-roxo" onclick="salvarDiario()">
+                Salvar 📝
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <div id="tab-jogos" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>🎮 Jogos</h1>
+              <p class="subtitulo">Relaxe e divirta-se</p>
+            </div>
+          </header>
+          <div class="jogos-grid">
+            <div class="jogo-card" onclick="abrirModalGame()">
+              <div class="jogo-icone">🎈</div>
+              <h3>Pop-It</h3>
+              <p>Estoure as bolhas da cor certa!</p>
+            </div>
+            <div class="jogo-card" onclick="abrirJogoMemoria()">
+              <div class="jogo-icone">🃏</div>
+              <h3>Jogo da Memória</h3>
+              <p>Encontre os pares de emoções</p>
+            </div>
+            <div class="jogo-card" onclick="abrirJogoSubir()">
+              <div class="jogo-icone">🧠</div>
+              <h3>Cérebro Saltador</h3>
+              <p>Pule nas plataformas móveis!</p>
+            </div>
+            <div class="jogo-card" onclick="abrirCacaPalavras()">
+              <div class="jogo-icone">🔤</div>
+              <h3>Caça-Palavras</h3>
+              <p>Encontre as palavras escondidas!</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-respiracao" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>🧘 Exercício de Respiração</h1>
+              <p class="subtitulo">Relaxe sua mente</p>
+            </div>
+          </header>
+          <div class="card-painel" style="text-align: center">
+            <p style="margin-bottom: 20px; color: #cbd5e1">
+              Acompanhe o círculo e respire no ritmo indicado
+            </p>
+            <div class="circulo-respiracao" id="circuloRespiracao">
+              <span id="textoRespiracaoTab">Inspire...</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                margin-top: 25px;
+              "
+            >
+              <button
+                class="btn-respiracao btn-iniciar"
+                id="btnIniciarRespiracao"
+                onclick="iniciarRespiracaoTab()"
+              >
+                ▶️ Iniciar
+              </button>
+              <button
+                class="btn-respiracao btn-parar"
+                id="btnPararRespiracao"
+                onclick="pararRespiracaoTab()"
+              >
+                ⏹️ Parar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-conquistas" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>🏆 Minhas Conquistas</h1>
+              <p class="subtitulo">Cuidar da sua mente rende recompensas!</p>
+            </div>
+          </header>
+          <div id="containerConquistasTab" class="lista-conquistas"></div>
+        </div>
+      </main>
+    </div>
+
+    <div id="modalHistorico" class="modal-overlay">
+      <div class="modal-content">
+        <span class="x-fechar" onclick="fecharModalHistorico()">&times;</span>
+        <h2>📜 Histórico de Emoções</h2>
+        <div id="historico" class="modal-body-scroll"></div>
+        <button class="btn-fechar-modal" onclick="fecharModalHistorico()">
+          Fechar
+        </button>
+      </div>
+    </div>
+
+    <div id="modalNotificacoes" class="modal-overlay">
+      <div class="modal-content modal-largo">
+        <span class="x-fechar" onclick="fecharModalNotificacoes()"
+          >&times;</span
+        >
+        <h2>🔔 Central de Notificações</h2>
+        <div class="notif-tabs">
+          <button
+            class="notif-tab ativo"
+            onclick="trocarNotifTab('mensagens', this)"
+          >
+            💬 Mensagens
+          </button>
+          <button
+            class="notif-tab"
+            onclick="trocarNotifTab('atividades', this)"
+          >
+            📅 Atividades
+          </button>
+          <button class="notif-tab" onclick="trocarNotifTab('avisos', this)">
+            📢 Avisos
+          </button>
+        </div>
+        <div id="notif-mensagens" class="notif-content ativo">
+          <div id="mensagensProfessor" class="modal-body-scroll"></div>
+        </div>
+        <div id="notif-atividades" class="notif-content">
+          <div id="atividadesAluno" class="modal-body-scroll"></div>
+        </div>
+        <div id="notif-avisos" class="notif-content">
+          <div id="avisosAluno" class="modal-body-scroll"></div>
+        </div>
+        <button class="btn-fechar-modal" onclick="fecharModalNotificacoes()">
+          Fechar
+        </button>
+      </div>
+    </div>
+
+    <div id="modalGame" class="modal-overlay">
+      <div class="modal-content">
+        <h2>🎈 Jogo Pop-It</h2>
+        <p>Estoure a cor certa antes do tempo acabar!</p>
+        <div class="game-placar">
+          <div>Cor: <strong id="corAlvoTexto">...</strong></div>
+          <div>⏱️ <span id="tempoGameTexto">5s</span></div>
+          <div>Pontos: <span id="gamePontos">0</span></div>
+        </div>
+        <div class="barra-tempo-container">
+          <div id="barraTempoProgresso" class="barra-tempo-progresso"></div>
+        </div>
+        <div id="gridBolasGame" class="grid-bolas"></div>
+        <button class="btn-fechar-modal" onclick="fecharModalGame()">
+          Fechar Jogo
+        </button>
+      </div>
+    </div>
+
+    <div id="modalMemoria" class="modal-overlay">
+      <div class="modal-content">
+        <h2>🃏 Jogo da Memória</h2>
+        <p>Encontre os pares de emoções!</p>
+        <div id="gridMemoria" class="grid-memoria"></div>
+        <p>Tentativas: <span id="tentativasMemoria">0</span></p>
+        <button class="btn-fechar-modal" onclick="fecharJogoMemoria()">
+          Fechar
+        </button>
+      </div>
+    </div>
+
+    <div id="modalSubir" class="modal-overlay">
+      <div class="modal-content modal-largo">
+        <h2>🧠 Cérebro Saltador</h2>
+        <p>Use ← → para mover e pule nas plataformas!</p>
+        <div class="game-placar">
+          <div>🧠 Pontos: <span id="pontosSubir">0</span></div>
+          <div>🏆 Melhor: <span id="melhorSubir">0</span></div>
+        </div>
+        <canvas
+          id="canvasSubir"
+          width="400"
+          height="400"
+          style="
+            border: 2px solid #a855f7;
+            border-radius: 12px;
+            background: #1a0a2e;
+            margin: 10px 0;
+          "
+        ></canvas>
+        <button class="btn-fechar-modal" onclick="fecharJogoSubir()">
+          Fechar
+        </button>
+      </div>
+    </div>
+
+    <div id="modalCacaPalavras" class="modal-overlay">
+      <div class="modal-content modal-largo">
+        <h2>🔤 Caça-Palavras das Emoções</h2>
+        <p>Clique na primeira letra e arraste até a última da palavra!</p>
+        <div class="game-placar">
+          <div>🔤 Encontradas: <span id="palavrasEncontradas">0/8</span></div>
+          <div>💡 Dicas: <span id="dicasRestantes">3</span></div>
+        </div>
+        <div
+          id="gradeCacaPalavras"
+          style="display: grid; gap: 2px; margin: 15px auto; user-select: none"
+        ></div>
+        <div
+          id="listaPalavras"
+          style="
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 10px;
+          "
+        ></div>
+        <div style="display: flex; gap: 10px">
+          <button class="btn-fechar-modal" onclick="usarDica()" id="btnDica">
+            💡 Dica
+          </button>
+          <button class="btn-fechar-modal" onclick="fecharCacaPalavras()">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modalVerDiario" class="modal-overlay">
+      <div class="modal-content">
+        <span class="x-fechar" onclick="fecharModalVerDiario()">&times;</span>
+        <h2>📖 Meus Registros</h2>
+        <div id="containerListaDiario" class="modal-body-scroll"></div>
+        <button class="btn-fechar-modal" onclick="fecharModalVerDiario()">
+          Fechar
+        </button>
+      </div>
+    </div>
+
+    <div id="modalAvatar" class="modal-overlay">
+      <div class="modal-content">
+        <h2>Escolha seu Avatar</h2>
+        <div class="grid-avatars">
+          <span onclick="mudarAvatar('😊')">😊</span
+          ><span onclick="mudarAvatar('😎')">😎</span>
+          <span onclick="mudarAvatar('🐱')">🐱</span
+          ><span onclick="mudarAvatar('🦊')">🦊</span>
+          <span onclick="mudarAvatar('🐼')">🐼</span
+          ><span onclick="mudarAvatar('🚀')">🚀</span>
+          <span onclick="mudarAvatar('🤖')">🤖</span
+          ><span onclick="mudarAvatar('🦄')">🦄</span>
+        </div>
+        <button class="btn-fechar-modal" onclick="fecharModalAvatar()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/aluno.js"></script>
+  </body>
+</html>

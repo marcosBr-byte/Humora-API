@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Humora | Painel do Professor</title>
+    <link rel="stylesheet" href="css/professor.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="pagina">
+      <aside class="sidebar">
+        <div class="topo-sidebar">
+          <div class="logo-area"><h1>🧠 Humora</h1></div>
+
+          <div class="perfil">
+            <div
+              class="avatar"
+              id="avatarProfAtual"
+              onclick="abrirModalAvatarProf()"
+              title="Mudar avatar"
+            >
+              👨‍🏫
+            </div>
+            <div class="perfil-info">
+              <h2 id="nomeProfessor">Professor</h2>
+              <p id="areaProfessor">Docente</p>
+            </div>
+          </div>
+
+          <div class="streak-card">
+            <span class="fogo">👨‍🏫</span>
+            <div>
+              <strong>Painel do Educador</strong>
+              <small>Acompanhamento emocional</small>
+            </div>
+          </div>
+
+          <nav class="menu-sidebar">
+            <button
+              class="menu-item ativo"
+              onclick="trocarTab('dashboard', this)"
+            >
+              <span class="icone-menu">🏠</span> Início
+            </button>
+            <button class="menu-item" onclick="trocarTab('graficos', this)">
+              <span class="icone-menu">📊</span> Gráficos
+            </button>
+            <button class="menu-item" onclick="trocarTab('alunos', this)">
+              <span class="icone-menu">👥</span> Alunos
+            </button>
+            <button class="menu-item" onclick="trocarTab('mensagens', this)">
+              <span class="icone-menu">💬</span> Mensagens
+            </button>
+            <button class="menu-item" onclick="trocarTab('diarios', this)">
+              <span class="icone-menu">📖</span> Diários
+            </button>
+            <button class="menu-item" onclick="trocarTab('comunicados', this)">
+              <span class="icone-menu">📢</span> Comunicados
+            </button>
+            <button class="menu-item" onclick="trocarTab('anotacoes', this)">
+              <span class="icone-menu">📝</span> Anotações
+            </button>
+            <button class="menu-item" onclick="trocarTab('jogos', this)">
+              <span class="icone-menu">🎮</span> Jogos
+            </button>
+            <button class="menu-item" onclick="trocarTab('conquistas', this)">
+              <span class="icone-menu">🏆</span> Conquistas
+            </button>
+          </nav>
+        </div>
+        <button class="btn-sair" onclick="sair()">🚪 Sair</button>
+      </aside>
+
+      <main class="conteudo">
+        <div id="tab-dashboard" class="tab-content ativo">
+          <header class="topo-conteudo">
+            <div>
+              <h1>Painel do Professor</h1>
+              <p class="subtitulo">Visão geral das turmas</p>
+            </div>
+          </header>
+          <section class="card-painel">
+            <h2>📊 Resumo Emocional</h2>
+            <div class="cards-resumo">
+              <div class="card-resumo" style="border-top: 4px solid #ffd700">
+                😊 <span id="totalFeliz">0</span><small>Feliz</small>
+              </div>
+              <div class="card-resumo" style="border-top: 4px solid #4a90e2">
+                😔 <span id="totalTriste">0</span><small>Triste</small>
+              </div>
+              <div class="card-resumo" style="border-top: 4px solid #b0b0b0">
+                😴 <span id="totalCansado">0</span><small>Cansado</small>
+              </div>
+              <div class="card-resumo" style="border-top: 4px solid #00c896">
+                😌 <span id="totalCalmo">0</span><small>Calmo</small>
+              </div>
+              <div class="card-resumo" style="border-top: 4px solid #ff8c00">
+                😰 <span id="totalAnsioso">0</span><small>Ansioso</small>
+              </div>
+              <div class="card-resumo" style="border-top: 4px solid #e74c3c">
+                😡 <span id="totalIrritado">0</span><small>Irritado</small>
+              </div>
+            </div>
+            <div class="grafico-card">
+              <h2>Gráfico Geral</h2>
+              <div class="canvas-container">
+                <canvas id="graficoTurma"></canvas>
+              </div>
+            </div>
+          </section>
+          <section class="card-painel">
+            <h2>🚨 Alunos em Alerta</h2>
+            <div id="listaAlunosAlerta"></div>
+          </section>
+        </div>
+
+        <div id="tab-graficos" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>📊 Gráficos e Estatísticas</h1>
+              <p class="subtitulo">Análise detalhada das emoções</p>
+            </div>
+          </header>
+          <div class="filtros-graficos">
+            <select
+              id="filtroTurmaGrafico"
+              onchange="atualizarGraficosFiltrados()"
+            >
+              <option value="">Todas as Turmas</option>
+            </select>
+            <select
+              id="filtroEmocaoGrafico"
+              onchange="atualizarGraficosFiltrados()"
+            >
+              <option value="">Todos os Estados</option>
+              <option value="feliz">😊 Feliz</option>
+              <option value="triste">😔 Triste</option>
+              <option value="cansado">😴 Cansado</option>
+              <option value="calmo">😌 Calmo</option>
+              <option value="ansioso">😰 Ansioso</option>
+              <option value="irritado">😡 Irritado</option>
+            </select>
+            <button class="btn-roxo-peq" onclick="limparFiltrosGraficos()">
+              Limpar
+            </button>
+          </div>
+          <div class="graficos-container">
+            <div class="grafico-card">
+              <h2>📊 Distribuição por Turma</h2>
+              <div class="canvas-container">
+                <canvas id="graficoBarra"></canvas>
+              </div>
+            </div>
+            <div class="grafico-card">
+              <h2>🍩 Distribuição Geral</h2>
+              <div class="canvas-container">
+                <canvas id="graficoPizza"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-alunos" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>👥 Gerenciar Alunos</h1>
+              <p class="subtitulo">Busque, filtre e acompanhe seus alunos</p>
+            </div>
+          </header>
+          <div class="filtros-graficos">
+            <input
+              type="text"
+              id="buscaAluno"
+              placeholder="Buscar por nome..."
+              oninput="aplicarFiltros()"
+            />
+            <select id="filtroTurma" onchange="aplicarFiltros()">
+              <option value="">Todas as Turmas</option>
+            </select>
+            <select id="filtroEmocao" onchange="aplicarFiltros()">
+              <option value="">Todos os Estados</option>
+              <option value="alerta">⚠️ Em Alerta</option>
+              <option value="feliz">😊 Feliz</option>
+              <option value="triste">😔 Triste</option>
+              <option value="cansado">😴 Cansado</option>
+              <option value="calmo">😌 Calmo</option>
+              <option value="ansioso">😰 Ansioso</option>
+              <option value="irritado">😡 Irritado</option>
+            </select>
+            <button class="btn-roxo-peq" onclick="limparFiltros()">
+              Limpar
+            </button>
+          </div>
+          <section class="card-painel">
+            <h2>Lista de Alunos</h2>
+            <div id="listaAlunosTurma"></div>
+          </section>
+        </div>
+
+        <div id="tab-mensagens" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>💬 Enviar Mensagem</h1>
+              <p class="subtitulo">Comunique-se com seus alunos</p>
+            </div>
+          </header>
+          <section class="card-painel">
+            <div class="form-grid">
+              <select id="selectAlunoMensagem">
+                <option value="">Selecione um aluno...</option>
+              </select>
+              <textarea
+                id="textoMensagemProf"
+                placeholder="Escreva sua mensagem de apoio..."
+                rows="4"
+              ></textarea>
+              <button class="btn-roxo" onclick="enviarMensagemDireta()">
+                Enviar Mensagem 📩
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <div id="tab-diarios" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>📖 Diários Compartilhados</h1>
+              <p class="subtitulo">Acompanhe os desabafos dos alunos</p>
+            </div>
+          </header>
+          <section class="card-painel">
+            <div id="containerDiariosCompartilhados" class="lista-mini"></div>
+          </section>
+        </div>
+
+        <div id="tab-comunicados" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>📢 Comunicados e Agendamentos</h1>
+              <p class="subtitulo">Publique avisos e agende atividades</p>
+            </div>
+          </header>
+          <div class="grid-recursos">
+            <section class="card-painel">
+              <h2>📌 Publicar Aviso</h2>
+              <div class="form-grid">
+                <textarea
+                  id="textoAvisoTurma"
+                  placeholder="Escreva um comunicado..."
+                  rows="2"
+                ></textarea
+                ><button onclick="publicarAvisoTurma()" class="btn-roxo-peq">
+                  Publicar 📌
+                </button>
+              </div>
+              <div id="listaAvisosProf" class="lista-mini"></div>
+            </section>
+            <section class="card-painel">
+              <h2>🗓️ Agendar Atividade</h2>
+              <form
+                id="formAgendamento"
+                onsubmit="salvarAgendamento(event)"
+                class="form-grid"
+              >
+                <input
+                  type="text"
+                  id="tituloAtividade"
+                  placeholder="Título"
+                  required
+                />
+                <input type="date" id="dataAtividade" required />
+                <select id="turmaAtividade" required>
+                  <option value="">Selecione a Turma</option>
+                </select>
+                <button type="submit" class="btn-roxo-peq">Agendar 🔔</button>
+              </form>
+              <div id="listaAgendamentos" class="lista-mini"></div>
+            </section>
+          </div>
+        </div>
+
+        <div id="tab-anotacoes" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>📝 Minhas Anotações</h1>
+              <p class="subtitulo">Suas notas pessoais</p>
+            </div>
+          </header>
+          <section class="card-painel">
+            <div class="form-grid">
+              <textarea
+                id="novaAnotacaoTexto"
+                placeholder="Escreva sua anotação..."
+                rows="3"
+              ></textarea
+              ><button class="btn-roxo" onclick="adicionarAnotacao()">
+                Salvar Anotação 📝
+              </button>
+            </div>
+            <div
+              id="containerAnotacoes"
+              class="grid-anotacoes"
+              style="margin-top: 20px"
+            ></div>
+          </section>
+        </div>
+
+        <div id="tab-jogos" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>🎮 Jogos</h1>
+              <p class="subtitulo">Relaxe com jogos interativos</p>
+            </div>
+          </header>
+          <div class="jogos-grid">
+            <div class="jogo-card" onclick="abrirModalGameProf()">
+              <div class="jogo-icone">🎈</div>
+              <h3>Pop-It</h3>
+              <p>Estoure as bolhas da cor certa!</p>
+            </div>
+            <div class="jogo-card" onclick="abrirJogoMemoriaProf()">
+              <div class="jogo-icone">🃏</div>
+              <h3>Jogo da Memória</h3>
+              <p>Encontre os pares de emoções</p>
+            </div>
+            <div class="jogo-card" onclick="abrirJogoSubirProf()">
+              <div class="jogo-icone">🧠</div>
+              <h3>Cérebro Saltador</h3>
+              <p>Pule nas plataformas móveis!</p>
+            </div>
+            <div class="jogo-card" onclick="abrirCacaPalavrasProf()">
+              <div class="jogo-icone">🔤</div>
+              <h3>Caça-Palavras</h3>
+              <p>Encontre as palavras escondidas!</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="tab-conquistas" class="tab-content">
+          <header class="topo-conteudo">
+            <div>
+              <h1>🎖️ Minhas Conquistas</h1>
+              <p class="subtitulo">Seu progresso como educador</p>
+            </div>
+          </header>
+          <div
+            id="containerConquistasProf"
+            style="
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 12px;
+            "
+          ></div>
+        </div>
+      </main>
+    </div>
+
+    <div id="modalMensagem" class="modal-overlay">
+      <div class="modal-content">
+        <span class="x-fechar" onclick="fecharModal()">&times;</span>
+        <h2>
+          Mensagem para <span id="nomeAlunoModal" style="color: #c084fc"></span>
+        </h2>
+        <textarea
+          id="textoMensagemModal"
+          placeholder="Escreva sua mensagem..."
+          rows="4"
+        ></textarea
+        ><button class="btn-roxo" onclick="enviarMensagem()">Enviar 📩</button>
+      </div>
+    </div>
+    <div id="modalBadge" class="modal-overlay">
+      <div class="modal-content">
+        <span class="x-fechar" onclick="fecharModalBadge()">&times;</span>
+        <h2>
+          Reconhecer: <span id="nomeAlunoBadge" style="color: #c084fc"></span>
+        </h2>
+        <div class="grid-badges">
+          <button
+            class="badge-option"
+            onclick="enviarBadge('🌟 Destaque de Empatia')"
+          >
+            🌟 Empatia</button
+          ><button
+            class="badge-option"
+            onclick="enviarBadge('🔥 Super Focado')"
+          >
+            🔥 Focado</button
+          ><button
+            class="badge-option"
+            onclick="enviarBadge('🚀 Evolução Incrível')"
+          >
+            🚀 Evolução</button
+          ><button
+            class="badge-option"
+            onclick="enviarBadge('🤝 Trabalho em Equipe')"
+          >
+            🤝 Equipe
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="modalAvatarProf" class="modal-overlay">
+      <div class="modal-content">
+        <h2>Escolha seu Avatar</h2>
+        <div class="grid-avatars">
+          <span onclick="mudarAvatarProf('👨‍🏫')">👨‍🏫</span
+          ><span onclick="mudarAvatarProf('👩‍🏫')">👩‍🏫</span
+          ><span onclick="mudarAvatarProf('🧠')">🧠</span
+          ><span onclick="mudarAvatarProf('☕')">☕</span
+          ><span onclick="mudarAvatarProf('😎')">😎</span
+          ><span onclick="mudarAvatarProf('🚀')">🚀</span>
+        </div>
+        <button class="btn-fechar-modal" onclick="fecharModalAvatarProf()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+    <div id="modalGameProf" class="modal-overlay">
+      <div class="modal-content">
+        <h2>🎈 Pop-It</h2>
+        <p>Estoure a cor certa!</p>
+        <div class="game-placar">
+          <div>Cor: <strong id="corAlvoTextoProf">...</strong></div>
+          <div>⏱️ <span id="tempoGameTextoProf">5s</span></div>
+          <div>Pontos: <span id="gamePontosProf">0</span></div>
+        </div>
+        <div class="barra-tempo-container">
+          <div id="barraTempoProgressoProf" class="barra-tempo-progresso"></div>
+        </div>
+        <div id="gridBolasGameProf" class="grid-bolas"></div>
+        <button class="btn-fechar-modal" onclick="fecharModalGameProf()">
+          Fechar
+        </button>
+      </div>
+    </div>
+    <div id="modalMemoriaProf" class="modal-overlay">
+      <div class="modal-content">
+        <h2>🃏 Jogo da Memória</h2>
+        <p>Encontre os pares!</p>
+        <div id="gridMemoriaProf" class="grid-memoria"></div>
+        <p>Tentativas: <span id="tentativasMemoriaProf">0</span></p>
+        <button class="btn-fechar-modal" onclick="fecharJogoMemoriaProf()">
+          Fechar
+        </button>
+      </div>
+    </div>
+    <div id="modalSubirProf" class="modal-overlay">
+      <div class="modal-content modal-largo">
+        <h2>🧠 Cérebro Saltador</h2>
+        <p>Use ← → para mover e pule nas plataformas!</p>
+        <div class="game-placar">
+          <div>🧠 Pontos: <span id="pontosSubirProf">0</span></div>
+          <div>🏆 Melhor: <span id="melhorSubirProf">0</span></div>
+        </div>
+        <canvas
+          id="canvasSubirProf"
+          width="400"
+          height="400"
+          style="
+            border: 2px solid #a855f7;
+            border-radius: 12px;
+            background: #1a0a2e;
+            margin: 10px 0;
+          "
+        ></canvas
+        ><button class="btn-fechar-modal" onclick="fecharJogoSubirProf()">
+          Fechar
+        </button>
+      </div>
+    </div>
+    <div id="modalCacaPalavrasProf" class="modal-overlay">
+      <div class="modal-content modal-largo">
+        <h2>🔤 Caça-Palavras</h2>
+        <p>Clique e arraste para selecionar!</p>
+        <div class="game-placar">
+          <div>
+            🔤 Encontradas: <span id="palavrasEncontradasProf">0/8</span>
+          </div>
+          <div>💡 Dicas: <span id="dicasRestantesProf">3</span></div>
+        </div>
+        <div
+          id="gradeCacaPalavrasProf"
+          style="display: grid; gap: 2px; margin: 15px auto; user-select: none"
+        ></div>
+        <div
+          id="listaPalavrasProf"
+          style="
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 10px;
+          "
+        ></div>
+        <div style="display: flex; gap: 10px">
+          <button
+            class="btn-fechar-modal"
+            onclick="usarDicaProf()"
+            id="btnDicaProf"
+          >
+            💡 Dica</button
+          ><button class="btn-fechar-modal" onclick="fecharCacaPalavrasProf()">
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/professor.js"></script>
+  </body>
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Humora | Login</title>
+    <link rel="stylesheet" href="css/login.css" />
+  </head>
+  <body>
+    <div class="nuvens-container">
+      <div class="nuvem nuvem-1"></div>
+      <div class="nuvem nuvem-2"></div>
+      <div class="nuvem nuvem-3"></div>
+    </div>
+
+    <div class="container">
+      <section class="apresentacao">
+        <div class="logo">
+          <img src="imagens/cerebro.png" alt="Humora" />
+          <h1>Humora</h1>
+        </div>
+        <h2>Entenda o que<br />você <span>sente.</span></h2>
+        <div class="texto">
+          <div class="icone">💜</div>
+          <p>
+            Um espaço seguro para registrar suas emoções, permitindo que
+            professores compreendam melhor como está a turma e possam
+            desenvolver estratégias para promover um ambiente escolar mais
+            acolhedor.
+          </p>
+        </div>
+      </section>
+
+      <section class="login-card">
+        <h1>Humora</h1>
+        <p>Faça login para acessar o sistema.</p>
+
+        <input type="email" id="email" placeholder="Digite seu e-mail" />
+        <input
+          type="password"
+          id="senha"
+          placeholder="Digite sua senha (mínimo 8 caracteres)"
+          minlength="8"
+        />
+
+        <div class="seletor-usuario">
+          <button type="button" class="tipo-btn ativo" id="btnAluno">
+            🎓 Aluno
+          </button>
+          <button type="button" class="tipo-btn" id="btnProfessor">
+            👨‍🏫 Professor
+          </button>
+        </div>
+
+        <input type="hidden" id="tipoUsuario" value="aluno" />
+
+        <button onclick="login()">Entrar</button>
+
+        <div class="cadastro">
+          <p>Ainda não possui conta?</p>
+          <a href="cadastroAluno.html" class="btn-cadastro">Cadastro Aluno</a>
+          <a href="cadastroProfessor.html" class="btn-cadastro btn-espacado"
+            >Cadastro Professor</a
+          >
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const btnAluno = document.getElementById("btnAluno");
+      const btnProfessor = document.getElementById("btnProfessor");
+      const tipo = document.getElementById("tipoUsuario");
+
+      btnAluno.onclick = () => {
+        btnAluno.classList.add("ativo");
+        btnProfessor.classList.remove("ativo");
+        tipo.value = "aluno";
+      };
+
+      btnProfessor.onclick = () => {
+        btnProfessor.classList.add("ativo");
+        btnAluno.classList.remove("ativo");
+        tipo.value = "professor";
+      };
+    </script>
+
+    <script src="js/api.js"></script>
+    <script src="js/login.js"></script>
+  </body>
+</html>
