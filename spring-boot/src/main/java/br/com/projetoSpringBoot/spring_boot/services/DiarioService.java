@@ -21,57 +21,53 @@ public class DiarioService {
     @Autowired
     private final DiarioRepositories diarioRepositories;
 
-    public List<Diario> findAll() {return diarioRepositories.findAll();}
+    public List<Diario> findAll() {
+        return diarioRepositories.findAll();
+    }
 
     public Diario findById(Long id) {
         Optional<Diario> diario = this.diarioRepositories.findById(id);
-        return diario.orElseThrow(() -> new RuntimeException(
-                "Diário não encontrado"
-        ));
+        return diario.orElseThrow(() -> new RuntimeException("Diário não encontrado"));
     }
+
     @Transactional
     public Diario create(Diario obj) {
-        obj =  this.diarioRepositories.save(obj);
+        obj = this.diarioRepositories.save(obj);
         return obj;
     }
 
     @Transactional
     public Diario update(Diario obj) {
         Diario newObj = findById(obj.getId());
-        if(Objects.nonNull(obj.getDataExpiracao())) {newObj.setDataExpiracao(obj.getDataExpiracao());}
-        if(Objects.nonNull((obj.getEmocoes()))) {newObj.setEmocoes(obj.getEmocoes());}
-        if(Objects.nonNull(obj.getAluno())) {newObj.setAluno(obj.getAluno());}
+        if (Objects.nonNull(obj.getDataExpiracao())) {
+            newObj.setDataExpiracao(obj.getDataExpiracao());
+        }
+        if (Objects.nonNull(obj.getEmocoes())) {
+            newObj.setEmocoes(obj.getEmocoes());
+        }
+        if (Objects.nonNull(obj.getAluno())) {
+            newObj.setAluno(obj.getAluno());
+        }
         return diarioRepositories.save(newObj);
     }
 
-
+    @Transactional
     public void delete(Long id) {
         findById(id);
         try {
             this.diarioRepositories.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new RuntimeException("Não pode excluir pois há Entidades Relacionadas");
         }
-        catch (EmptyResultDataAccessException e) {
-            throw new RuntimeException(
-                    "Não pode exluir pois há Entidades Relacionadas"
-            );
-        }
-
     }
+
     public List<Diario> findAllByDiario(Aluno aluno) {
         List<Diario> diarios = diarioRepositories.findAllDiarioByAluno(aluno);
-        for (Diario diario : diarios) {
-            validarDiario(diario);
-        }
+        // Remover diários expirados
+        diarios.removeIf(diario ->
+                diario.getDataExpiracao().isBefore(LocalDateTime.now()) ||
+                        diario.getDataExpiracao().isEqual(LocalDateTime.now())
+        );
         return diarios;
     }
-
-    public void validarDiario(Diario diario) {
-        if((diario.getDataExpiracao().isBefore(LocalDateTime.now()) || diario.getDataExpiracao().isEqual(LocalDateTime.now()))) {
-            delete(diario.getId());
-        }
-    }
-
-
 }
-
-

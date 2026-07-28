@@ -67,7 +67,8 @@
         background: rgba(10, 5, 30, 0.9);
         display: flex;
         flex-direction: column;
-        overflow-y: auto; /* scroll interno apenas se necessário */
+        overflow-y: auto;
+        max-height: 100vh;
       }
 
       .right h1 {
@@ -118,69 +119,76 @@
         font-size: 0.75rem;
       }
 
-      /* GRID DE TURMAS – MAIS AMPLA */
+      /* ====== BOTÕES DE TURMA USANDO .turma-btn ====== */
       .turmas-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        max-height: 360px; /* bem maior que antes */
+        gap: 12px;
+        max-height: 480px;
         overflow-y: auto;
-        padding: 10px;
-        margin: 10px 0 12px 0;
-        background: rgba(20, 5, 38, 0.95);
-        border: 1px solid rgba(168, 85, 247, 0.45);
-        border-radius: 12px;
+        padding: 16px;
+        margin: 12px 0 16px 0;
+        background: rgba(10, 5, 30, 0.95);
+        border: 1px solid rgba(168, 85, 247, 0.3);
+        border-radius: 16px;
       }
 
-      .turma-btn {
+      .turmas-grid .turma-btn {
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 52px;
-        padding: 6px 10px;
-        border-radius: 8px;
-        border: 1px solid rgba(168, 85, 247, 0.25);
-        background: #2d2d3f;
-        color: #cbd5e1;
-        font-size: 0.85rem; /* um pouco maior */
+        height: 48px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.05);
+        color: #e2e8f0;
+        font-size: 0.9rem;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.25s ease;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        width: 100%;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       }
 
-      .turma-btn:hover {
-        background: #3d3d5c;
-        border-color: rgba(168, 85, 247, 0.6);
-        color: #e2e8f0;
+      .turmas-grid .turma-btn:hover {
+        background: rgba(168, 85, 247, 0.2);
+        border-color: rgba(168, 85, 247, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
       }
 
-      .turma-btn.todas {
+      .turmas-grid .turma-btn.todas {
         grid-column: span 2;
-        background: #3a3a52;
+        background: rgba(168, 85, 247, 0.15);
+        border-color: rgba(168, 85, 247, 0.4);
         font-weight: 600;
-        color: #e2e8f0;
+        color: #f3e8ff;
       }
 
-      .turma-btn.selecionado {
+      .turmas-grid .turma-btn.selecionado {
         background: #6f42c1 !important;
         border-color: #c084fc !important;
-        color: white !important;
+        color: #ffffff !important;
         font-weight: 600;
-        box-shadow: 0 0 12px rgba(111, 66, 193, 0.7);
+        box-shadow: 0 0 20px rgba(111, 66, 193, 0.6);
+        transform: scale(1.02);
       }
 
       .turmas-grid h4 {
         grid-column: span 2;
         color: #c084fc;
-        font-size: 0.82rem;
-        margin: 6px 0 2px 0;
+        font-size: 0.85rem;
+        margin: 8px 0 4px 0;
         text-transform: uppercase;
-        font-weight: 600;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+        padding-bottom: 6px;
       }
-
       .chave-box {
         margin: 8px 0 12px 0;
         padding: 10px 12px;
@@ -296,128 +304,65 @@
           </optgroup>
         </select>
 
-        <label>Turmas que você leciona</label>
+        <label>Turmas que você seleciona</label>
         <small>Clique para selecionar quantas quiser</small>
 
+        <!-- ====== BOTÕES USANDO .turma-btn ====== -->
         <div class="turmas-grid" id="turmasGrid">
           <button type="button" class="turma-btn todas" data-value="Todas">
             Todas as Turmas
           </button>
           <h4>1º ANO</h4>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="1º AGROECOLOGIA - A"
-          >
+          <button type="button" class="turma-btn" data-value="1º AGROECOLOGIA - A">
             1º AGROECOLOGIA - A
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="1º ANÁLISES CLÍNICAS - B"
-          >
+          <button type="button" class="turma-btn" data-value="1º ANÁLISES CLÍNICAS - B">
             1º ANÁLISES CLÍNICAS - B
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="1º ANÁLISES CLÍNICAS - C"
-          >
+          <button type="button" class="turma-btn" data-value="1º ANÁLISES CLÍNICAS - C">
             1º ANÁLISES CLÍNICAS - C
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="1º INFORMÁTICA - D"
-          >
+          <button type="button" class="turma-btn" data-value="1º INFORMÁTICA - D">
             1º INFORMÁTICA - D
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="1º INFORMÁTICA - E"
-          >
+          <button type="button" class="turma-btn" data-value="1º INFORMÁTICA - E">
             1º INFORMÁTICA - E
           </button>
 
           <h4>2º ANO</h4>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="2º AGROECOLOGIA - F"
-          >
+          <button type="button" class="turma-btn" data-value="2º AGROECOLOGIA - F">
             2º AGROECOLOGIA - F
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="2º ANÁLISES CLÍNICAS - G"
-          >
+          <button type="button" class="turma-btn" data-value="2º ANÁLISES CLÍNICAS - G">
             2º ANÁLISES CLÍNICAS - G
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="2º INFORMÁTICA - H"
-          >
+          <button type="button" class="turma-btn" data-value="2º INFORMÁTICA - H">
             2º INFORMÁTICA - H
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="2º INFORMÁTICA - I"
-          >
+          <button type="button" class="turma-btn" data-value="2º INFORMÁTICA - I">
             2º INFORMÁTICA - I
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="2º INFORMÁTICA - J"
-          >
+          <button type="button" class="turma-btn" data-value="2º INFORMÁTICA - J">
             2º INFORMÁTICA - J
           </button>
 
           <h4>3º ANO</h4>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="3º AGROECOLOGIA - K"
-          >
+          <button type="button" class="turma-btn" data-value="3º AGROECOLOGIA - K">
             3º AGROECOLOGIA - K
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="3º ANÁLISES CLÍNICAS - L"
-          >
+          <button type="button" class="turma-btn" data-value="3º ANÁLISES CLÍNICAS - L">
             3º ANÁLISES CLÍNICAS - L
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="3º ANÁLISES CLÍNICAS - M"
-          >
+          <button type="button" class="turma-btn" data-value="3º ANÁLISES CLÍNICAS - M">
             3º ANÁLISES CLÍNICAS - M
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="3º INFORMÁTICA - N"
-          >
+          <button type="button" class="turma-btn" data-value="3º INFORMÁTICA - N">
             3º INFORMÁTICA - N
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="3º INFORMÁTICA - O"
-          >
+          <button type="button" class="turma-btn" data-value="3º INFORMÁTICA - O">
             3º INFORMÁTICA - O
           </button>
-          <button
-            type="button"
-            class="turma-btn"
-            data-value="3º INFORMÁTICA - P"
-          >
+          <button type="button" class="turma-btn" data-value="3º INFORMÁTICA - P">
             3º INFORMÁTICA - P
           </button>
         </div>
@@ -447,113 +392,6 @@
       </div>
     </div>
 
-    <script>
-      // Remove seleção inicial
-      document
-        .querySelectorAll(".turma-btn")
-        .forEach((b) => b.classList.remove("selecionado"));
-      document.getElementById("turmasSelecionadas").value = "[]";
-
-      const botoes = document.querySelectorAll(".turma-btn");
-      const inputHidden = document.getElementById("turmasSelecionadas");
-
-      function atualizarTurmas() {
-        const selecionadas = Array.from(
-          document.querySelectorAll(".turma-btn.selecionado"),
-        ).map((b) => b.dataset.value);
-        if (selecionadas.includes("Todas")) {
-          inputHidden.value = JSON.stringify(["Todas"]);
-        } else {
-          inputHidden.value = JSON.stringify(selecionadas);
-        }
-      }
-
-      botoes.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const valor = btn.dataset.value;
-          if (valor === "Todas") {
-            const jaSelecionado = btn.classList.contains("selecionado");
-            botoes.forEach((b) => b.classList.remove("selecionado"));
-            if (!jaSelecionado) btn.classList.add("selecionado");
-          } else {
-            document
-              .querySelector(".turma-btn.todas")
-              ?.classList.remove("selecionado");
-            btn.classList.toggle("selecionado");
-          }
-          atualizarTurmas();
-        });
-      });
-
-      const API_URL = "http://localhost:8080/api";
-
-      async function cadastrarProfessor() {
-        const nome = document.getElementById("nome").value.trim();
-        const email = document
-          .getElementById("email")
-          .value.trim()
-          .toLowerCase();
-        const senha = document.getElementById("senha").value.trim();
-        const area = document.getElementById("area").value;
-        const chaveAcesso = document.getElementById("chaveAcesso").value.trim();
-        const turmasSelecionadas = JSON.parse(
-          document.getElementById("turmasSelecionadas").value || "[]",
-        );
-
-        if (!nome || !email || !senha || !area)
-          return alert("Preencha todos os campos obrigatórios.");
-        if (senha.length < 8)
-          return alert("A senha deve possuir no mínimo 8 caracteres.");
-        if (!chaveAcesso)
-          return alert("⚠️ A chave de acesso do professor é obrigatória!");
-        if (chaveAcesso !== "HUMORADM2026")
-          return alert("❌ Chave de acesso inválida!");
-        if (turmasSelecionadas.length === 0)
-          return alert("Selecione pelo menos uma turma.");
-
-        try {
-          const response = await fetch(`${API_URL}/auth/cadastro/professor`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              nome,
-              email,
-              senha,
-              area,
-              chaveAcesso,
-              turmas: turmasSelecionadas,
-            }),
-          });
-          const data = await response.json();
-          if (!response.ok)
-            throw new Error(data.message || "Erro ao cadastrar");
-          alert("Professor cadastrado com sucesso! 👨‍🏫");
-          window.location.href = "login.html";
-        } catch (error) {
-          console.warn("API offline, salvando local:", error);
-          let professores = JSON.parse(
-            localStorage.getItem("professoresHumora") || "[]",
-          );
-          if (professores.some((p) => p.email === email))
-            return alert("Já existe um professor cadastrado com este e-mail.");
-          professores.push({
-            nome,
-            email,
-            senha,
-            area,
-            turmas: turmasSelecionadas,
-            dataCadastro: new Date().toLocaleDateString("pt-BR"),
-            anotacoes: [],
-          });
-          localStorage.setItem(
-            "professoresHumora",
-            JSON.stringify(professores),
-          );
-          alert("Professor cadastrado com sucesso! 👨‍🏫");
-          window.location.href = "login.html";
-        }
-      }
-    </script>
     <script src="js/api.js"></script>
     <script src="js/cadastroProfessor.js"></script>
   </body>

@@ -19,7 +19,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -37,11 +36,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
 
+                        // Rotas públicas da API (login e cadastro)
                         .requestMatchers(HttpMethod.POST, "/auth/login/aluno").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login/professor").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register/aluno").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register/professor").permitAll()
 
+                        // Rotas protegidas
                         .requestMatchers("/aluno/**").hasRole("ALUNO")
                         .requestMatchers("/professor/**").hasRole("PROFESSOR")
 
@@ -54,7 +55,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5500",
+                "http://127.0.0.1:5500",
+                "http://localhost:8080",
+                "http://localhost:3000",
+                "http://127.0.0.1:3000",
+                "null"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));

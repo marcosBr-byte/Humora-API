@@ -1,7 +1,6 @@
 package br.com.projetoSpringBoot.spring_boot.controllers;
 
 import br.com.projetoSpringBoot.spring_boot.dto.CriarDiarioDTO;
-import br.com.projetoSpringBoot.spring_boot.dto.DiarioDTO;
 import br.com.projetoSpringBoot.spring_boot.model.Aluno;
 import br.com.projetoSpringBoot.spring_boot.model.Diario;
 import br.com.projetoSpringBoot.spring_boot.services.AlunoService;
@@ -20,62 +19,67 @@ import java.util.Optional;
 @RequestMapping("/aluno")
 public class AlunoController {
     private final AlunoService alunoService;
-    private  final DiarioService diarioService;
+    private final DiarioService diarioService;
 
-    // DO DIÁRIO
+    // DIÁRIO
+
     @GetMapping("/diario")
-    public ResponseEntity<List<Diario>> findAll(@RequestBody DiarioDTO diarioDTO) {
-         Optional <Aluno> aluno = alunoService.findByEmail(diarioDTO.email());
-         if (!aluno.isPresent()) {
-             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-         }
+    public ResponseEntity<List<Diario>> findAll(@RequestParam String email) {
+        Optional<Aluno> aluno = alunoService.findByEmail(email);
+        if (!aluno.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         List<Diario> diarios = diarioService.findAllByDiario(aluno.get());
         return ResponseEntity.ok(diarios);
     }
 
-
-
     @PostMapping("/diario")
     public ResponseEntity<Diario> create(@RequestBody CriarDiarioDTO diarioDTO) {
-        Optional <Aluno> aluno = alunoService.findByEmail(diarioDTO.email());
+        Optional<Aluno> aluno = alunoService.findByEmail(diarioDTO.email());
         if (!aluno.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        Diario diario = new Diario(diarioDTO.emocoe(),aluno.get(), LocalDateTime.now().plusMonths(2));
+        Diario diario = new Diario(diarioDTO.emocoe(), aluno.get(), LocalDateTime.now().plusMonths(2));
         diario = diarioService.create(diario);
         return ResponseEntity.status(HttpStatus.CREATED).body(diario);
     }
 
     @DeleteMapping("/diario/{id}")
-    public ResponseEntity deletarDiario(@PathVariable Long id){
-        alunoService.delete(id);
+    public ResponseEntity<String> deletarDiario(@PathVariable Long id) {
+        diarioService.delete(id);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body("O Diario foi removido com sucesso");
     }
 
-    @PutMapping("/diario")
-    public ResponseEntity<Diario> update(@RequestBody Diario diario){
+    @PutMapping("/diario/{id}")
+    public ResponseEntity<Diario> update(@PathVariable Long id, @RequestBody CriarDiarioDTO diarioDTO) {
+        Diario diario = diarioService.findById(id);
+        if (diarioDTO.emocoe() != null) {
+            diario.setEmocoes(diarioDTO.emocoe());
+        }
         return ResponseEntity.ok(diarioService.update(diario));
     }
 
+    // ALUNO
 
-    // DO ALUNO
     @GetMapping
-    public ResponseEntity<List<Aluno>> FindAll(){
+    public ResponseEntity<List<Aluno>> FindAll() {
         List<Aluno> alunos = alunoService.findAll();
         return ResponseEntity.ok(alunos);
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Aluno> findById(@PathVariable Long id){
+    public ResponseEntity<Aluno> findById(@PathVariable Long id) {
         return ResponseEntity.ok(alunoService.findById(id));
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable Long id){
-        return  ResponseEntity.status(HttpStatus.ACCEPTED).body("O Aluno foi deletado com sucesso");
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        alunoService.delete(id);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("O Aluno foi deletado com sucesso");
     }
 
     @PutMapping("/{id}")
-    public  ResponseEntity update(@PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("O Aluno foi modificado com sucesso")  ;
+    public ResponseEntity<String> update(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("O Aluno foi modificado com sucesso");
     }
-
 }

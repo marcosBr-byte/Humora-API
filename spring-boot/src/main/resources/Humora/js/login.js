@@ -1,4 +1,8 @@
 // js/login.js
+
+// ⭐ CHAVE DE ACESSO CORRETA
+const CHAVE_ACESSO_CORRETA = "HUMORADM2026";
+
 async function login() {
     const email = document.getElementById("email").value.trim().toLowerCase();
     const senha = document.getElementById("senha").value.trim();
@@ -17,9 +21,9 @@ async function login() {
             response = await api.loginAluno(email, senha);
         } else {
             const chaveAcesso = prompt("🔑 Digite a chave de acesso do professor:");
-            const CHAVE_CORRETA = "profDM2026";
             
-            if (!chaveAcesso || chaveAcesso !== CHAVE_CORRETA) {
+            // ⭐ VALIDAR CHAVE DE ACESSO
+            if (!chaveAcesso || chaveAcesso !== CHAVE_ACESSO_CORRETA) {
                 return alert("❌ Chave de acesso inválida! Acesso negado.");
             }
             response = await api.loginProfessor(email, senha);

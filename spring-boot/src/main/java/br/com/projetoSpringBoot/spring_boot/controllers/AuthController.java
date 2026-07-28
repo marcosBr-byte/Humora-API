@@ -42,7 +42,7 @@ public class AuthController {
     private TokenConfig tokenConfig;
 
     @PostMapping("/login/aluno")
-    public ResponseEntity logarAluno(@RequestBody LoginRequestDTO login){
+    public ResponseEntity logarAluno(@RequestBody LoginRequestDTO login) {
 
         UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(login.email(), login.senha());
         Authentication authentication = authenticationManager.authenticate(userAndPass);
@@ -53,7 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/login/professor")
-    public ResponseEntity logarProfessor(@RequestBody LoginRequestDTO login){
+    public ResponseEntity logarProfessor(@RequestBody LoginRequestDTO login) {
         try {
             System.out.println("Professor recebido");
             UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(login.email(), login.senha());
@@ -62,25 +62,25 @@ public class AuthController {
             Professor professor = (Professor) authentication.getPrincipal();
             String token = tokenConfig.generateToken(professor);
             return ResponseEntity.ok(new LoginResponseDTO(token));
-        } catch (Exception e){
-            System.out.println("Erro no login "+ e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro no login " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
         }
     }
 
     @PostMapping("/register/aluno")
-    public ResponseEntity reistrarAluno(@Valid @RequestBody AlunoDTO alunoDTO){
+    public ResponseEntity reistrarAluno(@Valid @RequestBody AlunoDTO alunoDTO) {
         try {
-            if (! alunoDTO.getEmail().contains("@")){
+            if (!alunoDTO.getEmail().contains("@")) {
                 return ResponseEntity.badRequest().body("Email invalido");
             }
 
-            if (alunoService.findByEmail(alunoDTO.getEmail()).isPresent()){
+            if (alunoService.findByEmail(alunoDTO.getEmail()).isPresent()) {
                 return ResponseEntity.badRequest().body("Email já cadastrado como aluno");
             }
 
-            if(professorService.findProfessorByEmail(alunoDTO.getEmail()).isPresent()) {
+            if (professorService.findProfessorByEmail(alunoDTO.getEmail()).isPresent()) {
                 return ResponseEntity.badRequest().body("Email já cadastrado como professor. Use outro email.");
             }
 
@@ -96,35 +96,40 @@ public class AuthController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Aluno criado com sucesso!");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro ao registrar aluno: "+e);
+            return ResponseEntity.badRequest().body("Erro ao registrar aluno: " + e);
         }
     }
-    private static final String chaveAcesso = "profDM2026";
-    @PostMapping("/register/professor")
-    public ResponseEntity registrarProfessor(@Valid @RequestBody ProfessorDTO professorDTO){
-        try {
-            if (!chaveAcesso.equals(professorDTO.getChaveAcesso())){
-                return ResponseEntity.badRequest().body("ChaveAcesso invalido");
 
+    private final String CHAVE_ACESSO = "HUMORADM2026";
+
+    @PostMapping("/register/professor")
+    public ResponseEntity<?> registrarProfessor(
+            @Valid @RequestBody ProfessorDTO professorDTO) {
+
+        try {
+
+            if (!CHAVE_ACESSO.equals(professorDTO.getChaveAcesso())) {
+                return ResponseEntity
+                        .status(HttpStatus.FORBIDDEN)
+                        .body("Chave de acesso inválida!");
             }
 
             Professor professor = new Professor(
-                    0L,
+                    null,
                     professorDTO.getNome(),
                     professorDTO.getEmail(),
                     passwordEncoder.encode(professorDTO.getSenha()),
                     professorDTO.getMateria()
-
             );
-            professor.setId(null);
 
             professorService.create(professor);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("Professor criado com sucesso!");
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body("Professor criado com sucesso!");
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro ao registrar professor: "+e);
+            return ResponseEntity.badRequest()
+                    .body("Erro ao registrar professor: " + e.getMessage());
         }
     }
-
-
 }

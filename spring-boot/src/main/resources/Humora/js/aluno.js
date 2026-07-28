@@ -194,7 +194,7 @@ function selecionarEmocao(event, tipo) {
     document.getElementById("btnEnviarEmocao").disabled = false;
 }
 
-// ========== ENVIAR EMOÇÃO PARA BACKEND ==========
+// ========== ENVIAR EMOÇÃO PARA BACKEND (CORRIGIDO) ==========
 async function enviarEmocao() {
     if (!emocaoSelecionada) {
         alert("Selecione uma emoção!");
@@ -261,7 +261,7 @@ async function enviarEmocao() {
     }
 }
 
-// ========== CARREGAR DIÁRIOS DO BACKEND ==========
+// ========== CARREGAR DIÁRIOS DO BACKEND (CORRIGIDO) ==========
 async function carregarDiariosBackend() {
     const email = localStorage.getItem("email");
     if (!email) return;
@@ -271,12 +271,10 @@ async function carregarDiariosBackend() {
         if (response.ok) {
             const diarios = await response.json();
             if (diarios && diarios.length > 0) {
-                // Processar diários do backend
                 for (var i = 0; i < diarios.length; i++) {
                     var d = diarios[i];
-                    // Adicionar ao histórico local se não existir
                     var emocaoLocal = EMOCAO_REVERSE[d.emocoes] || d.emocoes;
-                    var existe = alunoAtual.historico.some(h => 
+                    var existe = alunoAtual.historico.some(h =>
                         h.data === new Date(d.dataExpiracao).toLocaleDateString("pt-BR") &&
                         h.emocao === emocaoLocal
                     );
