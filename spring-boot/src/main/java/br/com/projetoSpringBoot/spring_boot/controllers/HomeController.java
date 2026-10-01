@@ -1,0 +1,11 @@
+package br.com.projetoSpringBoot.spring_boot.controllers;
+
+import org.springframework.web.bind.annotation.GetMapping;
+
+public class HomeController {
+    @GetMapping("/")
+    public String home() {
+        return "Humora API Online!";
+    }
+}
+
