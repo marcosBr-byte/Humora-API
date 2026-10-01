@@ -29,51 +29,105 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         return http
                 .csrf(csrf -> csrf.disable())
+
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
                 .authorizeHttpRequests(authorize -> authorize
 
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
 
-                        // Frontend
+                        // =========================
+                        // FRONTEND
+                        // =========================
+
                         .requestMatchers(
                                 "/",
                                 "/index.html",
+                                "/login.html",
+                                "/aluno.html",
+                                "/professor.html",
+                                "/cadastroAluno.html",
+                                "/cadastroProfessor.html",
                                 "/css/**",
                                 "/js/**",
                                 "/imagens/**",
+                                "/images/**",
                                 "/favicon.ico"
                         ).permitAll()
 
-                        // Swagger
+                        // =========================
+                        // SWAGGER
+                        // =========================
+
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**"
                         ).permitAll()
 
-                        // Login
-                        .requestMatchers(HttpMethod.POST, "/auth/login/aluno").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/login/professor").permitAll()
+                        // =========================
+                        // AUTENTICAÇÃO
+                        // =========================
 
-                        // Cadastro
-                        .requestMatchers(HttpMethod.POST, "/auth/register/aluno").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register/professor").permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/auth/login/aluno"
+                        ).permitAll()
 
-                        // Rotas protegidas
-                        .requestMatchers("/aluno/**").hasRole("ALUNO")
-                        .requestMatchers("/professor/**").hasRole("PROFESSOR")
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/auth/login/professor"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/auth/register/aluno"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/auth/register/professor"
+                        ).permitAll()
+
+                        // =========================
+                        // ÁREA DO ALUNO
+                        // =========================
+
+                        .requestMatchers("/aluno/**")
+                        .hasRole("ALUNO")
+
+                        // =========================
+                        // ÁREA DO PROFESSOR
+                        // =========================
+
+                        .requestMatchers("/professor/**")
+                        .hasRole("PROFESSOR")
+
+                        // =========================
+                        // RESTANTE DA API
+                        // =========================
 
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+
+                .addFilterBefore(
+                        securityFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
+
                 .build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(Arrays.asList(
@@ -102,12 +156,16 @@ public class SecurityConfig {
         ));
 
         configuration.setAllowCredentials(true);
+
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration(
+                "/**",
+                configuration
+        );
 
         return source;
     }
