@@ -1,15 +1,17 @@
 package br.com.projetoSpringBoot.spring_boot.services;
 
-import br.com.projetoSpringBoot.spring_boot.model.Professor;
-import br.com.projetoSpringBoot.spring_boot.repositories.ProfessorRepositories;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+
+import br.com.projetoSpringBoot.spring_boot.model.Professor;
+import br.com.projetoSpringBoot.spring_boot.repositories.ProfessorRepositories;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
