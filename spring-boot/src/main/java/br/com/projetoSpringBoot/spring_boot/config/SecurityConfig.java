@@ -37,8 +37,15 @@ public class SecurityConfig {
 
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
 
-                        // Página inicial
-                        .requestMatchers(HttpMethod.GET, "/").permitAll()
+                        // Frontend
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/favicon.ico"
+                        ).permitAll()
 
                         // Swagger
                         .requestMatchers(
@@ -88,6 +95,7 @@ public class SecurityConfig {
         ));
 
         configuration.setAllowedHeaders(Arrays.asList("*"));
+
         configuration.setExposedHeaders(Arrays.asList(
                 "Authorization",
                 "Content-Type"
