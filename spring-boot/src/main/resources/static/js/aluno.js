@@ -34,6 +34,13 @@ if (!alunoAtual) {
     salvarAlunos();
 }
 
+// Garante arrays em qualquer cenário (evita crash se aluno vem do backend sem histórico)
+if (!alunoAtual.historico) alunoAtual.historico = [];
+if (!alunoAtual.diario) alunoAtual.diario = [];
+if (!alunoAtual.conquistas) alunoAtual.conquistas = [];
+if (!alunoAtual.mensagensProfessor) alunoAtual.mensagensProfessor = [];
+if (!alunoAtual.badges) alunoAtual.badges = [];
+
 // Variáveis globais
 var emocaoSelecionada = null;
 var graficoSemana = null, graficoRadar = null;
@@ -150,11 +157,16 @@ function atualizarBadgeNotificacoes() {
     var msgs = alunoAtual.mensagensProfessor || [];
     var ag = JSON.parse(localStorage.getItem("agendamentosHumora")) || [];
     var av = JSON.parse(localStorage.getItem("avisosTurmaHumora")) || [];
+
     var total = msgs.length;
     for (var i = 0; i < ag.length; i++) {
         if (ag[i].turma === alunoAtual.turma) total++;
     }
-    total += av.length;
+    // Filtra avisos por turma (avisos sem turma = todos)
+    for (var j = 0; j < av.length; j++) {
+        if (!av[j].turma || av[j].turma === alunoAtual.turma) total++;
+    }
+
     if (total > 0) {
         badge.innerText = total;
         badge.style.display = "flex";
@@ -194,14 +206,14 @@ function selecionarEmocao(event, tipo) {
     document.getElementById("btnEnviarEmocao").disabled = false;
 }
 
-// ========== ENVIAR EMOÇÃO PARA BACKEND (CORRIGIDO) ==========
+// ========== ENVIAR EMOÇÃO PARA BACKEND ==========
 async function enviarEmocao() {
     if (!emocaoSelecionada) {
         alert("Selecione uma emoção!");
         return;
     }
 
-    const email = alunoAtual?.email || localStorage.getItem("email");
+    const email = (alunoAtual && alunoAtual.email) || localStorage.getItem("email");
     if (!email) {
         alert("Usuário não autenticado.");
         return;
@@ -224,8 +236,6 @@ async function enviarEmocao() {
             } catch (e) {}
             return alert("❌ " + errorMsg);
         }
-
-        const diario = await response.json();
 
         // Atualizar dados locais
         var registro = {
@@ -261,38 +271,41 @@ async function enviarEmocao() {
     }
 }
 
-// ========== CARREGAR DIÁRIOS DO BACKEND (CORRIGIDO) ==========
+// ========== CARREGAR DIÁRIOS DO BACKEND ==========
 async function carregarDiariosBackend() {
-    const email = localStorage.getItem("email");
+    const email = (alunoAtual && alunoAtual.email) || localStorage.getItem("email");
     if (!email) return;
 
     try {
         const response = await api.getDiario(email);
-        if (response.ok) {
-            const diarios = await response.json();
-            if (diarios && diarios.length > 0) {
-                for (var i = 0; i < diarios.length; i++) {
-                    var d = diarios[i];
-                    var emocaoLocal = EMOCAO_REVERSE[d.emocoes] || d.emocoes;
-                    var existe = alunoAtual.historico.some(h =>
-                        h.data === new Date(d.dataExpiracao).toLocaleDateString("pt-BR") &&
-                        h.emocao === emocaoLocal
-                    );
-                    if (!existe) {
-                        alunoAtual.historico.push({
-                            emocao: emocaoLocal,
-                            intensidade: 1,
-                            descricao: "",
-                            data: new Date(d.dataExpiracao).toLocaleDateString("pt-BR"),
-                            hora: "00:00",
-                            timestamp: new Date(d.dataExpiracao).getTime()
-                        });
-                    }
-                }
-                salvarAlunos();
-                carregarHistorico();
+        if (!response.ok) return;
+
+        const diarios = await response.json();
+        if (!diarios || !diarios.length) return;
+
+        if (!alunoAtual.historico) alunoAtual.historico = [];
+
+        for (var i = 0; i < diarios.length; i++) {
+            var d = diarios[i];
+            var emocaoLocal = EMOCAO_REVERSE[d.emocoes] || d.emocoes;
+            var dataStr = new Date(d.dataExpiracao).toLocaleDateString("pt-BR");
+            var existe = alunoAtual.historico.some(h =>
+                h.data === dataStr && h.emocao === emocaoLocal
+            );
+            if (!existe) {
+                alunoAtual.historico.push({
+                    emocao: emocaoLocal,
+                    intensidade: 1,
+                    descricao: "",
+                    data: dataStr,
+                    hora: "00:00",
+                    timestamp: new Date(d.dataExpiracao).getTime()
+                });
             }
         }
+        salvarAlunos();
+        carregarHistorico();
+        atualizarStreak();
     } catch (error) {
         console.error("Erro ao carregar diários:", error);
     }
@@ -563,14 +576,19 @@ function carregarAvisosAluno() {
     if (!c) return;
     c.innerHTML = "";
     var av = JSON.parse(localStorage.getItem("avisosTurmaHumora")) || [];
-    if (av.length === 0) {
+    // Filtra por turma (avisos sem turma = todos)
+    var meus = [];
+    for (var k = 0; k < av.length; k++) {
+        if (!av[k].turma || av[k].turma === alunoAtual.turma) meus.push(av[k]);
+    }
+    if (meus.length === 0) {
         c.innerHTML = '<p style="color:#94a3b8;padding:15px;">Nenhum aviso.</p>';
         return;
     }
-    for (var i = av.length - 1; i >= 0; i--)
+    for (var i = meus.length - 1; i >= 0; i--)
         c.innerHTML +=
             '<div style="padding:10px 0;border-bottom:1px solid rgba(168,85,247,0.2);"><strong>📢 Aviso</strong><p style="color:#e2e8f0;">' +
-            av[i].texto + "</p><small>" + av[i].data + "</small></div>";
+            meus[i].texto + "</p><small>" + meus[i].data + "</small></div>";
 }
 
 function abrirModalNotificacoes() {
@@ -1146,10 +1164,7 @@ function mudarAvatar(emoji) {
 // ========== SAIR ==========
 function sair() {
     if (confirm("Tem certeza que deseja sair?")) {
-        localStorage.removeItem("usuarioLogado");
-        localStorage.removeItem("token");
-        localStorage.removeItem("tipoUsuario");
-        localStorage.removeItem("email");
+        api.logout();
         window.location.href = "login.html";
     }
 }

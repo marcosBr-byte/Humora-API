@@ -1,41 +1,30 @@
 // js/login.js
-
-// ⭐ CHAVE DE ACESSO CORRETA
 const CHAVE_ACESSO_CORRETA = "HUMORADM2026";
 
 async function login() {
     const email = document.getElementById("email").value.trim().toLowerCase();
     const senha = document.getElementById("senha").value.trim();
-    const tipo = document.getElementById("tipoUsuario").value;
+    const tipo  = document.getElementById("tipoUsuario").value;
 
-    if (email === "" || senha === "") {
-        return alert("Preencha todos os campos.");
-    }
-    if (senha.length < 8) {
-        return alert("A senha deve possuir no mínimo 8 caracteres.");
-    }
+    if (!email || !senha) return alert("Preencha todos os campos.");
+    if (senha.length < 8) return alert("A senha deve possuir no mínimo 8 caracteres.");
 
     try {
         let response;
         if (tipo === "aluno") {
             response = await api.loginAluno(email, senha);
         } else {
-            const chaveAcesso = prompt("🔑 Digite a chave de acesso do professor:");
-            
-            // ⭐ VALIDAR CHAVE DE ACESSO
-            if (!chaveAcesso || chaveAcesso !== CHAVE_ACESSO_CORRETA) {
+            const chave = prompt("🔑 Digite a chave de acesso do professor:");
+            if (!chave || chave !== CHAVE_ACESSO_CORRETA) {
                 return alert("❌ Chave de acesso inválida! Acesso negado.");
             }
             response = await api.loginProfessor(email, senha);
         }
 
         if (!response.ok) {
-            let errorMsg = "Erro no login.";
-            try {
-                const error = await response.text();
-                if (error) errorMsg = error;
-            } catch (e) {}
-            return alert("❌ " + errorMsg);
+            let msg = "Erro no login.";
+            try { const t = await response.text(); if (t) msg = t; } catch (_) {}
+            return alert("❌ " + msg);
         }
 
         const data = await response.json();
@@ -43,34 +32,19 @@ async function login() {
         localStorage.setItem("tipoUsuario", tipo);
         localStorage.setItem("email", email);
 
-        // Buscar dados do usuário
         if (tipo === "aluno") {
-            const alunosResponse = await api.getAllAlunos();
-            if (alunosResponse.ok) {
-                const alunos = await alunosResponse.json();
-                const aluno = alunos.find(a => a.email === email);
-                if (aluno) {
-                    localStorage.setItem("usuarioLogado", JSON.stringify({
-                        ...aluno,
-                        senha: senha,
-                        tipo: 'aluno'
-                    }));
-                }
-            }
+            const aluno = await api.getAlunoByEmail(email);
+            const usuario = aluno
+                ? { ...aluno, tipo: 'aluno' }
+                : { nome: email.split('@')[0], email, tipo: 'aluno' };
+            localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
             window.location.href = "aluno.html";
         } else {
-            const profResponse = await api.getAllProfessores();
-            if (profResponse.ok) {
-                const professores = await profResponse.json();
-                const professor = professores.find(p => p.email === email);
-                if (professor) {
-                    localStorage.setItem("usuarioLogado", JSON.stringify({
-                        ...professor,
-                        senha: senha,
-                        tipo: 'professor'
-                    }));
-                }
-            }
+            const prof = await api.getProfessorByEmail(email);
+            const usuario = prof
+                ? { ...prof, tipo: 'professor' }
+                : { nome: email.split('@')[0], email, tipo: 'professor' };
+            localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
             window.location.href = "professor.html";
         }
     } catch (error) {
@@ -79,23 +53,20 @@ async function login() {
     }
 }
 
-// Configurar os botões de tipo
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const btnAluno = document.getElementById("btnAluno");
     const btnProfessor = document.getElementById("btnProfessor");
     const tipo = document.getElementById("tipoUsuario");
+    if (!btnAluno || !btnProfessor) return;
 
-    if (btnAluno && btnProfessor) {
-        btnAluno.onclick = () => {
-            btnAluno.classList.add("ativo");
-            btnProfessor.classList.remove("ativo");
-            tipo.value = "aluno";
-        };
-
-        btnProfessor.onclick = () => {
-            btnProfessor.classList.add("ativo");
-            btnAluno.classList.remove("ativo");
-            tipo.value = "professor";
-        };
-    }
+    btnAluno.onclick = () => {
+        btnAluno.classList.add("ativo");
+        btnProfessor.classList.remove("ativo");
+        tipo.value = "aluno";
+    };
+    btnProfessor.onclick = () => {
+        btnProfessor.classList.add("ativo");
+        btnAluno.classList.remove("ativo");
+        tipo.value = "professor";
+    };
 });
