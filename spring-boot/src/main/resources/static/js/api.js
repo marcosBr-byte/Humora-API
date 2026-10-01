@@ -1,7 +1,7 @@
 // js/api.js
 
 // ⭐ DEFINIR A URL DA API AQUI
-const API_URL = 'http://localhost:8080';
+const API_URL = 'https://humora-api.onrender.com';';
 
 console.log("🔵 API inicializada com URL:", API_URL);
 
