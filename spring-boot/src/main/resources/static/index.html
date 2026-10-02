@@ -1,44 +1,126 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Humora | Bem-vindo</title>
-    <link rel="stylesheet" href="css/index.css" />
-  </head>
-  <body>
-    <div class="nuvens-container">
-      <div class="nuvem nuvem-1"></div>
-      <div class="nuvem nuvem-2"></div>
-      <div class="nuvem nuvem-3"></div>
-      <div class="nuvem nuvem-4"></div>
-      <div class="nuvem nuvem-5"></div>
-    </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Humora | Bem-vindo</title>
+  <link rel="stylesheet" href="css/index.css" />
 
-    <div class="pagina-inicial">
-      <div class="conteudo-central">
-        <div class="logo-grande">
-          <img
-            src="imagens/cerebro.png"
-            alt="Humora"
-            class="cerebro-logo"
-            onerror="this.style.display = 'none'"
-          />
-        </div>
-        <h1 class="titulo-principal">Humora</h1>
-        <p class="slogan">Entenda o que você sente.</p>
-        <p class="descricao">
-          Um espaço seguro para você registrar,<br />entender e cuidar das suas
-          emoções.
-        </p>
-        <a href="login.html" class="btn-comecar">Começar 💜</a>
-        <div class="links-adicionais">
-          <a href="login.html" class="link-secundario">Já tenho conta</a>
-          <span class="separador">|</span>
-          <a href="cadastroAluno.html" class="link-secundario">Criar conta</a>
-        </div>
-      </div>
-      <footer class="rodape-inicial"><p>©️ 2026 Projeto - Humora</p></footer>
+  <!-- ===== RESPONSIVIDADE ===== -->
+  <style>
+    /* Reset seguro + base fluida */
+    html { -webkit-text-size-adjust: 100%; }
+    img, canvas, video, svg { max-width: 100%; height: auto; display: block; }
+    button, a, input, select, textarea { font: inherit; }
+
+    /* Notebook (até 1366px) */
+    @media (max-width: 1366px) {
+      .titulo-principal { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+      .slogan { font-size: clamp(1rem, 1.6vw, 1.25rem); }
+      .descricao { font-size: clamp(0.95rem, 1.4vw, 1.1rem); }
+    }
+
+    /* Tablet (até 1024px) */
+    @media (max-width: 1024px) {
+      .conteudo-central { padding: 40px 24px; }
+      .logo-grande img, .cerebro-logo { width: 140px; }
+      .btn-comecar { padding: 14px 36px; font-size: 1rem; }
+    }
+
+    /* Tablet pequeno / celular grande (até 768px) */
+    @media (max-width: 768px) {
+      .pagina-inicial { min-height: 100dvh; }
+      .conteudo-central {
+        padding: 32px 20px;
+        text-align: center;
+        gap: 14px;
+      }
+      .logo-grande img, .cerebro-logo { width: 110px; }
+      .titulo-principal { font-size: clamp(2rem, 9vw, 2.8rem); }
+      .descricao { font-size: 0.98rem; line-height: 1.5; }
+      .descricao br { display: none; } /* quebra natural no mobile */
+      .btn-comecar {
+        width: 100%;
+        max-width: 320px;
+        padding: 14px 24px;
+        margin: 8px auto 0;
+      }
+      .links-adicionais {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px 14px;
+        margin-top: 14px;
+      }
+      .rodape-inicial { font-size: 0.8rem; padding: 16px; }
+    }
+
+    /* Celular (até 480px) */
+    @media (max-width: 480px) {
+      .conteudo-central { padding: 24px 16px; }
+      .logo-grande img, .cerebro-logo { width: 90px; }
+      .titulo-principal { font-size: 2rem; }
+      .slogan { font-size: 0.95rem; }
+      .descricao { font-size: 0.9rem; }
+      .btn-comecar { padding: 12px 20px; font-size: 0.95rem; }
+      .link-secundario { font-size: 0.85rem; }
+    }
+
+    /* Celular muito pequeno (até 360px) */
+    @media (max-width: 360px) {
+      .titulo-principal { font-size: 1.7rem; }
+      .logo-grande img { width: 80px; }
+    }
+
+    /* Paisagem em celular */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .pagina-inicial { min-height: auto; padding: 20px 0; }
+      .logo-grande img { width: 70px; }
+      .conteudo-central { padding: 16px; }
+    }
+
+    /* Acessibilidade: reduzir movimento */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="nuvens-container">
+  <div class="nuvem nuvem-1"></div>
+  <div class="nuvem nuvem-2"></div>
+  <div class="nuvem nuvem-3"></div>
+  <div class="nuvem nuvem-4"></div>
+  <div class="nuvem nuvem-5"></div>
+</div>
+
+<div class="pagina-inicial">
+  <div class="conteudo-central">
+    <div class="logo-grande">
+      <img
+              src="imagens/cerebro.png"
+              alt="Humora"
+              class="cerebro-logo"
+              onerror="this.style.display = 'none'"
+      />
     </div>
-  </body>
+    <h1 class="titulo-principal">Humora</h1>
+    <p class="slogan">Entenda o que você sente.</p>
+    <p class="descricao">
+      Um espaço seguro para você registrar,<br />entender e cuidar das suas
+      emoções.
+    </p>
+    <a href="login.html" class="btn-comecar">Começar 💜</a>
+    <div class="links-adicionais">
+      <a href="login.html" class="link-secundario">Já tenho conta</a>
+      <span class="separador">|</span>
+      <a href="cadastroAluno.html" class="link-secundario">Criar conta</a>
+    </div>
+  </div>
+  <footer class="rodape-inicial"><p>©️ 2026 Projeto - Humora</p></footer>
+</div>
+</body>
 </html>

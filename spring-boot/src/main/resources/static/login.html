@@ -1,90 +1,175 @@
+LOGIN.html
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Humora | Login</title>
-    <link rel="stylesheet" href="css/login.css" />
-  </head>
-  <body>
-    <div class="nuvens-container">
-      <div class="nuvem nuvem-1"></div>
-      <div class="nuvem nuvem-2"></div>
-      <div class="nuvem nuvem-3"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Humora | Login</title>
+  <link rel="stylesheet" href="css/login.css" />
+
+  <!-- ===== RESPONSIVIDADE ===== -->
+  <style>
+    html { -webkit-text-size-adjust: 100%; }
+    img, canvas, video, svg { max-width: 100%; height: auto; }
+    input, select, textarea, button { font: inherit; }
+
+    /* Notebook */
+    @media (max-width: 1366px) {
+      .container { max-width: 1100px; }
+      .apresentacao h2 { font-size: clamp(1.6rem, 2.4vw, 2.2rem); }
+    }
+
+    /* Tablet grande */
+    @media (max-width: 1024px) {
+      .container {
+        flex-direction: column;
+        width: 100%;
+        max-width: 720px;
+        min-height: auto;
+        margin: 20px auto;
+        border-radius: 20px;
+      }
+      .apresentacao,
+      .login-card {
+        width: 100%;
+        padding: 32px 24px;
+      }
+      .apresentacao { text-align: center; }
+      .apresentacao .logo { justify-content: center; }
+      .texto { justify-content: center; }
+    }
+
+    /* Celular */
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+        min-height: 100dvh;
+        align-items: flex-start;
+      }
+      .container {
+        margin: 0 auto;
+        border-radius: 16px;
+      }
+      .apresentacao,
+      .login-card { padding: 24px 18px; }
+      .login-card h1 { font-size: 1.5rem; }
+      .login-card > p { font-size: 0.9rem; }
+      .apresentacao h2 { font-size: 1.5rem; line-height: 1.25; }
+      .texto p { font-size: 0.9rem; }
+      input, select { padding: 12px 14px; font-size: 16px; } /* evita zoom iOS */
+      .login-card button { width: 100%; padding: 14px; }
+      .seletor-usuario { gap: 8px; }
+      .tipo-btn { flex: 1; padding: 10px 8px; font-size: 0.9rem; }
+      .cadastro { flex-direction: column; gap: 10px; }
+      .btn-cadastro { width: 100%; text-align: center; }
+      .btn-espacado { margin-left: 0; }
+    }
+
+    /* Celular pequeno */
+    @media (max-width: 480px) {
+      body { padding: 10px; }
+      .apresentacao { padding: 20px 14px; }
+      .login-card { padding: 20px 14px; }
+      .apresentacao h2 { font-size: 1.3rem; }
+      .texto p { font-size: 0.85rem; }
+      .logo img { width: 60px; }
+      .logo h1 { font-size: 1.4rem; }
+    }
+
+    /* Paisagem curta */
+    @media (max-height: 520px) and (orientation: landscape) {
+      .container { flex-direction: row; max-width: 100%; margin: 8px; }
+      .apresentacao, .login-card { padding: 16px; }
+      .apresentacao h2 { font-size: 1.1rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="nuvens-container">
+  <div class="nuvem nuvem-1"></div>
+  <div class="nuvem nuvem-2"></div>
+  <div class="nuvem nuvem-3"></div>
+</div>
+
+<div class="container">
+  <section class="apresentacao">
+    <div class="logo">
+      <img src="imagens/cerebro.png" alt="Humora" />
+      <h1>Humora</h1>
+    </div>
+    <h2>Entenda o que<br />você <span>sente.</span></h2>
+    <div class="texto">
+      <div class="icone">💜</div>
+      <p>
+        Um espaço seguro para registrar suas emoções, permitindo que
+        professores compreendam melhor como está a turma e possam
+        desenvolver estratégias para promover um ambiente escolar mais
+        acolhedor.
+      </p>
+    </div>
+  </section>
+
+  <section class="login-card">
+    <h1>Humora</h1>
+    <p>Faça login para acessar o sistema.</p>
+
+    <input type="email" id="email" placeholder="Digite seu e-mail" />
+    <input
+            type="password"
+            id="senha"
+            placeholder="Digite sua senha (mínimo 8 caracteres)"
+            minlength="8"
+    />
+
+    <div class="seletor-usuario">
+      <button type="button" class="tipo-btn ativo" id="btnAluno">
+        🎓 Aluno
+      </button>
+      <button type="button" class="tipo-btn" id="btnProfessor">
+        👨‍🏫 Professor
+      </button>
     </div>
 
-    <div class="container">
-      <section class="apresentacao">
-        <div class="logo">
-          <img src="imagens/cerebro.png" alt="Humora" />
-          <h1>Humora</h1>
-        </div>
-        <h2>Entenda o que<br />você <span>sente.</span></h2>
-        <div class="texto">
-          <div class="icone">💜</div>
-          <p>
-            Um espaço seguro para registrar suas emoções, permitindo que
-            professores compreendam melhor como está a turma e possam
-            desenvolver estratégias para promover um ambiente escolar mais
-            acolhedor.
-          </p>
-        </div>
-      </section>
+    <input type="hidden" id="tipoUsuario" value="aluno" />
 
-      <section class="login-card">
-        <h1>Humora</h1>
-        <p>Faça login para acessar o sistema.</p>
+    <button onclick="login()">Entrar</button>
 
-        <input type="email" id="email" placeholder="Digite seu e-mail" />
-        <input
-          type="password"
-          id="senha"
-          placeholder="Digite sua senha (mínimo 8 caracteres)"
-          minlength="8"
-        />
-
-        <div class="seletor-usuario">
-          <button type="button" class="tipo-btn ativo" id="btnAluno">
-            🎓 Aluno
-          </button>
-          <button type="button" class="tipo-btn" id="btnProfessor">
-            👨‍🏫 Professor
-          </button>
-        </div>
-
-        <input type="hidden" id="tipoUsuario" value="aluno" />
-
-        <button onclick="login()">Entrar</button>
-
-        <div class="cadastro">
-          <p>Ainda não possui conta?</p>
-          <a href="cadastroAluno.html" class="btn-cadastro">Cadastro Aluno</a>
-          <a href="cadastroProfessor.html" class="btn-cadastro btn-espacado"
-            >Cadastro Professor</a
-          >
-        </div>
-      </section>
+    <div class="cadastro">
+      <p>Ainda não possui conta?</p>
+      <a href="cadastroAluno.html" class="btn-cadastro">Cadastro Aluno</a>
+      <a href="cadastroProfessor.html" class="btn-cadastro btn-espacado"
+      >Cadastro Professor</a
+      >
     </div>
+  </section>
+</div>
 
-    <script>
-      const btnAluno = document.getElementById("btnAluno");
-      const btnProfessor = document.getElementById("btnProfessor");
-      const tipo = document.getElementById("tipoUsuario");
+<script>
+  const btnAluno = document.getElementById("btnAluno");
+  const btnProfessor = document.getElementById("btnProfessor");
+  const tipo = document.getElementById("tipoUsuario");
 
-      btnAluno.onclick = () => {
-        btnAluno.classList.add("ativo");
-        btnProfessor.classList.remove("ativo");
-        tipo.value = "aluno";
-      };
+  btnAluno.onclick = () => {
+    btnAluno.classList.add("ativo");
+    btnProfessor.classList.remove("ativo");
+    tipo.value = "aluno";
+  };
 
-      btnProfessor.onclick = () => {
-        btnProfessor.classList.add("ativo");
-        btnAluno.classList.remove("ativo");
-        tipo.value = "professor";
-      };
-    </script>
+  btnProfessor.onclick = () => {
+    btnProfessor.classList.add("ativo");
+    btnAluno.classList.remove("ativo");
+    tipo.value = "professor";
+  };
+</script>
 
-    <script src="js/api.js"></script>
-    <script src="js/login.js"></script>
-  </body>
+<script src="js/api.js"></script>
+<script src="js/login.js"></script>
+</body>
 </html>

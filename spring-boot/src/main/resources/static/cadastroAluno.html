@@ -1,99 +1,175 @@
+CADASTROALUNO.html
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Humora | Cadastro de Aluno</title>
-    <link rel="stylesheet" href="css/login.css" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Humora | Cadastro de Aluno</title>
+  <link rel="stylesheet" href="css/login.css" />
 
-  <body>
-    <div class="nuvens-container">
-      <div class="nuvem nuvem-1"></div>
-      <div class="nuvem nuvem-2"></div>
-      <div class="nuvem nuvem-3"></div>
+  <!-- ===== RESPONSIVIDADE ===== -->
+  <style>
+    html { -webkit-text-size-adjust: 100%; }
+    img, canvas, video, svg { max-width: 100%; height: auto; }
+    input, select, textarea, button { font: inherit; }
+
+    /* Notebook */
+    @media (max-width: 1366px) {
+      .container { max-width: 1100px; }
+      .apresentacao h2 { font-size: clamp(1.5rem, 2.2vw, 2rem); }
+    }
+
+    /* Tablet */
+    @media (max-width: 1024px) {
+      .container {
+        flex-direction: column;
+        width: 100%;
+        max-width: 720px;
+        min-height: auto;
+        margin: 20px auto;
+        border-radius: 20px;
+      }
+      .apresentacao,
+      .login-card {
+        width: 100%;
+        padding: 32px 24px;
+      }
+      .apresentacao { text-align: center; }
+      .apresentacao .logo { justify-content: center; }
+      .texto { justify-content: center; }
+      .apresentacao .cerebro { display: none; } /* opcional: esconde no tablet/mobile */
+    }
+
+    /* Celular */
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+        min-height: 100dvh;
+        align-items: flex-start;
+      }
+      .container {
+        margin: 0 auto;
+        border-radius: 16px;
+      }
+      .apresentacao,
+      .login-card { padding: 24px 18px; }
+      .login-card h1 { font-size: 1.4rem; }
+      .login-card > p { font-size: 0.9rem; }
+      .apresentacao h2 { font-size: 1.4rem; line-height: 1.3; }
+      .texto p { font-size: 0.9rem; }
+      input, select { padding: 12px 14px; font-size: 16px; }
+      .login-card button { width: 100%; padding: 14px; }
+      .cadastro { flex-direction: column; gap: 10px; text-align: center; }
+    }
+
+    /* Celular pequeno */
+    @media (max-width: 480px) {
+      body { padding: 10px; }
+      .apresentacao { padding: 20px 14px; }
+      .login-card { padding: 20px 14px; }
+      .apresentacao h2 { font-size: 1.2rem; }
+      .texto p { font-size: 0.85rem; }
+      .logo img { width: 60px; }
+      .logo h1 { font-size: 1.4rem; }
+      select { font-size: 15px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="nuvens-container">
+  <div class="nuvem nuvem-1"></div>
+  <div class="nuvem nuvem-2"></div>
+  <div class="nuvem nuvem-3"></div>
+</div>
+
+<div class="container">
+  <section class="apresentacao">
+    <div class="logo">
+      <img src="imagens/cerebro.png" alt="Humora" />
+      <h1>Humora</h1>
     </div>
 
-    <div class="container">
-      <section class="apresentacao">
-        <div class="logo">
-          <img src="imagens/cerebro.png" alt="Humora" />
-          <h1>Humora</h1>
-        </div>
+    <h2>
+      Comece sua jornada<br />
+      de autocuidado.
+    </h2>
 
-        <h2>
-          Comece sua jornada<br />
-          de autocuidado.
-        </h2>
-
-        <div class="texto">
-          <div class="icone">💜</div>
-          <p>
-            Cadastre-se para registrar suas emoções e contribuir para uma escola
-            mais acolhedora e preparada para compreender seus estudantes.
-          </p>
-        </div>
-
-        <img src="imagens/cerebro.png" class="cerebro" alt="Humora" />
-      </section>
-
-      <section class="login-card">
-        <h1>🎓 Cadastro Aluno</h1>
-
-        <p>Preencha seus dados.</p>
-
-        <input type="text" id="nome" placeholder="Nome completo" />
-
-        <input type="email" id="email" placeholder="E-mail" />
-
-        <input
-          type="password"
-          id="senha"
-          placeholder="Senha (mínimo 8 caracteres)"
-          minlength="8"
-        />
-
-        <select id="sala">
-          <option value="">Selecione sua turma</option>
-          <option value="1º AGROECOLOGIA - A">1º AGROECOLOGIA - A</option>
-          <option value="1º ANÁLISES CLÍNICAS - B">
-            1º ANÁLISES CLÍNICAS - B
-          </option>
-          <option value="1º ANÁLISES CLÍNICAS - C">
-            1º ANÁLISES CLÍNICAS - C
-          </option>
-          <option value="1º INFORMÁTICA - D">1º INFORMÁTICA - D</option>
-          <option value="1º INFORMÁTICA - E">1º INFORMÁTICA - E</option>
-
-          <option value="2º AGROECOLOGIA - F">2º AGROECOLOGIA - F</option>
-          <option value="2º ANÁLISES CLÍNICAS - G">
-            2º ANÁLISES CLÍNICAS - G
-          </option>
-          <option value="2º INFORMÁTICA - H">2º INFORMÁTICA - H</option>
-          <option value="2º INFORMÁTICA - I">2º INFORMÁTICA - I</option>
-          <option value="2º INFORMÁTICA - J">2º INFORMÁTICA - J</option>
-
-          <option value="3º AGROECOLOGIA - K">3º AGROECOLOGIA - K</option>
-          <option value="3º ANÁLISES CLÍNICAS - L">
-            3º ANÁLISES CLÍNICAS - L
-          </option>
-          <option value="3º ANÁLISES CLÍNICAS - M">
-            3º ANÁLISES CLÍNICAS - M
-          </option>
-          <option value="3º INFORMÁTICA - N">3º INFORMÁTICA - N</option>
-          <option value="3º INFORMÁTICA - O">3º INFORMÁTICA - O</option>
-          <option value="3º INFORMÁTICA - P">3º INFORMÁTICA - P</option>
-        </select>
-
-        <button onclick="cadastrarAluno()">Cadastrar</button>
-
-        <div class="cadastro">
-          <a href="login.html"> ← Voltar para Login </a>
-        </div>
-      </section>
+    <div class="texto">
+      <div class="icone">💜</div>
+      <p>
+        Cadastre-se para registrar suas emoções e contribuir para uma escola
+        mais acolhedora e preparada para compreender seus estudantes.
+      </p>
     </div>
 
-    <script src="js/api.js"></script>
-    <script src="js/cadastroAluno.js"></script>
-  </body>
+    <img src="imagens/cerebro.png" class="cerebro" alt="Humora" />
+  </section>
+
+  <section class="login-card">
+    <h1>🎓 Cadastro Aluno</h1>
+
+    <p>Preencha seus dados.</p>
+
+    <input type="text" id="nome" placeholder="Nome completo" />
+
+    <input type="email" id="email" placeholder="E-mail" />
+
+    <input
+            type="password"
+            id="senha"
+            placeholder="Senha (mínimo 8 caracteres)"
+            minlength="8"
+    />
+
+    <select id="sala">
+      <option value="">Selecione sua turma</option>
+      <option value="1º AGROECOLOGIA - A">1º AGROECOLOGIA - A</option>
+      <option value="1º ANÁLISES CLÍNICAS - B">
+        1º ANÁLISES CLÍNICAS - B
+      </option>
+      <option value="1º ANÁLISES CLÍNICAS - C">
+        1º ANÁLISES CLÍNICAS - C
+      </option>
+      <option value="1º INFORMÁTICA - D">1º INFORMÁTICA - D</option>
+      <option value="1º INFORMÁTICA - E">1º INFORMÁTICA - E</option>
+
+      <option value="2º AGROECOLOGIA - F">2º AGROECOLOGIA - F</option>
+      <option value="2º ANÁLISES CLÍNICAS - G">
+        2º ANÁLISES CLÍNICAS - G
+      </option>
+      <option value="2º INFORMÁTICA - H">2º INFORMÁTICA - H</option>
+      <option value="2º INFORMÁTICA - I">2º INFORMÁTICA - I</option>
+      <option value="2º INFORMÁTICA - J">2º INFORMÁTICA - J</option>
+
+      <option value="3º AGROECOLOGIA - K">3º AGROECOLOGIA - K</option>
+      <option value="3º ANÁLISES CLÍNICAS - L">
+        3º ANÁLISES CLÍNICAS - L
+      </option>
+      <option value="3º ANÁLISES CLÍNICAS - M">
+        3º ANÁLISES CLÍNICAS - M
+      </option>
+      <option value="3º INFORMÁTICA - N">3º INFORMÁTICA - N</option>
+      <option value="3º INFORMÁTICA - O">3º INFORMÁTICA - O</option>
+      <option value="3º INFORMÁTICA - P">3º INFORMÁTICA - P</option>
+    </select>
+
+    <button onclick="cadastrarAluno()">Cadastrar</button>
+
+    <div class="cadastro">
+      <a href="login.html"> ← Voltar para Login </a>
+    </div>
+  </section>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/cadastroAluno.js"></script>
+</body>
 </html>
