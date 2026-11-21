@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("nomeAluno").innerText = alunoAtual.nome;
     document.getElementById("nomeAlunoSidebar").innerText = alunoAtual.nome;
     document.getElementById("turmaAlunoSidebar").innerText = modoVisitante ? usuarioLogado.cidade : alunoAtual.turma || "Sem turma";
-    document.getElementById("avatarAtual").innerText = alunoAtual.avatar || "😊";
+    exibirAvatarEmocao();
     atualizarStreak();
     carregarHistorico();
     carregarConquistasTab();
@@ -271,7 +271,9 @@ async function enviarEmocao() {
 
         if (!alunoAtual.historico) alunoAtual.historico = [];
         alunoAtual.historico.push(registro);
-        alunoAtual.ultimaEmocao = new Date().getTime();
+        alunoAtual.ultimaEmocao = registro.timestamp;
+        alunoAtual.avatarEmocao = registro.emocao;
+        exibirAvatarEmocao();
 
         desbloquearConquista("primeiro_registro");
         atualizarStreak();
@@ -1175,19 +1177,41 @@ function usarDica() {
 }
 
 // ========== AVATAR ==========
+function emocaoDoAvatar() {
+    return Object.hasOwn(nomesEmocoes, alunoAtual.avatarEmocao) ? alunoAtual.avatarEmocao : "calmo";
+}
+
+function exibirAvatarEmocao() {
+    const emocao = emocaoDoAvatar();
+    const avatar = document.getElementById("avatarAtual");
+    avatar.replaceChildren(criarImagemEmocao(emocao));
+    avatar.setAttribute("aria-label", `Mudar avatar. Amora atual: ${nomesEmocoes[emocao]}`);
+}
+
 function abrirModalAvatar() {
+    if (document.getElementById("sidebarAluno").classList.contains("sidebar-aberta")) {
+        mostrarMenu(false);
+        document.getElementById("menuToggleMobile").focus();
+    }
+    const opcoes = Object.entries(nomesEmocoes).map(([emocao, nome]) => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.setAttribute("aria-pressed", String(emocao === emocaoDoAvatar()));
+        botao.append(criarImagemEmocao(emocao), nome);
+        botao.addEventListener("click", () => {
+            alunoAtual.avatarEmocao = emocao;
+            exibirAvatarEmocao();
+            salvarAlunos();
+            fecharModalAvatar();
+        });
+        return botao;
+    });
+    document.getElementById("avataresEmocoes").replaceChildren(...opcoes);
     exibirElemento(document.getElementById("modalAvatar"), "flex");
 }
 
 function fecharModalAvatar() {
     exibirElemento(document.getElementById("modalAvatar"), "nenhum");
-}
-
-function mudarAvatar(emoji) {
-    alunoAtual.avatar = emoji;
-    document.getElementById("avatarAtual").innerText = emoji;
-    salvarAlunos();
-    fecharModalAvatar();
 }
 
 // ========== SAIR ==========

@@ -29,14 +29,10 @@
     <div class="topo-sidebar estilo-topo-sidebar">
       <div class="logo-area estilo-logo-area"><h1 class="estilo-logo-area-titulo"><img class="marca-sidebar estilo-marca-sidebar" src="imagens/cerebro.png" alt="" /> Humora</h1></div>
       <div class="perfil estilo-perfil">
-        <div
-                class="avatar estilo-avatar-atual"
-                id="avatarAtual" role="button" tabindex="0" aria-label="Mudar avatar"
-                onclick="abrirModalAvatar()"
-                title="Mudar avatar"
-        >
-          😊
-        </div>
+        <button type="button" class="avatar estilo-avatar-atual" id="avatarAtual"
+                onclick="abrirModalAvatar()" aria-label="Mudar avatar">
+          <img class="imagem-emocao" src="imagens/emocoes/calmo.webp" alt="">
+        </button>
         <div class="perfil-info">
           <h2 class="estilo-nome-aluno-sidebar" id="nomeAlunoSidebar">Aluno</h2>
           <p class="estilo-turma-aluno-sidebar" id="turmaAlunoSidebar">Turma</p>
@@ -428,17 +424,8 @@
 
 <div id="modalAvatar" class="modal-overlay estilo-modal-historico">
   <div class="modal-content estilo-modal-content-2">
-    <h2 class="estilo-modal-content-subtitulo">Escolha seu Avatar</h2>
-    <div class="grid-avatars estilo-grid-avatars">
-          <span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('😊')">😊</span
-          ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('😎')">😎</span>
-      <span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🐱')">🐱</span
-      ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🦊')">🦊</span>
-      <span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🐼')">🐼</span
-      ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🚀')">🚀</span>
-      <span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🤖')">🤖</span
-      ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🦄')">🦄</span>
-    </div>
+    <h2 class="estilo-modal-content-subtitulo">Escolha sua amora</h2>
+    <div id="avataresEmocoes" class="avatares-emocoes"></div>
     <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharModalAvatar()">
       Cancelar
     </button>

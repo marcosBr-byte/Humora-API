@@ -354,3 +354,28 @@
     border-color: #319d78 !important;
   }
 }
+
+#avatarAtual {
+  background: var(--fect-elevado);
+  border-color: var(--fect-borda-destaque);
+}
+#avatarAtual .imagem-emocao { width: 34px; height: 34px; object-fit: contain; }
+.avatares-emocoes {
+  @apply tw:my-4 tw:grid tw:w-full tw:grid-cols-3 tw:gap-2;
+}
+.avatares-emocoes button {
+  @apply tw:grid tw:min-h-16 tw:min-w-0 tw:place-items-center tw:rounded-xl tw:px-1 tw:py-2 tw:text-xs tw:font-semibold;
+  background: var(--fect-elevado);
+  color: var(--fect-texto);
+  border: 1px solid var(--fect-borda);
+  cursor: pointer;
+}
+.avatares-emocoes button:is(:hover,[aria-pressed="true"]) {
+  background: var(--fect-selecionado);
+  border-color: var(--fect-roxo);
+}
+.avatares-emocoes button:focus-visible, #avatarAtual:focus-visible {
+  outline: 2px solid var(--fect-roxo);
+  outline-offset: 2px;
+}
+.avatares-emocoes .imagem-emocao { width: 42px; height: 42px; object-fit: contain; }

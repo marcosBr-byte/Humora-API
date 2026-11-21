@@ -128,6 +128,7 @@ async function sincronizarAlunosAPI() {
                 email: a.email,
                 turma: a.turma || local.turma || "",
                 avatar: local.avatar || "😊",
+                avatarEmocao: local.avatarEmocao,
                 historico: local.historico || [],
                 diario: local.diario || [],
                 conquistas: local.conquistas || [],
