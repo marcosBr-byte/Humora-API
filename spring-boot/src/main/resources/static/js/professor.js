@@ -407,9 +407,9 @@ function carregarGraficoGeral() {
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { stepSize: 1, color: "#615375" }
+                    ticks: { stepSize: 1, color: () => corTemaHumora("--fect-secundario") }
                 },
-                x: { ticks: { color: "#281b40" } }
+                x: { ticks: { color: () => corTemaHumora("--fect-secundario") } }
             }
         }
     });
@@ -477,8 +477,8 @@ function carregarGraficoBarra(lista) {
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1, color: "#615375" } },
-                x: { ticks: { color: "#281b40" } }
+                y: { beginAtZero: true, ticks: { stepSize: 1, color: () => corTemaHumora("--fect-secundario") } },
+                x: { ticks: { color: () => corTemaHumora("--fect-secundario") } }
             }
         }
     });
@@ -518,7 +518,7 @@ function carregarGraficoPizza(lista) {
                 data: dados,
                 backgroundColor: cores,
                 borderWidth: 2,
-                borderColor: "#ffffff"
+                borderColor: () => corTemaHumora("--fect-superficie")
             }]
         },
         options: {
@@ -527,7 +527,7 @@ function carregarGraficoPizza(lista) {
             plugins: {
                 legend: {
                     position: "bottom",
-                    labels: { color: "#615375", padding: 15, font: { size: 11 } }
+                    labels: { color: () => corTemaHumora("--fect-secundario"), padding: 15, font: { size: 11 } }
                 }
             }
         }

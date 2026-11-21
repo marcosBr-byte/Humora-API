@@ -441,8 +441,8 @@ function carregarGraficoSemana() {
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                x: { ticks: { color: modoVisitante ? "#615375" : "#94a3b8" } },
-                y: { min: 1, max: 5, ticks: { stepSize: 1, color: modoVisitante ? "#615375" : "#94a3b8" } }
+                x: { ticks: { color: () => corTemaHumora("--fect-secundario") } },
+                y: { min: 1, max: 5, ticks: { stepSize: 1, color: () => corTemaHumora("--fect-secundario") } }
             }
         }
     });
