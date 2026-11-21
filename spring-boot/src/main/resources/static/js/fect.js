@@ -19,11 +19,16 @@ function criarTermometroFect() {
     return elemento;
 }
 
-function atualizarTermometroFect(elemento, intensidade, rotulo, emocao) {
-    elemento.style.setProperty('--fect-nivel', `${intensidade ? 8 + (intensidade - 1) * 22 : 0}%`);
+function atualizarTermometroFect(elemento, intensidade, rotulo, emocao, maximo = 5) {
+    const nivel = maximo === 100 ? (intensidade ?? 0) * .88 : (intensidade == null ? 0 : 8 + (intensidade - 1) * 22);
+    elemento.style.setProperty('--fect-nivel', `${nivel}%`);
     elemento.dataset.emocao = emocao || '';
-    elemento.querySelector('.fect-valor').firstChild.textContent =
-        intensidade ? `${fectDecimal.format(intensidade)} ` : '— ';
+    const valor = elemento.querySelector('.fect-valor');
+    const escala = elemento.querySelectorAll('.fect-escala span');
+    const porcentagem = maximo === 100;
+    valor.firstChild.textContent = intensidade == null ? '— ' : fectDecimal.format(intensidade);
+    valor.querySelector('small').textContent = porcentagem ? '%' : ' / 5';
+    escala.forEach((marca, indice) => { marca.textContent = porcentagem ? 100 - indice * 25 : 5 - indice; });
     elemento.querySelector('.fect-legenda').textContent = rotulo;
 
     const imagem = elemento.querySelector('.fect-amora-leitura');
@@ -81,32 +86,6 @@ function montarPainelFectProfessor() {
     const painel = document.getElementById('painelFect');
     const termometro = criarTermometroFect();
     painel.querySelector('.fect-mostrador').append(termometro);
-    const barras = painel.querySelector('.fect-distribuicao');
-    const linhas = new Map();
-    for (const [emocao, nome] of Object.entries(nomesEmocoes)) {
-        const linha = document.createElement('div');
-        linha.className = 'fect-barra';
-        const medalhao = criarImagemEmocao(emocao);
-        const rotulo = document.createElement('span');
-        rotulo.textContent = nome;
-        const medidor = document.createElement('meter');
-        medidor.min = 0;
-        medidor.max = 100;
-        medidor.value = 0;
-        medidor.setAttribute('aria-label', `Percentual de registros de ${nome}`);
-        const trilha = document.createElement('div');
-        trilha.className = 'fect-barra-trilha';
-        trilha.style.setProperty('--fect-cor-barra', coresDosGraficos[emocao]);
-        trilha.append(medidor);
-        const contagem = document.createElement('strong');
-        contagem.textContent = '0';
-        const proporcao = document.createElement('small');
-        proporcao.textContent = '0%';
-        proporcao.setAttribute('aria-hidden', 'true');
-        linha.append(medalhao, rotulo, trilha, contagem, proporcao);
-        barras.append(linha);
-        linhas.set(emocao, { medidor, trilha, contagem, proporcao });
-    }
     const status = painel.querySelector('.fect-atualizacao');
     const totalEl = painel.querySelector('#fectTotal');
     const legendaTotal = painel.querySelector('#fectLegendaTotal');
@@ -126,16 +105,11 @@ function montarPainelFectProfessor() {
             const principal = lideres.length === 1 ? EMOCAO_REVERSE[lideres[0].emocao] : undefined;
             totalEl.textContent = total.toLocaleString('pt-BR');
             legendaTotal.textContent = total === 1 ? 'registro' : 'registros';
-            atualizarTermometroFect(termometro, total ? intensidade / total : 0, 'Intensidade média', principal);
-            for (const [emocao, linha] of linhas) {
-                const quantidade = contagens.find(item => EMOCAO_REVERSE[item.emocao] === emocao)?.total ?? 0;
-                const percentual = total ? quantidade * 100 / total : 0;
-                linha.medidor.value = percentual;
-                linha.medidor.title = `${fectDecimal.format(percentual)}%`;
-                linha.trilha.style.setProperty('--fect-proporcao', `${percentual}%`);
-                linha.proporcao.textContent = linha.medidor.title;
-                linha.contagem.textContent = quantidade.toLocaleString('pt-BR');
-            }
+            atualizarTermometroFect(termometro, total ? intensidade / total : null, 'Intensidade média', principal);
+            const porEmocao = contarEmocoes([]);
+            for (const item of contagens) porEmocao[EMOCAO_REVERSE[item.emocao]] = item.total;
+            termometrosPercentuais('fectDistribuicao', medidasDasEmocoes(porEmocao, 'registros'),
+                'Os percentuais aparecem após a primeira participação.');
             status.textContent = total
                 ? `Atualizado às ${new Date().toLocaleTimeString('pt-BR')}`
                 : 'Aguardando o primeiro registro da feira';

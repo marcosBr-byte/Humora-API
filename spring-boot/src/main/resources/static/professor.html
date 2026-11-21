@@ -5,11 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Humora | Painel do Professor</title>
-  <script src="vendor/chart.js"></script>
 
   <script src="js/tema.js"></script>
   <link rel="stylesheet" href="css/fect.css" />
   <link rel="stylesheet" href="css/professor.css" />
+  <script src="js/amoras.js" defer></script>
 </head>
 <body data-humora-painel data-painel-professor class="estilo-fundo-professor">
 <!-- Botão hambúrguer mobile -->
@@ -59,8 +59,8 @@
          aria-current="page">
           <span class="ui-icon ui-icon--home ui-icon--nav estilo-ui-icon--home" aria-hidden="true"></span> Início
         </button>
-        <button class="menu-item estilo-menu-item" onclick="trocarTab('graficos', this)">
-          <span class="ui-icon ui-icon--chart ui-icon--nav estilo-ui-icon--chart-2" aria-hidden="true"></span> Gráficos
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('termometros', this)">
+          <span class="ui-icon ui-icon--chart ui-icon--nav estilo-ui-icon--chart-2" aria-hidden="true"></span> Termômetros
         </button>
         <button class="menu-item estilo-menu-item" onclick="trocarTab('alunos', this)">
           <span class="ui-icon ui-icon--people ui-icon--nav estilo-ui-icon--people" aria-hidden="true"></span> Alunos
@@ -110,8 +110,8 @@
           <div class="fect-mostrador"></div>
           <div class="fect-controles">
             <div class="fect-total"><strong id="fectTotal">—</strong> <span id="fectLegendaTotal">registros</span></div>
-            <h3>Distribuição das emoções</h3>
-            <div class="fect-distribuicao"></div>
+            <h3>Escolha uma emoção</h3>
+            <div id="fectDistribuicao"></div>
           </div>
         </div>
       </section>
@@ -139,9 +139,7 @@
         </div>
         <div class="grafico-card estilo-grafico-card">
           <h2 class="estilo-grafico-card-subtitulo">Última emoção de cada aluno</h2>
-          <div class="canvas-container estilo-canvas-container">
-            <canvas class="estilo-grafico-semana" id="graficoTurma" role="img" aria-label="Última emoção de cada aluno"></canvas>
-          </div>
+          <div id="termometroTurma"></div>
         </div>
       </section>
       <section class="card-painel estilo-card-painel">
@@ -150,23 +148,23 @@
       </section>
     </div>
 
-    <div id="tab-graficos" class="tab-content estilo-tab-dashboard">
+    <div id="tab-termometros" class="tab-content estilo-tab-dashboard">
       <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--chart estilo-ui-icon--chart" aria-hidden="true"></span> Gráficos e Estatísticas</h1>
-          <p class="subtitulo estilo-subtitulo">Análise detalhada das emoções</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--chart estilo-ui-icon--chart" aria-hidden="true"></span> Termômetros das turmas</h1>
+          <p class="subtitulo estilo-subtitulo">Escolha uma turma ou emoção para explorar os níveis.</p>
         </div>
       </header>
       <div class="filtros-graficos estilo-filtros-graficos">
         <select class="estilo-filtro-turma-grafico"
                 id="filtroTurmaGrafico"
-                onchange="atualizarGraficosFiltrados()"
+                onchange="alterarFiltrosTermometros()"
         >
           <option class="estilo-filtro-turma-grafico-opcao" value="">Todas as Turmas</option>
         </select>
         <select class="estilo-filtro-turma-grafico"
                 id="filtroEmocaoGrafico"
-                onchange="atualizarGraficosFiltrados()"
+                onchange="alterarFiltrosTermometros()"
         >
           <option class="estilo-filtro-turma-grafico-opcao" value="">Todas as emoções</option>
           <option class="estilo-filtro-turma-grafico-opcao" value="feliz">Feliz</option>
@@ -176,22 +174,18 @@
           <option class="estilo-filtro-turma-grafico-opcao" value="ansioso">Ansioso</option>
           <option class="estilo-filtro-turma-grafico-opcao" value="irritado">Irritado</option>
         </select>
-        <button class="btn-roxo-peq estilo-btn-roxo-peq" onclick="limparFiltrosGraficos()">
+        <button class="btn-roxo-peq estilo-btn-roxo-peq" onclick="limparFiltrosTermometros()">
           Limpar
         </button>
       </div>
       <div class="graficos-container estilo-graficos-container">
         <div class="grafico-card estilo-grafico-card">
           <h2 class="estilo-grafico-card-subtitulo-2"><span class="ui-icon ui-icon--chart estilo-ui-icon--chart" aria-hidden="true"></span> Alunos por turma</h2>
-          <div class="canvas-container estilo-canvas-container">
-            <canvas class="estilo-grafico-semana" id="graficoBarra" role="img" aria-label="Alunos por turma"></canvas>
-          </div>
+          <div id="termometroAlunosPorTurma"></div>
         </div>
         <div class="grafico-card estilo-grafico-card">
           <h2 class="estilo-grafico-card-subtitulo-2">Proporção das emoções</h2>
-          <div class="canvas-container estilo-canvas-container">
-            <canvas class="estilo-grafico-semana" id="graficoPizza" role="img" aria-label="Proporção das emoções"></canvas>
-          </div>
+          <div id="termometroEmocoesTurmas"></div>
         </div>
       </div>
     </div>
@@ -569,7 +563,7 @@
 
 <script src="js/estados-visuais.js"></script>
 <script src="js/fect.js"></script>
-<script src="js/graficos.js"></script>
+<script src="js/termometros.js"></script>
 <script src="js/professor.js"></script>
 
 <script src="js/menu-mobile.js"></script>

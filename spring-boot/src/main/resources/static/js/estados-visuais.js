@@ -142,8 +142,3 @@ function notificarPainel(mensagem, erro = false) {
     clearTimeout(tempoAvisoPainel);
     tempoAvisoPainel = setTimeout(() => { aviso.hidden = true; }, erro ? 7000 : 4500);
 }
-
-if (window.Chart?.defaults) {
-    window.Chart.defaults.animation = matchMedia('(prefers-reduced-motion: reduce)').matches
-        ? false : { duration: 550, easing: 'easeOutQuart' };
-}

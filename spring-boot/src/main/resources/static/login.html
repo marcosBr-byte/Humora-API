@@ -10,6 +10,7 @@
   <script src="js/api.js" defer></script>
   <script src="js/formularios.js" defer></script>
   <script src="js/login.js" defer></script>
+  <script src="js/amoras.js" defer></script>
 </head>
 <body class="fect-entrada">
   <main class="fect-acesso">
@@ -18,7 +19,7 @@
       <p class="fect-etiqueta">FECT</p>
       <h1 id="tituloVisitante">Visite o Humora</h1>
       <p>Use seu primeiro nome e sua cidade para participar do termômetro da feira.</p>
-      <a href="cadastroVisitante.html" class="fect-acao fect-acao-visitante">Entrar como visitante <span aria-hidden="true">→</span></a>
+      <a href="cadastroVisitante.html" class="fect-acao fect-acao-visitante" aria-label="Entrar como visitante">Visitante <span aria-hidden="true">→</span></a>
       <div class="fect-amoras" aria-hidden="true">
         <img src="imagens/emocoes/feliz.webp" alt="">
         <img src="imagens/emocoes/calmo.webp" alt="">
@@ -26,14 +27,14 @@
       </div>
     </section>
     <section class="fect-formulario login-card fect-login-card">
-      <h2>Entrar com uma conta</h2>
+      <h2 id="tituloAcesso">Área administrativa</h2>
       <label for="email">E-mail</label>
       <input type="email" id="email" autocomplete="username" required>
       <label for="senha">Senha</label>
       <input type="password" id="senha" minlength="8" autocomplete="current-password" required>
       <div class="fect-perfis" role="group" aria-label="Tipo de conta">
-        <button type="button" id="btnAluno" aria-pressed="false">Aluno</button>
-        <button type="button" id="btnProfessor" aria-pressed="true">Professor</button>
+        <button type="button" id="btnProfessor" aria-pressed="true">Admin</button>
+        <button type="button" id="btnAluno" aria-pressed="false">Acesso do aluno</button>
       </div>
       <input type="hidden" id="tipoUsuario" value="professor">
       <button class="fect-acao" type="button" onclick="login()">Entrar <span aria-hidden="true">→</span></button>

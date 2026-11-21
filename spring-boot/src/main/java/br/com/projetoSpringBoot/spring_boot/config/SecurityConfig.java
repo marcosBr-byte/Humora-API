@@ -53,7 +53,6 @@ public class SecurityConfig {
                                 "/cadastroProfessor.html",
                                 "/css/**",
                                 "/js/**",
-                                "/vendor/chart.js",
                                 "/imagens/**",
                                 "/images/**",
                                 "/favicon.ico"

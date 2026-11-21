@@ -79,8 +79,8 @@ document.addEventListener("DOMContentLoaded", function () {
     renderizarConquistasProf();
     renderizarAnotacoes();
     popularSelectAlunos();
-    carregarGraficoGeral();
-    carregarGraficosFiltrados();
+    atualizarTermometroGeral();
+    atualizarTermometrosFiltrados();
     sincronizarAlunosAPI();
     montarPainelFectProfessor();
     fetch('/professor/permissoes', { headers: api.getHeaders() })
@@ -133,8 +133,8 @@ async function sincronizarAlunosAPI() {
         popularFiltros();
         popularSelectAlunos();
         aplicarFiltros();
-        carregarGraficoGeral();
-        carregarGraficosFiltrados();
+        atualizarTermometroGeral();
+        atualizarTermometrosFiltrados();
     } catch (e) {
         console.warn("Não foi possível sincronizar alunos com o backend:", e);
     }
@@ -160,10 +160,10 @@ function trocarTab(nomeTab, elemento) {
     sincronizarAbaPainel(tab, elemento);
 
     if (nomeTab === "dashboard") {
-        setTimeout(function () { carregarGraficoGeral(); }, 200);
+        setTimeout(function () { atualizarTermometroGeral(); }, 200);
     }
-    if (nomeTab === "graficos") {
-        setTimeout(function () { carregarGraficosFiltrados(); }, 200);
+    if (nomeTab === "termometros") {
+        setTimeout(function () { atualizarTermometrosFiltrados(); }, 200);
     }
     if (nomeTab === "alunos") {
         aplicarFiltros();
@@ -358,17 +358,13 @@ function emocaoMaisRecente(aluno) {
     return aluno.historico?.at(-1)?.emocao;
 }
 
-function linhaPorAluno(valor) {
-    return valor === 1 ? "1 aluno" : `${valor} alunos`;
-}
-
-function carregarGraficoGeral() {
+function atualizarTermometroGeral() {
     const contagem = contarEmocoes(alunos.map(emocaoMaisRecente));
-    graficoDeBarras("graficoTurma", linhasDasEmocoes(contagem), linhaPorAluno,
+    termometrosPercentuais("termometroTurma", medidasDasEmocoes(contagem, "alunos com registro"),
         "Ainda não há emoções de alunos disponíveis neste painel.");
 }
 
-function carregarGraficosFiltrados() {
+function atualizarTermometrosFiltrados() {
     const turma = document.getElementById("filtroTurmaGrafico").value;
     const emocao = document.getElementById("filtroEmocaoGrafico").value;
     const filtrados = alunos.filter(aluno =>
@@ -380,26 +376,25 @@ function carregarGraficosFiltrados() {
         const rotulo = aluno.turma || "Sem turma";
         turmas.set(rotulo, (turmas.get(rotulo) ?? 0) + 1);
     }
-    const linhas = Array.from(turmas, ([rotulo, valor]) => ({ rotulo, valor }))
-        .sort((a, b) => b.valor - a.valor || a.rotulo.localeCompare(b.rotulo, "pt-BR"));
-    const areaTurmas = document.getElementById("graficoBarra").parentElement;
-    areaTurmas.style.setProperty("--altura-grafico", Math.max(240, linhas.length * 29 + 42) + "px");
-    graficoDeBarras("graficoBarra", linhas, linhaPorAluno,
-        "Nenhum aluno corresponde aos filtros selecionados.");
-    graficoDeDistribuicao("graficoPizza", linhasDasEmocoes(contarEmocoes(filtrados.map(emocaoMaisRecente))),
+    const medidas = Array.from(turmas, ([chave, quantidade]) => ({
+        chave, nome: chave === "Sem turma" ? chave : `Turma ${chave}`, quantidade, unidade: "alunos"
+    })).sort((a, b) => b.quantidade - a.quantidade || a.nome.localeCompare(b.nome, "pt-BR"));
+    termometrosPercentuais("termometroAlunosPorTurma", medidas, "Nenhum aluno corresponde aos filtros selecionados.");
+    termometrosPercentuais("termometroEmocoesTurmas",
+        medidasDasEmocoes(contarEmocoes(filtrados.map(emocaoMaisRecente)), "alunos com registro"),
         "Nenhuma emoção disponível para estes filtros.");
 }
 
-function atualizarGraficosFiltrados() {
-    carregarGraficosFiltrados();
+function alterarFiltrosTermometros() {
+    atualizarTermometrosFiltrados();
 }
 
-function limparFiltrosGraficos() {
+function limparFiltrosTermometros() {
     var elT = document.getElementById("filtroTurmaGrafico");
     var elE = document.getElementById("filtroEmocaoGrafico");
     if (elT) elT.value = "";
     if (elE) elE.value = "";
-    carregarGraficosFiltrados();
+    atualizarTermometrosFiltrados();
 }
 
 // ==========================================================

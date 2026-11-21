@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { copyFile, mkdir, readFile } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
@@ -22,7 +22,3 @@ await Promise.all(pages.map(async page => {
     throw new Error(`Falha ao compilar ${page}.css\n${error.stderr || error.message}`, { cause: error });
   }
 }));
-
-const vendor = resolve(output, '../vendor');
-await mkdir(vendor, { recursive: true });
-await copyFile(resolve(root, 'node_modules/chart.js/dist/chart.umd.min.js'), resolve(vendor, 'chart.js'));

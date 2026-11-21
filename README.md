@@ -2,7 +2,7 @@ Humora 💜
 
 Plataforma web de acompanhamento e acolhimento emocional de estudantes.
 
-O Humora permite que alunos registrem diariamente como se sentem e pratiquem o autocuidado, enquanto professores acompanham o clima emocional das turmas por meio de um painel com gráficos e alertas — favorecendo a identificação precoce de estudantes que precisam de apoio.
+O Humora permite que alunos registrem diariamente como se sentem e pratiquem o autocuidado, enquanto professores acompanham o clima emocional das turmas por meio de um painel com termômetros interativos e alertas — favorecendo a identificação precoce de estudantes que precisam de apoio.
 
 Projeto desenvolvido por estudantes do Curso Técnico em Informática da rede pública estadual da Paraíba, para o Programa Ouse Criar 2026/2027 e a FECT PB 2026.
 
@@ -11,14 +11,14 @@ Projeto desenvolvido por estudantes do Curso Técnico em Informática da rede p�
 ✨ Funcionalidades
 👩‍🎓 Perfil do aluno
 Registro diário de emoções: feliz, triste, cansado, calmo, ansioso e irritado, com intensidade e comentário opcional
-Exercício de respiração guiada
+Exercício de respiração guiada com sessões de 30 segundos ou 1 minuto
 Jogos calmantes: Pop-it, Jogo da Memória, Cérebro Saltador e Caça-Palavras
 Diário pessoal, que pode ser compartilhado com o professor
-Gráficos da própria evolução emocional
+Termômetros dos registros recentes e da frequência das emoções
 Conquistas (badges) e escolha de avatar
 👨‍🏫 Perfil do professor
 Cadastro com chave de acesso e vínculo às turmas em que leciona
-Painel com resumo emocional e gráficos por turma
+Painel com resumo emocional e termômetros por turma
 Lista de alunos em alerta
 Leitura dos diários compartilhados
 Envio de mensagens de apoio e comunicados
@@ -67,9 +67,9 @@ Em bancos existentes, execute [o script SQL](spring-boot/sql/permitir-nomes-repe
 
 ### Apresentação na FECT
 
-1. Na página inicial, escolha **Cadastro visitante**. Em **Login**, o mesmo formulário está em **Entrar como visitante**.
+1. Na página inicial ou no login, escolha **Visitante** para abrir o cadastro.
 2. Informe o primeiro nome e a cidade. Escolha uma amora, ajuste a intensidade de 1 a 5 e registre a emoção. O termômetro mostra a intensidade escolhida.
-3. Em outro navegador, entre como professor. O **Termômetro da feira** atualiza a intensidade média e a distribuição das emoções a cada cinco segundos. A conta configurada como administradora também vê **Cadastrar professor**.
+3. Em outro navegador, escolha **Admin** e entre com uma conta de professor ou administrador. O **Termômetro da feira** atualiza a intensidade média e a distribuição das emoções a cada cinco segundos. A conta configurada como administradora também vê **Cadastrar professor**.
 
 O banco guarda as emoções e intensidades enviadas à FECT. Nome, cidade, anotações, diário e histórico particular do visitante ficam na sessão do navegador. Use a rede local do evento ou um endereço HTTPS para apresentar.
 

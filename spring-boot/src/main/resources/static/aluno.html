@@ -5,11 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Humora | Aluno</title>
-  <script src="vendor/chart.js"></script>
 
   <script src="js/tema.js"></script>
   <link rel="stylesheet" href="css/fect.css" />
   <link rel="stylesheet" href="css/aluno.css" />
+  <script src="js/amoras.js" defer></script>
 </head>
 <body data-humora-painel class="estilo-fundo-aluno">
 <!-- Botão hambúrguer mobile -->
@@ -49,8 +49,8 @@
         <button class="menu-item ativo estilo-menu-item" onclick="trocarTab('inicio', this)" aria-current="page">
           <span class="ui-icon ui-icon--home ui-icon--nav estilo-ui-icon--home" aria-hidden="true"></span> Início
         </button>
-        <button class="menu-item estilo-menu-item" onclick="trocarTab('graficos', this)">
-          <span class="ui-icon ui-icon--chart ui-icon--nav estilo-ui-icon--chart-2" aria-hidden="true"></span> Meus Gráficos
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('termometros', this)">
+          <span class="ui-icon ui-icon--chart ui-icon--nav estilo-ui-icon--chart-2" aria-hidden="true"></span> Meus termômetros
         </button>
         <button class="menu-item estilo-menu-item" onclick="trocarTab('diario', this)">
           <span class="ui-icon ui-icon--book ui-icon--nav estilo-ui-icon--book-2" aria-hidden="true"></span> Diário
@@ -155,25 +155,21 @@
         </div>
     </div>
 
-    <div id="tab-graficos" class="tab-content estilo-tab-inicio">
+    <div id="tab-termometros" class="tab-content estilo-tab-inicio">
       <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--chart estilo-ui-icon--chart" aria-hidden="true"></span> Meus Gráficos</h1>
-          <p class="subtitulo estilo-subtitulo">Acompanhe sua evolução emocional</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--chart estilo-ui-icon--chart" aria-hidden="true"></span> Meus termômetros</h1>
+          <p class="subtitulo estilo-subtitulo">Escolha um registro ou uma emoção para ver o nível.</p>
         </div>
       </header>
       <div class="graficos estilo-graficos">
         <div class="grafico-card estilo-grafico-card">
           <h2 class="estilo-grafico-card-subtitulo">Intensidade dos últimos 7 registros</h2>
-          <div class="canvas-container estilo-canvas-container">
-            <canvas class="estilo-grafico-semana" id="graficoSemana" role="img" aria-label="Intensidade dos últimos sete registros"></canvas>
-          </div>
+          <div id="termometroRegistros"></div>
         </div>
         <div class="grafico-card estilo-grafico-card">
           <h2 class="estilo-grafico-card-subtitulo">Frequência das emoções</h2>
-          <div class="canvas-container estilo-canvas-container">
-            <canvas class="estilo-grafico-semana" id="graficoFrequencia" role="img" aria-label="Frequência das emoções"></canvas>
-          </div>
+          <div id="termometroFrequencia"></div>
         </div>
       </div>
     </div>
@@ -244,30 +240,28 @@
           <p class="subtitulo estilo-subtitulo">Relaxe sua mente</p>
         </div>
       </header>
-      <div class="card-painel estilo-card-painel-2">
-        <p class="estilo-card-painel-texto">
-          Acompanhe o círculo e respire no ritmo indicado
-        </p>
-        <div class="circulo-respiracao estilo-circulo-respiracao" id="circuloRespiracao">
-          <span class="estilo-texto-respiracao-tab" id="textoRespiracaoTab">Inspire...</span>
+      <section class="fect-painel respiracao-painel" aria-label="Respiração guiada">
+        <div class="respiracao-palco" id="palcoRespiracao" aria-hidden="true">
+          <div class="respiracao-onda"></div>
+          <img src="imagens/emocoes/calmo.webp" alt="">
         </div>
-        <div class="estilo-card-painel-div">
-          <button
-                  class="btn-respiracao btn-iniciar estilo-btn-iniciar-respiracao"
-                  id="btnIniciarRespiracao"
-                  onclick="iniciarRespiracaoTab()"
-          >
-            ▶️ Iniciar
-          </button>
-          <button
-                  class="btn-respiracao btn-parar estilo-btn-parar-respiracao"
-                  id="btnPararRespiracao"
-                  onclick="pararRespiracaoTab()"
-          >
-            ⏹️ Parar
-          </button>
+        <div class="respiracao-controles">
+          <h2>Respiração guiada</h2>
+          <p>Inspire suavemente por 4 segundos e solte o ar por 6, no seu ritmo.</p>
+          <p class="respiracao-fase" id="faseRespiracao" role="status">Quando estiver pronto, comece.</p>
+          <p id="tempoRespiracao" class="respiracao-tempo" aria-hidden="true">0:30 · ciclo 1 de 3</p>
+          <progress id="progressoRespiracao" value="0" max="30" aria-label="Progresso da respiração"></progress>
+          <label for="ciclosRespiracao">Duração</label>
+          <select id="ciclosRespiracao">
+            <option value="3">30 segundos</option>
+            <option value="6">1 minuto</option>
+          </select>
+          <div class="respiracao-botoes">
+            <button type="button" id="acaoRespiracao" class="fect-acao">Começar</button>
+            <button type="button" id="reiniciarRespiracao" class="fect-botao-secundario" disabled>Reiniciar</button>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
 
     <div id="tab-conquistas" class="tab-content estilo-tab-inicio">
@@ -488,8 +482,9 @@
 
 <script src="js/estados-visuais.js"></script>
 <script src="js/fect.js"></script>
-<script src="js/graficos.js"></script>
+<script src="js/termometros.js"></script>
 <script src="js/aluno.js"></script>
+<script src="js/respiracao.js"></script>
 
 <script src="js/menu-mobile.js"></script>
 </body>

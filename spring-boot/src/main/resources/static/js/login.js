@@ -44,6 +44,7 @@ for (const perfil of perfis) {
     perfil.botao.addEventListener('click', () => {
         if (botaoDoFormulario('login').disabled) return;
         document.getElementById('tipoUsuario').value = perfil.tipo;
+        document.getElementById('tituloAcesso').textContent = perfil.tipo === 'aluno' ? 'Acesso do aluno' : 'Área administrativa';
         for (const item of perfis) {
             const selecionado = item === perfil;
             item.botao.classList.toggle('ativo', selecionado);

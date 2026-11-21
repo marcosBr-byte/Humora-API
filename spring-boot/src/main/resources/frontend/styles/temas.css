@@ -1,5 +1,6 @@
 :root {
   color-scheme: light;
+  background-color: var(--fect-fundo);
   --fect-fundo: #f7f4fd;
   --fect-superficie: #ffffff;
   --fect-elevado: #faf7fe;

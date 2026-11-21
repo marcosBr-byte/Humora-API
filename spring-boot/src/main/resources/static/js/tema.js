@@ -17,17 +17,6 @@ function lerTemaHumora() {
     }
 }
 
-function corTemaHumora(propriedade) {
-    return getComputedStyle(raizTemaHumora).getPropertyValue(propriedade).trim();
-}
-
-function atualizarGraficosTemaHumora() {
-    if (!window.Chart) return;
-    Chart.defaults.color = corTemaHumora('--fect-secundario');
-    Chart.defaults.borderColor = corTemaHumora('--fect-borda');
-    for (const grafico of Object.values(Chart.instances)) grafico.update('none');
-}
-
 aplicarTemaHumora(lerTemaHumora());
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -42,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function atualizar(tema) {
         aplicarTemaHumora(tema);
         opcoes.value = raizTemaHumora.dataset.tema;
-        atualizarGraficosTemaHumora();
     }
     opcoes.addEventListener('change', () => {
         atualizar(opcoes.value);

@@ -48,7 +48,7 @@ if (!alunoAtual.badges) alunoAtual.badges = [];
 var emocaoSelecionada = null;
 let registroFectPendente;
 let atualizarTermometroIndividual;
-var intervalRespiracao = null, intervalBloqueio = null;
+var intervalBloqueio = null;
 var pontosGame = 0, bolasEstouradas = 0, corAlvoAtual = "", tempoGameInterval = null;
 var cartasMemoria = [], cartasViradas = [], paresEncontrados = 0, tentativasMemoria = 0;
 var canvasSubir, ctxSubir, jogadorSubir, plataformasSubir, pontosSubir, gameLoopSubir, teclasSubir;
@@ -186,12 +186,8 @@ function trocarTab(nomeTab, elemento) {
     if (tab) tab.classList.add("ativo");
     if (elemento) elemento.classList.add("ativo");
     sincronizarAbaPainel(tab, elemento);
-    if (nomeTab === "graficos") {
-        setTimeout(function () {
-            carregarGraficoSemana();
-            carregarGraficoFrequencia();
-        }, 200);
-    }
+    if (nomeTab === "termometros") atualizarTermometrosAluno();
+    if (nomeTab !== "respiracao") pausarRespiracao();
     if (nomeTab === "conquistas") carregarConquistasTab();
 }
 
@@ -331,6 +327,7 @@ async function carregarDiariosBackend() {
         carregarHistorico();
         atualizarStreak();
         atualizarTermometroIndividual();
+        if (document.getElementById("tab-termometros").classList.contains("ativo")) atualizarTermometrosAluno();
     } catch (error) {
         console.error("Erro ao carregar diários:", error);
     }
@@ -406,85 +403,18 @@ function fecharModalVerDiario() {
 }
 
 // ========== GRÁFICOS ==========
-function carregarGraficoSemana() {
-    const linhas = alunoAtual.historico.slice(-7).map(item => ({
-        rotulo: item.hora && item.hora !== "00:00" ? `${item.data} · ${item.hora}` : item.data,
-        detalhes: nomesEmocoes[item.emocao],
-        valor: item.intensidade || 1
+function atualizarTermometrosAluno() {
+    const recentes = alunoAtual.historico.slice(-7).reverse().map((item, indice) => ({
+        chave: String(item.timestamp ?? "") + ":" + indice,
+        nome: nomesEmocoes[item.emocao] || "Emoção",
+        emocao: item.emocao,
+        valor: item.intensidade ?? 1,
+        detalhe: [item.data, item.hora].filter(Boolean).join(" · ")
     }));
-    renderizarGrafico("graficoSemana", linhas, {
-        tipo: "line",
-        unidade: valor => `${valor} de 5`,
-        vazio: "Registre sua primeira emoção para acompanhar a intensidade.",
-        dataset: {
-            borderColor: corPrincipalGrafico,
-            backgroundColor: () => corTemaHumora("--fect-selecionado"),
-            pointBackgroundColor: corPrincipalGrafico,
-            pointBorderColor: () => corTemaHumora("--fect-superficie"),
-            pointBorderWidth: 2,
-            pointRadius: 5,
-            pointHitRadius: 8,
-            borderWidth: 2,
-            fill: "start",
-            cubicInterpolationMode: "monotone"
-        },
-        opcoes: {
-            interaction: { intersect: false, mode: "index" },
-            scales: {
-                x: {
-                    grid: { display: false },
-                    ticks: {
-                        color: corTextoGrafico,
-                        maxRotation: 0,
-                        maxTicksLimit: 4,
-                        callback(index) { return `${index + 1}º`; }
-                    }
-                },
-                y: { min: 1, max: 5, grid: { color: corGradeGrafico }, ticks: { stepSize: 1, color: corTextoGrafico } }
-            }
-        }
-    });
-}
-
-function carregarGraficoFrequencia() {
+    mostrarTermometros("termometroRegistros", recentes, "Registre uma emoção para começar.");
     const contagem = contarEmocoes(alunoAtual.historico.map(item => item.emocao));
-    graficoDeBarras("graficoFrequencia", linhasDasEmocoes(contagem),
-        valor => valor === 1 ? "1 registro" : `${valor} registros`,
+    termometrosPercentuais("termometroFrequencia", medidasDasEmocoes(contagem, "registros"),
         "Suas emoções registradas vão aparecer aqui.");
-}
-
-// ========== RESPIRAÇÃO ==========
-function iniciarRespiracaoTab() {
-    var el = document.getElementById("textoRespiracaoTab"),
-        circ = document.getElementById("circuloRespiracao"),
-        btnI = document.getElementById("btnIniciarRespiracao"),
-        btnP = document.getElementById("btnPararRespiracao");
-    if (!el) return;
-    clearInterval(intervalRespiracao);
-    circ.classList.add("animando");
-    btnI.disabled = true;
-    btnP.disabled = false;
-    var fases = ["Inspire...", "Segure...", "Expire..."],
-        etapa = 0;
-    el.innerText = fases[0];
-    intervalRespiracao = setInterval(function () {
-        etapa = (etapa + 1) % 3;
-        el.innerText = fases[etapa];
-    }, 2600);
-    desbloquearConquista("respirou");
-}
-
-function pararRespiracaoTab() {
-    clearInterval(intervalRespiracao);
-    intervalRespiracao = null;
-    var el = document.getElementById("textoRespiracaoTab"),
-        circ = document.getElementById("circuloRespiracao"),
-        btnI = document.getElementById("btnIniciarRespiracao"),
-        btnP = document.getElementById("btnPararRespiracao");
-    if (el) el.innerText = "Inspire...";
-    if (circ) circ.classList.remove("animando");
-    if (btnI) btnI.disabled = false;
-    if (btnP) btnP.disabled = true;
 }
 
 // ========== HISTÓRICO ==========
