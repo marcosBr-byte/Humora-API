@@ -1,14 +1,12 @@
 const temasHumora = Object.freeze({
     claro: 'Claro',
-    lavanda: 'Lavanda',
-    ameixa: 'Escuro · Ameixa',
-    ametista: 'Escuro · Ametista'
+    ameixa: 'Ameixa (escuro)'
 });
 const chaveTemaHumora = 'humoraTema';
 const raizTemaHumora = document.documentElement;
 
 function aplicarTemaHumora(tema) {
-    raizTemaHumora.dataset.tema = Object.hasOwn(temasHumora, tema) ? tema : 'claro';
+    raizTemaHumora.dataset.tema = tema === 'ameixa' || tema === 'ametista' ? 'ameixa' : 'claro';
 }
 
 function lerTemaHumora() {
