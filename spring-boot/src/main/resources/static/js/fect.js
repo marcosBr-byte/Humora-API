@@ -33,16 +33,16 @@ function atualizarTermometroFect(elemento, intensidade, rotulo, emocao) {
     }
 }
 
-function montarTermometroVisitante() {
+function montarTermometroIndividual(visitante) {
     const inicio = document.getElementById('tab-inicio');
     const card = document.createElement('section');
-    card.className = 'fect-painel fect-visitante-painel';
+    card.className = 'fect-painel termometro-individual';
     card.setAttribute('aria-labelledby', 'tituloTermometro');
     card.innerHTML = `
         <div class="fect-cabecalho">
             <span class="fect-icone ui-icon ui-icon--heart" aria-hidden="true"></span>
             <div>
-                <p class="fect-etiqueta">FECT</p>
+                ${visitante ? '<p class="fect-etiqueta">FECT</p>' : ''}
                 <h2 id="tituloTermometro">Termômetro das emoções</h2>
                 <p>Escolha uma amora e ajuste a intensidade de 1 a 5.</p>
             </div>
@@ -55,13 +55,16 @@ function montarTermometroVisitante() {
     card.querySelector('#fectMostrador').append(termometro);
     card.querySelector('#fectControles').append(
         document.getElementById('emocoes'),
-        document.getElementById('motivoContainer')
+        document.getElementById('motivoContainer'),
+        document.getElementById('bloqueioHumora')
     );
     inicio.querySelector('header').after(card);
 
     const intensidade = document.getElementById('intensidadeEmocao');
     function atualizar() {
-        const ultima = alunoAtual.historico.at(-1);
+        // Leituras recuperadas do diário escolar trazem a data de expiração e apenas a emoção.
+        const ultima = alunoAtual.historico.findLast(item => item.timestamp <= alunoAtual.ultimaEmocao)
+            ?? alunoAtual.historico.at(-1);
         const emocao = emocaoSelecionada || ultima?.emocao;
         const nivel = emocaoSelecionada ? Number(intensidade.value) : ultima?.intensidade;
         atualizarTermometroFect(termometro, nivel, nomesEmocoes[emocao] || 'Escolha uma emoção', emocao);
@@ -70,8 +73,8 @@ function montarTermometroVisitante() {
         if (event.target.closest('.emocao')) atualizar();
     });
     intensidade.addEventListener('input', atualizar);
-    card.addEventListener('fect:registrado', atualizar);
     atualizar();
+    return atualizar;
 }
 
 function montarPainelFectProfessor() {

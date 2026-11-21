@@ -175,8 +175,8 @@
 .fect-barra meter::-webkit-meter-optimum-value { background: var(--fect-roxo); border-radius: 12px; }
 .fect-barra meter::-moz-meter-bar { background: var(--fect-roxo); border-radius: 12px; }
 
-.fect-visitante #emocoes { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin: 0 0 12px; }
-.fect-visitante #emocoes .emocao {
+.termometro-individual #emocoes { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin: 0 0 12px; }
+.termometro-individual #emocoes .emocao {
   display: grid;
   min-width: 0;
   place-items: center;
@@ -185,14 +185,14 @@
   border-radius: 13px;
   color: var(--fect-texto);
 }
-.fect-visitante #emocoes .imagem-emocao { width: clamp(33px, 11vw, 61px); height: auto; aspect-ratio: 1; animation: fect-flutuar 4.2s ease-in-out infinite; }
-.fect-visitante #emocoes .emocao:nth-child(2n) img { animation-delay: -.9s; }
-.fect-visitante #emocoes .emocao:nth-child(3n) img { animation-delay: -2s; }
-.fect-visitante #emocoes .rotulo { color: var(--fect-texto); font-size: .78rem; }
-.fect-visitante #motivoContainer { margin: 0; padding: 11px 0 0; border: 0; border-top: 1px solid var(--fect-borda); border-radius: 0; box-shadow: none; }
-.fect-visitante #motivoContainer input[type="range"] { width: 100%; accent-color: var(--fect-roxo); }
-.fect-visitante #motivo { min-height: 64px; }
-.fect-visitante #btnEnviarEmocao { background: var(--fect-acao); color: var(--fect-acao-texto); }
+.termometro-individual #emocoes .imagem-emocao { width: clamp(33px, 11vw, 61px); height: auto; aspect-ratio: 1; animation: fect-flutuar 4.2s ease-in-out infinite; }
+.termometro-individual #emocoes .emocao:nth-child(2n) img { animation-delay: -.9s; }
+.termometro-individual #emocoes .emocao:nth-child(3n) img { animation-delay: -2s; }
+.termometro-individual #emocoes .rotulo { color: var(--fect-texto); font-size: .78rem; }
+.termometro-individual #motivoContainer { margin: 0; padding: 11px 0 0; border: 0; border-top: 1px solid var(--fect-borda); border-radius: 0; box-shadow: none; }
+.termometro-individual #motivoContainer input[type="range"] { width: 100%; accent-color: var(--fect-roxo); }
+.termometro-individual #motivo { min-height: 64px; }
+.termometro-individual #btnEnviarEmocao { background: var(--fect-acao); color: var(--fect-acao-texto); }
 
 .fect-jogo-controles { @apply tw:mt-3 tw:flex tw:justify-center tw:gap-3; }
 .fect-jogo-controles button { @apply tw:min-h-11 tw:min-w-14 tw:rounded-xl tw:border tw:font-bold; background: var(--fect-elevado); color: var(--fect-roxo); border-color: var(--fect-borda-destaque); touch-action: none; }
@@ -244,7 +244,7 @@
   [data-humora-painel] .estilo-modal-content-subtitulo { color: var(--fect-texto) !important; }
   [data-painel-professor] :is(.aluno-card,.item-mini) { background: var(--fect-elevado) !important; color: var(--fect-texto); }
 
-  .fect-visitante #motivoContainer {
+  .termometro-individual #motivoContainer {
     background: var(--fect-superficie) !important;
     border-color: var(--fect-borda) !important;
     box-shadow: none !important;

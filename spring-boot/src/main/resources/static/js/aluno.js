@@ -47,6 +47,7 @@ if (!alunoAtual.badges) alunoAtual.badges = [];
 // Variáveis globais
 var emocaoSelecionada = null;
 let registroFectPendente;
+let atualizarTermometroIndividual;
 var graficoSemana = null, graficoRadar = null;
 var intervalRespiracao = null, intervalBloqueio = null;
 var pontosGame = 0, bolasEstouradas = 0, corAlvoAtual = "", tempoGameInterval = null;
@@ -85,13 +86,13 @@ document.addEventListener("DOMContentLoaded", function () {
     atualizarStreak();
     carregarHistorico();
     carregarConquistasTab();
+    atualizarTermometroIndividual = montarTermometroIndividual(modoVisitante);
     if (modoVisitante) {
         document.title = "Humora | Visitante FECT";
         document.body.classList.add("fect-visitante");
         const diario = document.getElementById("tab-diario");
         diario.querySelectorAll('[data-apenas-aluno]').forEach(elemento => elemento.remove());
         document.querySelector('[onclick="abrirModalNotificacoes()"]').hidden = true;
-        montarTermometroVisitante();
     } else {
         atualizarBadgeNotificacoes();
         iniciarMonitorBloqueio();
@@ -284,9 +285,7 @@ async function enviarEmocao() {
         emocaoSelecionada = null;
         atualizarSelecaoEmocao(null);
 
-        if (modoVisitante) {
-            document.querySelector(".fect-visitante-painel").dispatchEvent(new Event("fect:registrado"));
-        }
+        atualizarTermometroIndividual();
         notificarPainel(modoVisitante ? "Emoção registrada no painel da FECT." : "Emoção registrada.");
 
     } catch (error) {
@@ -330,6 +329,7 @@ async function carregarDiariosBackend() {
         salvarAlunos();
         carregarHistorico();
         atualizarStreak();
+        atualizarTermometroIndividual();
     } catch (error) {
         console.error("Erro ao carregar diários:", error);
     }
