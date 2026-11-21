@@ -16,9 +16,6 @@ var anotacoesProfessor = JSON.parse(localStorage.getItem("anotacoesProfessorHumo
 var alunoSelecionadoEmail = null;
 
 // Gráficos
-var graficoGeral = null;
-var graficoBarra = null;
-var graficoPizza = null;
 
 // Jogo Pop-It
 var pontosGameProf = 0;
@@ -62,15 +59,6 @@ var bancoPalavrasProf = [
     "DANCAR", "CANTAR", "MENTE", "CORPO", "SERENO", "PLENO", "AFETO",
     "LACO", "APOIO", "LIVRE", "HUMORA", "ENSINAR", "SABER"
 ];
-
-const coresEmocoes = {
-    feliz:    "#FFD700",
-    triste:   "#4A90E2",
-    cansado:  "#B0B0B0",
-    calmo:    "#00C896",
-    ansioso:  "#FF8C00",
-    irritado: "#E74C3C"
-};
 
 // ==========================================================
 // INICIALIZAÇÃO
@@ -146,6 +134,7 @@ async function sincronizarAlunosAPI() {
         popularSelectAlunos();
         aplicarFiltros();
         carregarGraficoGeral();
+        carregarGraficosFiltrados();
     } catch (e) {
         console.warn("Não foi possível sincronizar alunos com o backend:", e);
     }
@@ -365,174 +354,40 @@ function atualizarListaAlerta(alunosDaTurma) {
 // ==========================================================
 // GRÁFICO GERAL (DASHBOARD)
 // ==========================================================
+function emocaoMaisRecente(aluno) {
+    return aluno.historico?.at(-1)?.emocao;
+}
+
+function linhaPorAluno(valor) {
+    return valor === 1 ? "1 aluno" : `${valor} alunos`;
+}
+
 function carregarGraficoGeral() {
-    var canvas = document.getElementById("graficoTurma");
-    if (!canvas) return;
-
-    var ctx = canvas.getContext("2d");
-    if (graficoGeral) graficoGeral.destroy();
-
-    var cont = { feliz: 0, triste: 0, cansado: 0, calmo: 0, ansioso: 0, irritado: 0 };
-    for (var i = 0; i < alunos.length; i++) {
-        if (alunos[i].historico && alunos[i].historico.length > 0) {
-            var u = alunos[i].historico[alunos[i].historico.length - 1].emocao;
-            if (cont[u] !== undefined) cont[u]++;
-        }
-    }
-
-    var labels = [];
-    var dados = [];
-    var cores = [];
-    var chaves = Object.keys(nomesEmocoes);
-    for (var k = 0; k < chaves.length; k++) {
-        const tipo = chaves[k];
-        labels.push(nomesEmocoes[tipo]);
-        dados.push(cont[tipo]);
-        cores.push(coresEmocoes[tipo]);
-    }
-
-    graficoGeral = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: labels,
-            datasets: [{
-                data: dados,
-                backgroundColor: cores,
-                borderRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1, color: () => corTemaHumora("--fect-secundario") }
-                },
-                x: { ticks: { color: () => corTemaHumora("--fect-secundario") } }
-            }
-        }
-    });
+    const contagem = contarEmocoes(alunos.map(emocaoMaisRecente));
+    graficoDeBarras("graficoTurma", linhasDasEmocoes(contagem), linhaPorAluno,
+        "Ainda não há emoções de alunos disponíveis neste painel.");
 }
 
-// ==========================================================
-// GRÁFICOS FILTRADOS (ABA GRÁFICOS)
-// ==========================================================
 function carregarGraficosFiltrados() {
-    var elT = document.getElementById("filtroTurmaGrafico");
-    var elE = document.getElementById("filtroEmocaoGrafico");
-    var t = elT ? elT.value : "";
-    var e = elE ? elE.value : "";
+    const turma = document.getElementById("filtroTurmaGrafico").value;
+    const emocao = document.getElementById("filtroEmocaoGrafico").value;
+    const filtrados = alunos.filter(aluno =>
+        (!turma || aluno.turma === turma) && (!emocao || emocaoMaisRecente(aluno) === emocao)
+    );
 
-    var filt = alunos;
-    if (t) {
-        filt = filt.filter(function (a) { return a.turma === t; });
+    const turmas = new Map();
+    for (const aluno of filtrados) {
+        const rotulo = aluno.turma || "Sem turma";
+        turmas.set(rotulo, (turmas.get(rotulo) ?? 0) + 1);
     }
-    if (e) {
-        filt = filt.filter(function (a) {
-            var u = a.historico && a.historico.length > 0 ? a.historico[a.historico.length - 1] : null;
-            return u && u.emocao === e;
-        });
-    }
-
-    carregarGraficoBarra(filt);
-    carregarGraficoPizza(filt);
-}
-
-function carregarGraficoBarra(lista) {
-    var canvas = document.getElementById("graficoBarra");
-    if (!canvas) return;
-
-    var ctx = canvas.getContext("2d");
-    if (graficoBarra) graficoBarra.destroy();
-
-    var turmas = [];
-    for (var i = 0; i < lista.length; i++) {
-        if (lista[i].turma && turmas.indexOf(lista[i].turma) === -1) {
-            turmas.push(lista[i].turma);
-        }
-    }
-
-    var dados = [];
-    for (var j = 0; j < turmas.length; j++) {
-        var contagem = 0;
-        for (var k = 0; k < lista.length; k++) {
-            if (lista[k].turma === turmas[j]) contagem++;
-        }
-        dados.push(contagem);
-    }
-
-    graficoBarra = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: turmas,
-            datasets: [{
-                data: dados,
-                backgroundColor: "#a855f7",
-                borderRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1, color: () => corTemaHumora("--fect-secundario") } },
-                x: { ticks: { color: () => corTemaHumora("--fect-secundario") } }
-            }
-        }
-    });
-}
-
-function carregarGraficoPizza(lista) {
-    var canvas = document.getElementById("graficoPizza");
-    if (!canvas) return;
-
-    var ctx = canvas.getContext("2d");
-    if (graficoPizza) graficoPizza.destroy();
-
-    var cont = { feliz: 0, triste: 0, cansado: 0, calmo: 0, ansioso: 0, irritado: 0 };
-    for (var i = 0; i < lista.length; i++) {
-        if (lista[i].historico && lista[i].historico.length > 0) {
-            var u = lista[i].historico[lista[i].historico.length - 1].emocao;
-            if (cont[u] !== undefined) cont[u]++;
-        }
-    }
-
-    var labels = [];
-    var dados = [];
-    var cores = [];
-    var chaves = Object.keys(nomesEmocoes);
-    for (var k = 0; k < chaves.length; k++) {
-        const tipo = chaves[k];
-        labels.push(nomesEmocoes[tipo]);
-        dados.push(cont[tipo]);
-        cores.push(coresEmocoes[tipo]);
-    }
-
-    graficoPizza = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-            labels: labels,
-            datasets: [{
-                data: dados,
-                backgroundColor: cores,
-                borderWidth: 2,
-                borderColor: () => corTemaHumora("--fect-superficie")
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: "bottom",
-                    labels: { color: () => corTemaHumora("--fect-secundario"), padding: 15, font: { size: 11 } }
-                }
-            }
-        }
-    });
+    const linhas = Array.from(turmas, ([rotulo, valor]) => ({ rotulo, valor }))
+        .sort((a, b) => b.valor - a.valor || a.rotulo.localeCompare(b.rotulo, "pt-BR"));
+    const areaTurmas = document.getElementById("graficoBarra").parentElement;
+    areaTurmas.style.setProperty("--altura-grafico", Math.max(240, linhas.length * 29 + 42) + "px");
+    graficoDeBarras("graficoBarra", linhas, linhaPorAluno,
+        "Nenhum aluno corresponde aos filtros selecionados.");
+    graficoDeDistribuicao("graficoPizza", linhasDasEmocoes(contarEmocoes(filtrados.map(emocaoMaisRecente))),
+        "Nenhuma emoção disponível para estes filtros.");
 }
 
 function atualizarGraficosFiltrados() {

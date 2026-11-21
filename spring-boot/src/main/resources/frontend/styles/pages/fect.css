@@ -167,13 +167,10 @@
 .fect-total { @apply tw:mb-3 tw:rounded-xl tw:px-4 tw:py-2 tw:text-sm; background: var(--fect-elevado); color: var(--fect-secundario); }
 .fect-total strong { @apply tw:mr-1 tw:text-2xl tw:font-bold; color: var(--fect-roxo); }
 .fect-distribuicao { @apply tw:grid tw:gap-2; }
-.fect-barra { @apply tw:grid tw:items-center tw:gap-2 tw:text-sm; grid-template-columns: 24px 58px minmax(0, 1fr) 34px; }
+.fect-barra { @apply tw:grid tw:items-center tw:gap-2 tw:text-sm; }
 .fect-barra img { width: 24px; height: 24px; object-fit: contain; }
 .fect-barra strong { text-align: right; }
-.fect-barra meter { width: 100%; height: .75rem; }
-.fect-barra meter::-webkit-meter-bar { background: var(--fect-borda); border: 0; border-radius: 12px; }
-.fect-barra meter::-webkit-meter-optimum-value { background: var(--fect-roxo); border-radius: 12px; }
-.fect-barra meter::-moz-meter-bar { background: var(--fect-roxo); border-radius: 12px; }
+
 
 .termometro-individual #emocoes { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin: 0 0 12px; }
 .termometro-individual #emocoes .emocao {
@@ -207,7 +204,6 @@
 @media (width <= 420px) {
   .fect-painel { padding: 13px; }
   .fect-cabecalho { gap: 8px; }
-  .fect-barra { grid-template-columns: 21px 54px minmax(0, 1fr) 25px; }
 }
 
 .fect-escolha { @apply tw:flex tw:flex-col tw:items-start tw:justify-center tw:gap-4; }
@@ -379,3 +375,102 @@
   outline-offset: 2px;
 }
 .avatares-emocoes .imagem-emocao { width: 42px; height: 42px; object-fit: contain; }
+
+[data-humora-painel] .grafico-card { min-width: 0; }
+[data-humora-painel] .grafico-card h2 {
+  color: var(--fect-texto);
+  text-align: start;
+  font-weight: 700;
+}
+[data-humora-painel] .canvas-container {
+  height: var(--altura-grafico, clamp(230px, 32vw, 305px));
+}
+[data-humora-painel] .grafico-sem-dados {
+  display: grid;
+  place-items: center;
+  height: auto;
+  min-height: 145px;
+  border: 1px dashed var(--fect-borda-destaque);
+  border-radius: 14px;
+  background: var(--fect-elevado);
+}
+.grafico-vazio {
+  max-width: 34ch;
+  padding: 14px;
+  color: var(--fect-secundario);
+  text-align: center;
+  font-size: .875rem;
+}
+.grafico-dados {
+  margin-top: 12px;
+  border-top: 1px solid var(--fect-borda);
+  padding-top: 9px;
+  color: var(--fect-secundario);
+  font-size: .82rem;
+}
+.grafico-dados summary { width: fit-content; color: var(--fect-roxo); cursor: pointer; }
+.grafico-dados summary:focus-visible { outline: 2px solid var(--fect-roxo); outline-offset: 3px; }
+.grafico-dados dl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  padding: 8px 0 0;
+}
+.grafico-rotulo-cor::before {
+  content: "";
+  display: inline-block;
+  width: .65em;
+  height: .65em;
+  margin-inline-end: .5em;
+  border-radius: 50%;
+  background: var(--grafico-cor);
+}
+.grafico-dados dd { text-align: end; font-variant-numeric: tabular-nums; }
+
+.fect-barra {
+  grid-template-columns: 24px 62px minmax(0, 1fr) 32px 44px;
+  font-variant-numeric: tabular-nums;
+}
+.fect-barra small { color: var(--fect-secundario); text-align: end; }
+.fect-barra-trilha {
+  position: relative;
+  overflow: hidden;
+  height: .55rem;
+  border-radius: 12px;
+  background: var(--fect-borda);
+}
+.fect-barra-trilha::after {
+  content: "";
+  display: block;
+  width: var(--fect-proporcao, 0%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--fect-cor-barra), color-mix(in srgb, var(--fect-cor-barra) 74%, var(--fect-roxo)));
+  transition: width 450ms ease;
+}
+.fect-barra meter {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+}
+@media (width <= 420px) {
+  .fect-barra { grid-template-columns: 21px 54px minmax(0, 1fr) 24px 36px; }
+}
+
+@keyframes painel-revelar {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-humora-painel] .tab-content.ativo > :is(.topo-conteudo, .fect-painel, .card-painel, .estilo-graficos, .estilo-graficos-container) {
+    animation: painel-revelar 380ms var(--ui-ease) both;
+  }
+  [data-humora-painel] .tab-content.ativo > :nth-child(2) { animation-delay: 55ms; }
+  [data-humora-painel] .tab-content.ativo > :nth-child(3) { animation-delay: 100ms; }
+  .fect-barra .imagem-emocao, #avatarAtual .imagem-emocao {
+    animation: fect-flutuar 4.6s ease-in-out infinite;
+  }
+  .fect-barra:nth-child(2n) .imagem-emocao { animation-delay: -1.3s; }
+  .fect-barra:nth-child(3n) .imagem-emocao { animation-delay: -2.3s; }
+}

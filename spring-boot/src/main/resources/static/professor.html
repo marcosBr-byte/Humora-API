@@ -138,9 +138,9 @@
           </div>
         </div>
         <div class="grafico-card estilo-grafico-card">
-          <h2 class="estilo-grafico-card-subtitulo">Gráfico Geral</h2>
+          <h2 class="estilo-grafico-card-subtitulo">Última emoção de cada aluno</h2>
           <div class="canvas-container estilo-canvas-container">
-            <canvas class="estilo-grafico-semana" id="graficoTurma"></canvas>
+            <canvas class="estilo-grafico-semana" id="graficoTurma" role="img" aria-label="Última emoção de cada aluno"></canvas>
           </div>
         </div>
       </section>
@@ -168,7 +168,7 @@
                 id="filtroEmocaoGrafico"
                 onchange="atualizarGraficosFiltrados()"
         >
-          <option class="estilo-filtro-turma-grafico-opcao" value="">Todos os Estados</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="">Todas as emoções</option>
           <option class="estilo-filtro-turma-grafico-opcao" value="feliz">Feliz</option>
           <option class="estilo-filtro-turma-grafico-opcao" value="triste">Triste</option>
           <option class="estilo-filtro-turma-grafico-opcao" value="cansado">Cansado</option>
@@ -182,15 +182,15 @@
       </div>
       <div class="graficos-container estilo-graficos-container">
         <div class="grafico-card estilo-grafico-card">
-          <h2 class="estilo-grafico-card-subtitulo-2"><span class="ui-icon ui-icon--chart estilo-ui-icon--chart" aria-hidden="true"></span> Distribuição por Turma</h2>
+          <h2 class="estilo-grafico-card-subtitulo-2"><span class="ui-icon ui-icon--chart estilo-ui-icon--chart" aria-hidden="true"></span> Alunos por turma</h2>
           <div class="canvas-container estilo-canvas-container">
-            <canvas class="estilo-grafico-semana" id="graficoBarra"></canvas>
+            <canvas class="estilo-grafico-semana" id="graficoBarra" role="img" aria-label="Alunos por turma"></canvas>
           </div>
         </div>
         <div class="grafico-card estilo-grafico-card">
-          <h2 class="estilo-grafico-card-subtitulo-2">🍩 Distribuição Geral</h2>
+          <h2 class="estilo-grafico-card-subtitulo-2">Proporção das emoções</h2>
           <div class="canvas-container estilo-canvas-container">
-            <canvas class="estilo-grafico-semana" id="graficoPizza"></canvas>
+            <canvas class="estilo-grafico-semana" id="graficoPizza" role="img" aria-label="Proporção das emoções"></canvas>
           </div>
         </div>
       </div>
@@ -214,7 +214,7 @@
           <option class="estilo-filtro-turma-grafico-opcao" value="">Todas as Turmas</option>
         </select>
         <select class="estilo-filtro-turma-grafico" id="filtroEmocao" onchange="aplicarFiltros()">
-          <option class="estilo-filtro-turma-grafico-opcao" value="">Todos os Estados</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="">Todas as emoções</option>
           <option class="estilo-filtro-turma-grafico-opcao" value="alerta">⚠️ Em Alerta</option>
           <option class="estilo-filtro-turma-grafico-opcao" value="feliz">Feliz</option>
           <option class="estilo-filtro-turma-grafico-opcao" value="triste">Triste</option>
@@ -569,6 +569,7 @@
 
 <script src="js/estados-visuais.js"></script>
 <script src="js/fect.js"></script>
+<script src="js/graficos.js"></script>
 <script src="js/professor.js"></script>
 
 <script src="js/menu-mobile.js"></script>

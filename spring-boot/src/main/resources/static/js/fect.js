@@ -94,11 +94,18 @@ function montarPainelFectProfessor() {
         medidor.max = 100;
         medidor.value = 0;
         medidor.setAttribute('aria-label', `Percentual de registros de ${nome}`);
+        const trilha = document.createElement('div');
+        trilha.className = 'fect-barra-trilha';
+        trilha.style.setProperty('--fect-cor-barra', coresDosGraficos[emocao]);
+        trilha.append(medidor);
         const contagem = document.createElement('strong');
         contagem.textContent = '0';
-        linha.append(medalhao, rotulo, medidor, contagem);
+        const proporcao = document.createElement('small');
+        proporcao.textContent = '0%';
+        proporcao.setAttribute('aria-hidden', 'true');
+        linha.append(medalhao, rotulo, trilha, contagem, proporcao);
         barras.append(linha);
-        linhas.set(emocao, { medidor, contagem });
+        linhas.set(emocao, { medidor, trilha, contagem, proporcao });
     }
     const status = painel.querySelector('.fect-atualizacao');
     const totalEl = painel.querySelector('#fectTotal');
@@ -125,6 +132,8 @@ function montarPainelFectProfessor() {
                 const percentual = total ? quantidade * 100 / total : 0;
                 linha.medidor.value = percentual;
                 linha.medidor.title = `${fectDecimal.format(percentual)}%`;
+                linha.trilha.style.setProperty('--fect-proporcao', `${percentual}%`);
+                linha.proporcao.textContent = linha.medidor.title;
                 linha.contagem.textContent = quantidade.toLocaleString('pt-BR');
             }
             status.textContent = total

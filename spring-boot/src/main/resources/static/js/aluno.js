@@ -48,7 +48,6 @@ if (!alunoAtual.badges) alunoAtual.badges = [];
 var emocaoSelecionada = null;
 let registroFectPendente;
 let atualizarTermometroIndividual;
-var graficoSemana = null, graficoRadar = null;
 var intervalRespiracao = null, intervalBloqueio = null;
 var pontosGame = 0, bolasEstouradas = 0, corAlvoAtual = "", tempoGameInterval = null;
 var cartasMemoria = [], cartasViradas = [], paresEncontrados = 0, tentativasMemoria = 0;
@@ -190,7 +189,7 @@ function trocarTab(nomeTab, elemento) {
     if (nomeTab === "graficos") {
         setTimeout(function () {
             carregarGraficoSemana();
-            carregarGraficoRadar();
+            carregarGraficoFrequencia();
         }, 200);
     }
     if (nomeTab === "conquistas") carregarConquistasTab();
@@ -408,81 +407,50 @@ function fecharModalVerDiario() {
 
 // ========== GRÁFICOS ==========
 function carregarGraficoSemana() {
-    var canvas = document.getElementById("graficoSemana");
-    if (!canvas) return;
-    var ctx = canvas.getContext("2d");
-    if (graficoSemana) graficoSemana.destroy();
-    var hist = alunoAtual.historico || [],
-        ultimos = hist.slice(-7),
-        labels = [],
-        dados = [];
-    if (ultimos.length > 0) {
-        labels = [];
-        dados = [];
-        for (var i = 0; i < ultimos.length; i++) {
-            labels.push(ultimos[i].data);
-            dados.push(ultimos[i].intensidade || 1);
-        }
-    }
-    graficoSemana = new Chart(ctx, {
-        type: "line",
-        data: {
-            labels: labels,
-            datasets: [{
-                data: dados,
-                borderColor: "#c084fc",
-                borderWidth: 3,
-                fill: true,
-                tension: 0.4,
-                pointRadius: 5,
-                pointBackgroundColor: "#fff"
-            }]
+    const linhas = alunoAtual.historico.slice(-7).map(item => ({
+        rotulo: item.hora && item.hora !== "00:00" ? `${item.data} · ${item.hora}` : item.data,
+        detalhes: nomesEmocoes[item.emocao],
+        valor: item.intensidade || 1
+    }));
+    renderizarGrafico("graficoSemana", linhas, {
+        tipo: "line",
+        unidade: valor => `${valor} de 5`,
+        vazio: "Registre sua primeira emoção para acompanhar a intensidade.",
+        dataset: {
+            borderColor: corPrincipalGrafico,
+            backgroundColor: () => corTemaHumora("--fect-selecionado"),
+            pointBackgroundColor: corPrincipalGrafico,
+            pointBorderColor: () => corTemaHumora("--fect-superficie"),
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHitRadius: 8,
+            borderWidth: 2,
+            fill: "start",
+            cubicInterpolationMode: "monotone"
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+        opcoes: {
+            interaction: { intersect: false, mode: "index" },
             scales: {
-                x: { ticks: { color: () => corTemaHumora("--fect-secundario") } },
-                y: { min: 1, max: 5, ticks: { stepSize: 1, color: () => corTemaHumora("--fect-secundario") } }
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        color: corTextoGrafico,
+                        maxRotation: 0,
+                        maxTicksLimit: 4,
+                        callback(index) { return `${index + 1}º`; }
+                    }
+                },
+                y: { min: 1, max: 5, grid: { color: corGradeGrafico }, ticks: { stepSize: 1, color: corTextoGrafico } }
             }
         }
     });
 }
 
-function carregarGraficoRadar() {
-    var canvas = document.getElementById("graficoRadar");
-    if (!canvas) return;
-    var ctx = canvas.getContext("2d");
-    if (graficoRadar) graficoRadar.destroy();
-    var cont = { feliz: 0, triste: 0, cansado: 0, calmo: 0, ansioso: 0, irritado: 0 },
-        hist = alunoAtual.historico || [];
-    for (var i = 0; i < hist.length; i++) {
-        if (cont[hist[i].emocao] !== undefined) cont[hist[i].emocao]++;
-    }
-    var vals = [cont.feliz, cont.triste, cont.cansado, cont.calmo, cont.ansioso, cont.irritado],
-        max = 5;
-    for (var j = 0; j < vals.length; j++) {
-        if (vals[j] > max) max = vals[j];
-    }
-    graficoRadar = new Chart(ctx, {
-        type: "radar",
-        data: {
-            labels: Object.values(nomesEmocoes),
-            datasets: [{
-                data: vals,
-                backgroundColor: "rgba(168,85,247,0.35)",
-                borderColor: "#c084fc",
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { r: { min: 0, max: max, ticks: { display: false } } },
-            plugins: { legend: { display: false } }
-        }
-    });
+function carregarGraficoFrequencia() {
+    const contagem = contarEmocoes(alunoAtual.historico.map(item => item.emocao));
+    graficoDeBarras("graficoFrequencia", linhasDasEmocoes(contagem),
+        valor => valor === 1 ? "1 registro" : `${valor} registros`,
+        "Suas emoções registradas vão aparecer aqui.");
 }
 
 // ========== RESPIRAÇÃO ==========
