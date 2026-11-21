@@ -1,5 +1,6 @@
 package br.com.projetoSpringBoot.spring_boot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -33,11 +34,12 @@ public class Professor  implements UserDetails {
 
     @Column(name = "id", nullable = false,unique = true)
         private Long id;
-    @Column(name = "nome", nullable = false,unique = true)
+    @Column(name = "nome", nullable = false)
         private String nome;
     @Column(name = "email", nullable = false,unique = true)
         private String email;
     @Column(name = "senha", nullable = false,unique = true)
+    @JsonIgnore
         private String senha;
     @Enumerated(EnumType.STRING)
         private Materia materia;
@@ -68,6 +70,7 @@ public class Professor  implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public @Nullable String getPassword() {
         return this.senha;
     }

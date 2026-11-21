@@ -1,72 +1,60 @@
-// js/login.js
-const CHAVE_ACESSO_CORRETA = "HUMORADM2026";
-
 async function login() {
-    const email = document.getElementById("email").value.trim().toLowerCase();
-    const senha = document.getElementById("senha").value.trim();
-    const tipo  = document.getElementById("tipoUsuario").value;
+    await executarEnvioFormulario('login', async () => {
+        const email = document.getElementById('email').value.trim().toLowerCase();
+        const senha = document.getElementById('senha').value.trim();
+        const tipo = document.getElementById('tipoUsuario').value;
 
-    if (!email || !senha) return alert("Preencha todos os campos.");
-    if (senha.length < 8) return alert("A senha deve possuir no mínimo 8 caracteres.");
+        if (!email || senha.length < 8) {
+            feedbackFormulario('Informe seu e-mail e uma senha com pelo menos 8 caracteres.', true);
+            return;
+        }
 
-    try {
-        let response;
-        if (tipo === "aluno") {
-            response = await api.loginAluno(email, senha);
-        } else {
-            const chave = prompt("🔑 Digite a chave de acesso do professor:");
-            if (!chave || chave !== CHAVE_ACESSO_CORRETA) {
-                return alert("❌ Chave de acesso inválida! Acesso negado.");
+        const resposta = tipo === 'aluno' ? await api.loginAluno(email, senha) : await api.loginProfessor(email, senha);
+        if (!resposta.ok) {
+            feedbackFormulario(await erroDoFormulario(resposta, 'Não foi possível entrar. Confira seus dados.'), true);
+            return;
+        }
+
+        const data = await resposta.json();
+        api.logout();
+        sessionStorage.setItem('token', data.token);
+        try {
+            const perfil = await api.getPerfil(tipo);
+            if (!perfil.ok) {
+                api.logout();
+                feedbackFormulario('Não foi possível carregar o perfil. Tente entrar novamente.', true);
+                return;
             }
-            response = await api.loginProfessor(email, senha);
+            const usuario = await perfil.json();
+            sessionStorage.setItem('usuarioLogado', JSON.stringify({ ...usuario, tipo }));
+            window.location.href = tipo === 'aluno' ? 'aluno.html' : 'professor.html';
+        } catch (erro) {
+            api.logout();
+            throw erro;
         }
-
-        if (!response.ok) {
-            let msg = "Erro no login.";
-            try { const t = await response.text(); if (t) msg = t; } catch (_) {}
-            return alert("❌ " + msg);
-        }
-
-        const data = await response.json();
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("tipoUsuario", tipo);
-        localStorage.setItem("email", email);
-
-        if (tipo === "aluno") {
-            const aluno = await api.getAlunoByEmail(email);
-            const usuario = aluno
-                ? { ...aluno, tipo: 'aluno' }
-                : { nome: email.split('@')[0], email, tipo: 'aluno' };
-            localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
-            window.location.href = "aluno.html";
-        } else {
-            const prof = await api.getProfessorByEmail(email);
-            const usuario = prof
-                ? { ...prof, tipo: 'professor' }
-                : { nome: email.split('@')[0], email, tipo: 'professor' };
-            localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
-            window.location.href = "professor.html";
-        }
-    } catch (error) {
-        console.error("Erro no login:", error);
-        alert("❌ Erro ao conectar com o servidor. Verifique se o backend está rodando.");
-    }
+    });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const btnAluno = document.getElementById("btnAluno");
-    const btnProfessor = document.getElementById("btnProfessor");
-    const tipo = document.getElementById("tipoUsuario");
-    if (!btnAluno || !btnProfessor) return;
+const perfis = [
+    { botao: document.getElementById('btnAluno'), tipo: 'aluno' },
+    { botao: document.getElementById('btnProfessor'), tipo: 'professor' }
+];
 
-    btnAluno.onclick = () => {
-        btnAluno.classList.add("ativo");
-        btnProfessor.classList.remove("ativo");
-        tipo.value = "aluno";
-    };
-    btnProfessor.onclick = () => {
-        btnProfessor.classList.add("ativo");
-        btnAluno.classList.remove("ativo");
-        tipo.value = "professor";
-    };
-});
+for (const perfil of perfis) {
+    perfil.botao.addEventListener('click', () => {
+        if (botaoDoFormulario('login').disabled) return;
+        document.getElementById('tipoUsuario').value = perfil.tipo;
+        for (const item of perfis) {
+            const selecionado = item === perfil;
+            item.botao.classList.toggle('ativo', selecionado);
+            item.botao.setAttribute('aria-pressed', String(selecionado));
+        }
+        feedbackFormulario('');
+    });
+}
+
+habilitarEnvioPorTeclado('login');
+if (sessionStorage.getItem('humoraCadastroConcluido')) {
+    sessionStorage.removeItem('humoraCadastroConcluido');
+    feedbackFormulario('Cadastro concluído. Você já pode entrar com sua conta.');
+}

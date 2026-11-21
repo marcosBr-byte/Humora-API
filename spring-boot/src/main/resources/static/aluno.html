@@ -1,304 +1,130 @@
 
 <!doctype html>
-<html lang="pt-BR">
+<html class="estilo-documento-aluno" lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Humora | Aluno</title>
+  <script src="vendor/chart.js"></script>
+
+  <link rel="stylesheet" href="css/fect.css" />
   <link rel="stylesheet" href="css/aluno.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- ===== RESPONSIVIDADE ===== -->
-  <style>
-    html { -webkit-text-size-adjust: 100%; }
-    img, canvas, video, svg { max-width: 100%; }
-    button, a, input, select, textarea { font: inherit; }
-
-    /* Botão hambúrguer mobile */
-    .menu-toggle-mobile {
-      display: none;
-      position: fixed;
-      top: 12px;
-      left: 12px;
-      z-index: 1100;
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      border: 1px solid rgba(168, 85, 247, 0.5);
-      background: rgba(46, 8, 84, 0.95);
-      color: #fff;
-      font-size: 1.4rem;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-    }
-    .menu-overlay-mobile {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55);
-      z-index: 999;
-    }
-    .menu-overlay-mobile.ativo { display: block; }
-
-    /* Notebook */
-    @media (max-width: 1366px) {
-      .sidebar { width: 260px; }
-      .conteudo { padding: 24px; }
-    }
-
-    /* Tablet */
-    @media (max-width: 1024px) {
-      .pagina { display: block; }
-      .sidebar {
-        position: fixed;
-        top: 0;
-        left: -300px;
-        width: 280px;
-        max-width: 85vw;
-        height: 100dvh;
-        overflow-y: auto;
-        z-index: 1050;
-        transition: left 0.3s ease;
-      }
-      .sidebar.sidebar-aberta { left: 0; }
-      .menu-toggle-mobile {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .conteudo {
-        margin-left: 0;
-        padding: 72px 20px 20px;
-        width: 100%;
-      }
-      .emocoes {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-      }
-      .graficos {
-        grid-template-columns: 1fr;
-      }
-      .jogos-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .lista-conquistas {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    /* Celular grande */
-    @media (max-width: 768px) {
-      .conteudo { padding: 68px 14px 20px; }
-      .topo-conteudo h1 { font-size: 1.4rem; }
-      .subtitulo { font-size: 0.9rem; }
-      .emocoes {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-      }
-      .emocao { padding: 14px 8px; }
-      .emocao .emoji { font-size: 1.8rem; }
-      .emocao .rotulo { font-size: 0.85rem; }
-      .jogos-grid { grid-template-columns: 1fr; }
-      .lista-conquistas { grid-template-columns: 1fr; }
-      .canvas-container {
-        height: 260px;
-        position: relative;
-      }
-      .canvas-container canvas { max-height: 260px; }
-      .modal-content {
-        width: 92vw;
-        max-width: 92vw;
-        max-height: 90dvh;
-        overflow-y: auto;
-        padding: 20px 16px;
-      }
-      .modal-content.modal-largo { width: 95vw; }
-      .notif-tabs {
-        flex-wrap: wrap;
-        gap: 6px;
-      }
-      .notif-tab { flex: 1 1 auto; font-size: 0.85rem; padding: 8px; }
-      .grid-badges, .grid-avatars {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .game-placar {
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: center;
-      }
-      .grid-memoria, .grid-bolas {
-        grid-template-columns: repeat(4, 1fr) !important;
-      }
-      canvas#canvasSubir {
-        width: 100% !important;
-        height: auto !important;
-      }
-      .diario-acoes {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-      }
-      .diario-acoes .btn-roxo { width: 100%; }
-    }
-
-    /* Celular */
-    @media (max-width: 480px) {
-      .conteudo { padding: 64px 10px 16px; }
-      .topo-conteudo h1 { font-size: 1.2rem; }
-      .emocoes {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-      }
-      .emocao { padding: 12px 6px; }
-      .emocao .emoji { font-size: 1.6rem; }
-      .emocao .rotulo { font-size: 0.8rem; }
-      .card-painel { padding: 14px 12px; border-radius: 12px; }
-      .card-painel h2 { font-size: 1.05rem; }
-      .jogo-card { padding: 16px 12px; }
-      .jogo-icone { font-size: 2rem; }
-      .menu-toggle-mobile { top: 8px; left: 8px; width: 42px; height: 42px; }
-      .circulo-respiracao {
-        width: 180px !important;
-        height: 180px !important;
-      }
-      .grid-avatars span { font-size: 1.6rem; padding: 8px; }
-    }
-
-    @media (max-width: 360px) {
-      .emocoes { grid-template-columns: 1fr 1fr; }
-      .emocao .emoji { font-size: 1.4rem; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        transition-duration: 0.001ms !important;
-      }
-    }
-  </style>
 </head>
-<body>
+<body class="estilo-fundo-aluno">
 <!-- Botão hambúrguer mobile -->
 <button
-        class="menu-toggle-mobile"
+        class="menu-toggle-mobile estilo-menu-toggle-mobile"
         id="menuToggleMobile"
         aria-label="Abrir menu"
-        onclick="toggleMenuMobile()"
+        aria-controls="sidebarAluno"
+        aria-expanded="false"
 >
-  ☰
+  <span class="ui-icon ui-icon--menu ui-icon--nav estilo-ui-icon--menu" aria-hidden="true"></span>
 </button>
-<div class="menu-overlay-mobile" id="menuOverlayMobile" onclick="toggleMenuMobile()"></div>
+<div class="menu-overlay-mobile estilo-menu-overlay-mobile" id="menuOverlayMobile"></div>
 
-<div class="pagina">
-  <aside class="sidebar" id="sidebarAluno">
-    <div class="topo-sidebar">
-      <div class="logo-area"><h1>🧠 Humora</h1></div>
-      <div class="perfil">
+<div class="pagina estilo-pagina">
+  <aside class="sidebar estilo-sidebar-aluno" id="sidebarAluno">
+    <div class="topo-sidebar estilo-topo-sidebar">
+      <div class="logo-area estilo-logo-area"><h1 class="estilo-logo-area-titulo"><img class="marca-sidebar estilo-marca-sidebar" src="imagens/cerebro.png" alt="" /> Humora</h1></div>
+      <div class="perfil estilo-perfil">
         <div
-                class="avatar"
-                id="avatarAtual"
+                class="avatar estilo-avatar-atual"
+                id="avatarAtual" role="button" tabindex="0" aria-label="Mudar avatar"
                 onclick="abrirModalAvatar()"
                 title="Mudar avatar"
         >
           😊
         </div>
         <div class="perfil-info">
-          <h2 id="nomeAlunoSidebar">Aluno</h2>
-          <p id="turmaAlunoSidebar">Turma</p>
+          <h2 class="estilo-nome-aluno-sidebar" id="nomeAlunoSidebar">Aluno</h2>
+          <p class="estilo-turma-aluno-sidebar" id="turmaAlunoSidebar">Turma</p>
         </div>
       </div>
-      <div class="streak-card">
-        <span class="fogo">🔥</span>
+      <div class="streak-card estilo-streak-card">
+        <span class="ui-icon ui-icon--flame ui-icon--streak estilo-ui-icon--flame" aria-hidden="true"></span>
         <div>
-          <strong id="diasStreak">0 Dias</strong
-          ><small>Sequência diária</small>
+          <strong class="estilo-dias-streak" id="diasStreak">0 Dias</strong
+          ><small class="estilo-streak-card-legenda">Sequência diária</small>
         </div>
       </div>
-      <nav class="menu-sidebar">
-        <button class="menu-item ativo" onclick="trocarTab('inicio', this)">
-          <span class="icone-menu">🏠</span> Início
+      <nav class="menu-sidebar estilo-menu-sidebar">
+        <button class="menu-item ativo estilo-menu-item" onclick="trocarTab('inicio', this)" aria-current="page">
+          <span class="ui-icon ui-icon--home ui-icon--nav estilo-ui-icon--home" aria-hidden="true"></span> Início
         </button>
-        <button class="menu-item" onclick="trocarTab('graficos', this)">
-          <span class="icone-menu">📊</span> Meus Gráficos
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('graficos', this)">
+          <span class="ui-icon ui-icon--chart ui-icon--nav estilo-ui-icon--chart-2" aria-hidden="true"></span> Meus Gráficos
         </button>
-        <button class="menu-item" onclick="trocarTab('diario', this)">
-          <span class="icone-menu">📖</span> Diário
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('diario', this)">
+          <span class="ui-icon ui-icon--book ui-icon--nav estilo-ui-icon--book-2" aria-hidden="true"></span> Diário
         </button>
-        <button class="menu-item" onclick="trocarTab('jogos', this)">
-          <span class="icone-menu">🎮</span> Jogos
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('jogos', this)">
+          <span class="ui-icon ui-icon--game ui-icon--nav estilo-ui-icon--game-2" aria-hidden="true"></span> Jogos
         </button>
-        <button class="menu-item" onclick="trocarTab('respiracao', this)">
-          <span class="icone-menu">🧘</span> Respiração
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('respiracao', this)">
+          <span class="ui-icon ui-icon--wind ui-icon--nav estilo-ui-icon--wind" aria-hidden="true"></span> Respiração
         </button>
-        <button class="menu-item" onclick="trocarTab('conquistas', this)">
-          <span class="icone-menu">🏆</span> Conquistas
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('conquistas', this)">
+          <span class="ui-icon ui-icon--trophy ui-icon--nav estilo-ui-icon--trophy" aria-hidden="true"></span> Conquistas
         </button>
       </nav>
       <button
-              class="menu-item menu-item-notif"
+              class="menu-item menu-item-notif estilo-menu-item-2"
               onclick="abrirModalHistorico()"
       >
-        <span class="icone-menu">📜</span> Histórico
+        <span class="ui-icon ui-icon--history ui-icon--nav estilo-ui-icon--history" aria-hidden="true"></span> Histórico
       </button>
       <button
-              class="menu-item menu-item-notif"
+              class="menu-item menu-item-notif estilo-menu-item-2"
               onclick="abrirModalNotificacoes()"
       >
-        <span class="icone-menu">🔔</span> Notificações
-        <span id="badgeNotificacao" class="badge-pop" style="display: none"
-        >0</span
+        <span class="ui-icon ui-icon--bell ui-icon--nav estilo-ui-icon--bell-2" aria-hidden="true"></span> Notificações
+        <span id="badgeNotificacao" class="badge-pop estilo-badge-notificacao">0</span
         >
       </button>
     </div>
-    <button class="btn-sair" onclick="sair()">🚪 Sair</button>
+    <button class="btn-sair estilo-btn-sair" onclick="sair()"><span class="ui-icon ui-icon--logout estilo-ui-icon--logout" aria-hidden="true"></span> Sair</button>
   </aside>
 
-  <main class="conteudo">
-    <div id="tab-inicio" class="tab-content ativo">
-      <header class="topo-conteudo">
+  <main class="conteudo estilo-conteudo">
+    <div id="tab-inicio" class="tab-content ativo estilo-tab-inicio">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>Olá, <span id="nomeAluno">Aluno</span>!</h1>
-          <p class="subtitulo">Como você está se sentindo hoje?</p>
+          <h1 class="estilo-topo-conteudo-titulo">Olá, <span id="nomeAluno">Aluno</span>!</h1>
+          <p class="subtitulo estilo-subtitulo">Como você está se sentindo hoje?</p>
         </div>
       </header>
-      <section id="emocoes" class="emocoes">
-        <div class="emocao" onclick="selecionarEmocao(event, 'feliz')">
-          <span class="emoji">😊</span><span class="rotulo">Feliz</span>
-        </div>
-        <div class="emocao" onclick="selecionarEmocao(event, 'triste')">
-          <span class="emoji">😔</span><span class="rotulo">Triste</span>
-        </div>
-        <div class="emocao" onclick="selecionarEmocao(event, 'cansado')">
-          <span class="emoji">😴</span><span class="rotulo">Cansado</span>
-        </div>
-        <div class="emocao" onclick="selecionarEmocao(event, 'calmo')">
-          <span class="emoji">😌</span><span class="rotulo">Calmo</span>
-        </div>
-        <div class="emocao" onclick="selecionarEmocao(event, 'ansioso')">
-          <span class="emoji">😰</span><span class="rotulo">Ansioso</span>
-        </div>
-        <div class="emocao" onclick="selecionarEmocao(event, 'irritado')">
-          <span class="emoji">😡</span><span class="rotulo">Irritado</span>
-        </div>
+      <section id="emocoes" class="emocoes estilo-emocoes">
+        <button type="button" class="emocao estilo-emocao" aria-pressed="false" onclick="selecionarEmocao(event, 'feliz')">
+          <img class="imagem-emocao" src="imagens/emocoes/feliz.webp" alt=""><span class="rotulo estilo-rotulo">Feliz</span>
+        </button>
+        <button type="button" class="emocao estilo-emocao" aria-pressed="false" onclick="selecionarEmocao(event, 'triste')">
+          <img class="imagem-emocao" src="imagens/emocoes/triste.webp" alt=""><span class="rotulo estilo-rotulo">Triste</span>
+        </button>
+        <button type="button" class="emocao estilo-emocao" aria-pressed="false" onclick="selecionarEmocao(event, 'cansado')">
+          <img class="imagem-emocao" src="imagens/emocoes/cansado.webp" alt=""><span class="rotulo estilo-rotulo">Cansado</span>
+        </button>
+        <button type="button" class="emocao estilo-emocao" aria-pressed="false" onclick="selecionarEmocao(event, 'calmo')">
+          <img class="imagem-emocao" src="imagens/emocoes/calmo.webp" alt=""><span class="rotulo estilo-rotulo">Calmo</span>
+        </button>
+        <button type="button" class="emocao estilo-emocao" aria-pressed="false" onclick="selecionarEmocao(event, 'ansioso')">
+          <img class="imagem-emocao" src="imagens/emocoes/ansioso.webp" alt=""><span class="rotulo estilo-rotulo">Ansioso</span>
+        </button>
+        <button type="button" class="emocao estilo-emocao" aria-pressed="false" onclick="selecionarEmocao(event, 'irritado')">
+          <img class="imagem-emocao" src="imagens/emocoes/irritado.webp" alt=""><span class="rotulo estilo-rotulo">Irritado</span>
+        </button>
       </section>
-      <div id="motivoContainer" class="card-painel">
+      <div id="motivoContainer" class="card-painel estilo-motivo-container">
         <p
-                id="emocaoSelecionadaTexto"
-                style="
-                display: none;
-                text-align: center;
-                font-size: 14px;
-                margin-bottom: 10px;
-              "
-        >
+                id="emocaoSelecionadaTexto" class="estilo-emocao-selecionada-texto">
           Você selecionou: <strong id="nomeEmocaoSelecionada"></strong>
         </p>
-        <div class="intensidade-wrapper">
-          <label
+        <div class="intensidade-wrapper estilo-intensidade-wrapper">
+          <label for="intensidadeEmocao"
           >Intensidade (1 a 5):
             <span id="valorIntensidade">1</span></label
           >
-          <input
+          <input class="estilo-intensidade-emocao"
                   type="range"
                   id="intensidadeEmocao"
                   min="1"
@@ -310,140 +136,134 @@
                 "
           />
         </div>
-        <textarea
+        <textarea class="estilo-motivo"
                 id="motivo"
                 placeholder="Conte o motivo dessa emoção... (opcional)"
         ></textarea>
         <button
                 id="btnEnviarEmocao"
-                class="btn-roxo"
+                class="btn-roxo estilo-btn-enviar-emocao"
                 onclick="enviarEmocao()"
                 disabled
         >
-          Enviar Emoção 💜
+          Registrar emoção <span class="ui-icon ui-icon--arrow estilo-ui-icon--arrow-2" aria-hidden="true"></span>
         </button>
       </div>
       <div
               id="bloqueioHumora"
-              class="card-painel"
-              style="display: none"
-      ></div>
+              class="card-painel estilo-bloqueio-humora">
+          <h3>✅ Emoção registrada!</h3>
+          <p>Próximo registro em:</p>
+          <strong id="tempoBloqueioHumora" class="estilo-tempo-bloqueio-humora"></strong>
+        </div>
     </div>
 
-    <div id="tab-graficos" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-graficos" class="tab-content estilo-tab-inicio">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>📊 Meus Gráficos</h1>
-          <p class="subtitulo">Acompanhe sua evolução emocional</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--chart estilo-ui-icon--chart" aria-hidden="true"></span> Meus Gráficos</h1>
+          <p class="subtitulo estilo-subtitulo">Acompanhe sua evolução emocional</p>
         </div>
       </header>
-      <div class="graficos">
-        <div class="grafico-card">
-          <h2>Evolução dos Últimos 7 Dias</h2>
-          <div class="canvas-container">
-            <canvas id="graficoSemana"></canvas>
+      <div class="graficos estilo-graficos">
+        <div class="grafico-card estilo-grafico-card">
+          <h2 class="estilo-grafico-card-subtitulo">Evolução dos Últimos 7 Dias</h2>
+          <div class="canvas-container estilo-canvas-container">
+            <canvas class="estilo-grafico-semana" id="graficoSemana"></canvas>
           </div>
         </div>
-        <div class="grafico-card">
-          <h2>Equilíbrio Emocional</h2>
-          <div class="canvas-container">
-            <canvas id="graficoRadar"></canvas>
+        <div class="grafico-card estilo-grafico-card">
+          <h2 class="estilo-grafico-card-subtitulo">Equilíbrio Emocional</h2>
+          <div class="canvas-container estilo-canvas-container">
+            <canvas class="estilo-grafico-semana" id="graficoRadar"></canvas>
           </div>
         </div>
       </div>
     </div>
 
-    <div id="tab-diario" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-diario" class="tab-content estilo-tab-inicio">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>📖 Diário Humorístico</h1>
-          <p class="subtitulo">Escreva livremente sobre o seu dia</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--book estilo-ui-icon--book" aria-hidden="true"></span> Diário Humorístico</h1>
+          <p class="subtitulo estilo-subtitulo">Escreva livremente sobre o seu dia</p>
         </div>
-        <button class="btn-roxo-peq" onclick="abrirModalVerDiario()">
-          📋 Ver Registros
+        <button class="btn-roxo-peq estilo-btn-roxo-peq" onclick="abrirModalVerDiario()">
+          <span class="ui-icon ui-icon--history estilo-ui-icon--history-2" aria-hidden="true"></span> Ver Registros
         </button>
       </header>
-      <section class="card-painel">
-            <textarea
+      <section class="card-painel estilo-card-painel">
+            <textarea class="estilo-motivo"
                     id="textoDiario"
                     placeholder="Escreva seu desabafo aqui..."
                     rows="5"
             ></textarea>
-        <div class="diario-acoes">
-          <label class="checkbox-label"
-          ><input type="checkbox" id="compartilharDiario" /> Permitir que
+        <div class="diario-acoes estilo-diario-acoes">
+          <label data-apenas-aluno class="checkbox-label estilo-checkbox-label"
+          ><input class="estilo-compartilhar-diario" type="checkbox" id="compartilharDiario" /> Permitir que
             o professor leia</label
           >
-          <button class="btn-roxo" onclick="salvarDiario()">
-            Salvar 📝
+          <button class="btn-roxo estilo-btn-enviar-emocao" onclick="salvarDiario()">
+            Salvar <span class="ui-icon ui-icon--edit estilo-ui-icon--edit" aria-hidden="true"></span>
           </button>
         </div>
       </section>
     </div>
 
-    <div id="tab-jogos" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-jogos" class="tab-content estilo-tab-inicio">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>🎮 Jogos</h1>
-          <p class="subtitulo">Relaxe e divirta-se</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--game estilo-ui-icon--game" aria-hidden="true"></span> Jogos</h1>
+          <p class="subtitulo estilo-subtitulo">Relaxe e divirta-se</p>
         </div>
       </header>
-      <div class="jogos-grid">
-        <div class="jogo-card" onclick="abrirModalGame()">
-          <div class="jogo-icone">🎈</div>
-          <h3>Pop-It</h3>
-          <p>Estoure as bolhas da cor certa!</p>
+      <div class="jogos-grid estilo-jogos-grid">
+        <div class="jogo-card estilo-jogo-card" onclick="abrirModalGame()" role="button" tabindex="0">
+          <div class="jogo-icone estilo-jogo-icone" aria-hidden="true"><span class="estilo-jogo-icone-detalhe-2" aria-hidden="true"></span></div>
+          <h3 class="estilo-jogo-card-titulo-item">Pop-It</h3>
+          <p class="estilo-jogo-card-texto">Estoure as bolhas da cor certa!</p>
         </div>
-        <div class="jogo-card" onclick="abrirJogoMemoria()">
-          <div class="jogo-icone">🃏</div>
-          <h3>Jogo da Memória</h3>
-          <p>Encontre os pares de emoções</p>
+        <div class="jogo-card estilo-jogo-card" onclick="abrirJogoMemoria()" role="button" tabindex="0">
+          <div class="jogo-icone estilo-jogo-icone" aria-hidden="true"><span class="estilo-jogo-icone-detalhe-4" aria-hidden="true"></span></div>
+          <h3 class="estilo-jogo-card-titulo-item">Jogo da Memória</h3>
+          <p class="estilo-jogo-card-texto">Encontre os pares de emoções</p>
         </div>
-        <div class="jogo-card" onclick="abrirJogoSubir()">
-          <div class="jogo-icone">🧠</div>
-          <h3>Cérebro Saltador</h3>
-          <p>Pule nas plataformas móveis!</p>
+        <div class="jogo-card estilo-jogo-card" onclick="abrirJogoSubir()" role="button" tabindex="0">
+          <div class="jogo-icone estilo-jogo-icone" aria-hidden="true"><span class="estilo-jogo-icone-detalhe-3" aria-hidden="true"></span></div>
+          <h3 class="estilo-jogo-card-titulo-item">Cérebro Saltador</h3>
+          <p class="estilo-jogo-card-texto">Pule nas plataformas móveis!</p>
         </div>
-        <div class="jogo-card" onclick="abrirCacaPalavras()">
-          <div class="jogo-icone">🔤</div>
-          <h3>Caça-Palavras</h3>
-          <p>Encontre as palavras escondidas!</p>
+        <div class="jogo-card estilo-jogo-card" onclick="abrirCacaPalavras()" role="button" tabindex="0">
+          <div class="jogo-icone estilo-jogo-icone" aria-hidden="true"><span class="estilo-jogo-icone-detalhe" aria-hidden="true"></span></div>
+          <h3 class="estilo-jogo-card-titulo-item">Caça-Palavras</h3>
+          <p class="estilo-jogo-card-texto">Encontre as palavras escondidas!</p>
         </div>
       </div>
     </div>
 
-    <div id="tab-respiracao" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-respiracao" class="tab-content estilo-tab-inicio">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>🧘 Exercício de Respiração</h1>
-          <p class="subtitulo">Relaxe sua mente</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--wind estilo-ui-icon--wind-2" aria-hidden="true"></span> Exercício de Respiração</h1>
+          <p class="subtitulo estilo-subtitulo">Relaxe sua mente</p>
         </div>
       </header>
-      <div class="card-painel" style="text-align: center">
-        <p style="margin-bottom: 20px; color: #cbd5e1">
+      <div class="card-painel estilo-card-painel-2">
+        <p class="estilo-card-painel-texto">
           Acompanhe o círculo e respire no ritmo indicado
         </p>
-        <div class="circulo-respiracao" id="circuloRespiracao">
-          <span id="textoRespiracaoTab">Inspire...</span>
+        <div class="circulo-respiracao estilo-circulo-respiracao" id="circuloRespiracao">
+          <span class="estilo-texto-respiracao-tab" id="textoRespiracaoTab">Inspire...</span>
         </div>
-        <div
-                style="
-                display: flex;
-                gap: 15px;
-                justify-content: center;
-                margin-top: 25px;
-                flex-wrap: wrap;
-              "
-        >
+        <div class="estilo-card-painel-div">
           <button
-                  class="btn-respiracao btn-iniciar"
+                  class="btn-respiracao btn-iniciar estilo-btn-iniciar-respiracao"
                   id="btnIniciarRespiracao"
                   onclick="iniciarRespiracaoTab()"
           >
             ▶️ Iniciar
           </button>
           <button
-                  class="btn-respiracao btn-parar"
+                  class="btn-respiracao btn-parar estilo-btn-parar-respiracao"
                   id="btnPararRespiracao"
                   onclick="pararRespiracaoTab()"
           >
@@ -453,221 +273,235 @@
       </div>
     </div>
 
-    <div id="tab-conquistas" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-conquistas" class="tab-content estilo-tab-inicio">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>🏆 Minhas Conquistas</h1>
-          <p class="subtitulo">Cuidar da sua mente rende recompensas!</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--trophy estilo-ui-icon--trophy-2" aria-hidden="true"></span> Minhas Conquistas</h1>
+          <p class="subtitulo estilo-subtitulo">Cuidar da sua mente rende recompensas!</p>
         </div>
       </header>
-      <div id="containerConquistasTab" class="lista-conquistas"></div>
+      <div id="containerConquistasTab" class="lista-conquistas estilo-container-conquistas-tab"></div>
     </div>
   </main>
 </div>
 
-<div id="modalHistorico" class="modal-overlay">
-  <div class="modal-content">
-    <span class="x-fechar" onclick="fecharModalHistorico()">&times;</span>
-    <h2>📜 Histórico de Emoções</h2>
-    <div id="historico" class="modal-body-scroll"></div>
-    <button class="btn-fechar-modal" onclick="fecharModalHistorico()">
+<div id="modalHistorico" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content estilo-modal-content-2">
+    <span class="x-fechar estilo-x-fechar" onclick="fecharModalHistorico()">&times;</span>
+    <h2 class="estilo-modal-content-subtitulo"><span class="ui-icon ui-icon--history estilo-ui-icon--history-2" aria-hidden="true"></span> Histórico de Emoções</h2>
+    <div id="historico" class="modal-body-scroll estilo-historico"></div>
+    <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharModalHistorico()">
       Fechar
     </button>
   </div>
 </div>
 
-<div id="modalNotificacoes" class="modal-overlay">
-  <div class="modal-content modal-largo">
-        <span class="x-fechar" onclick="fecharModalNotificacoes()"
+<div id="modalNotificacoes" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content modal-largo estilo-modal-content">
+        <span class="x-fechar estilo-x-fechar" onclick="fecharModalNotificacoes()"
         >&times;</span
         >
-    <h2>🔔 Central de Notificações</h2>
-    <div class="notif-tabs">
+    <h2 class="estilo-modal-content-subtitulo"><span class="ui-icon ui-icon--bell estilo-ui-icon--bell" aria-hidden="true"></span> Central de Notificações</h2>
+    <div class="notif-tabs estilo-notif-tabs">
       <button
-              class="notif-tab ativo"
+              class="notif-tab ativo estilo-notif-tab"
               onclick="trocarNotifTab('mensagens', this)"
       >
         💬 Mensagens
       </button>
       <button
-              class="notif-tab"
+              class="notif-tab estilo-notif-tab"
               onclick="trocarNotifTab('atividades', this)"
       >
         📅 Atividades
       </button>
-      <button class="notif-tab" onclick="trocarNotifTab('avisos', this)">
+      <button class="notif-tab estilo-notif-tab" onclick="trocarNotifTab('avisos', this)">
         📢 Avisos
       </button>
     </div>
-    <div id="notif-mensagens" class="notif-content ativo">
-      <div id="mensagensProfessor" class="modal-body-scroll"></div>
+    <div id="notif-mensagens" class="notif-content ativo estilo-notif-mensagens">
+      <div id="mensagensProfessor" class="modal-body-scroll estilo-historico"></div>
     </div>
-    <div id="notif-atividades" class="notif-content">
-      <div id="atividadesAluno" class="modal-body-scroll"></div>
+    <div id="notif-atividades" class="notif-content estilo-notif-mensagens">
+      <div id="atividadesAluno" class="modal-body-scroll estilo-historico"></div>
     </div>
-    <div id="notif-avisos" class="notif-content">
-      <div id="avisosAluno" class="modal-body-scroll"></div>
+    <div id="notif-avisos" class="notif-content estilo-notif-mensagens">
+      <div id="avisosAluno" class="modal-body-scroll estilo-historico"></div>
     </div>
-    <button class="btn-fechar-modal" onclick="fecharModalNotificacoes()">
+    <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharModalNotificacoes()">
       Fechar
     </button>
   </div>
 </div>
 
-<div id="modalGame" class="modal-overlay">
-  <div class="modal-content">
-    <h2>🎈 Jogo Pop-It</h2>
+<div id="modalGame" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content estilo-modal-content-2">
+    <h2 class="estilo-modal-content-subtitulo"><span class="estilo-jogo-icone-detalhe-2" aria-hidden="true"></span>  Jogo Pop-It</h2>
     <p>Estoure a cor certa antes do tempo acabar!</p>
-    <div class="game-placar">
-      <div>Cor: <strong id="corAlvoTexto">...</strong></div>
+    <div class="game-placar estilo-game-placar">
+      <div>Cor: <strong id="corAlvoTexto" class="estilo-cor-alvo-texto">...</strong></div>
       <div>⏱️ <span id="tempoGameTexto">5s</span></div>
       <div>Pontos: <span id="gamePontos">0</span></div>
     </div>
-    <div class="barra-tempo-container">
-      <div id="barraTempoProgresso" class="barra-tempo-progresso"></div>
+    <div class="barra-tempo-container estilo-barra-tempo-container">
+      <div id="barraTempoProgresso" class="barra-tempo-progresso estilo-barra-tempo-progresso"></div>
     </div>
-    <div id="gridBolasGame" class="grid-bolas"></div>
-    <button class="btn-fechar-modal" onclick="fecharModalGame()">
+    <p id="resultadoPopIt" class="fect-jogo-feedback" role="status"></p>
+    <div id="gridBolasGame" class="grid-bolas estilo-grid-bolas-game"></div>
+    <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharModalGame()">
       Fechar Jogo
     </button>
   </div>
 </div>
 
-<div id="modalMemoria" class="modal-overlay">
-  <div class="modal-content">
-    <h2>🃏 Jogo da Memória</h2>
+<div id="modalMemoria" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content estilo-modal-content-2">
+    <h2 class="estilo-modal-content-subtitulo"><span class="estilo-jogo-icone-detalhe-4" aria-hidden="true"></span>  Jogo da Memória</h2>
     <p>Encontre os pares de emoções!</p>
-    <div id="gridMemoria" class="grid-memoria"></div>
+    <div id="gridMemoria" class="grid-memoria estilo-grid-memoria"></div>
     <p>Tentativas: <span id="tentativasMemoria">0</span></p>
-    <button class="btn-fechar-modal" onclick="fecharJogoMemoria()">
+    <p id="resultadoMemoria" class="fect-jogo-feedback" role="status"></p>
+    <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharJogoMemoria()">
       Fechar
     </button>
   </div>
 </div>
 
-<div id="modalSubir" class="modal-overlay">
-  <div class="modal-content modal-largo">
-    <h2>🧠 Cérebro Saltador</h2>
-    <p>Use ← → para mover e pule nas plataformas!</p>
-    <div class="game-placar">
+<div id="modalSubir" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content modal-largo estilo-modal-content">
+    <h2 class="estilo-modal-content-subtitulo"><span class="estilo-jogo-icone-detalhe-3" aria-hidden="true"></span>  Cérebro Saltador</h2>
+    <p>Use as setas ou os botões para mover. O salto é automático.</p>
+    <div class="game-placar estilo-game-placar">
       <div>🧠 Pontos: <span id="pontosSubir">0</span></div>
       <div>🏆 Melhor: <span id="melhorSubir">0</span></div>
     </div>
     <canvas
             id="canvasSubir"
             width="400"
-            height="400"
-            style="
-            border: 2px solid #a855f7;
-            border-radius: 12px;
-            background: #1a0a2e;
-            margin: 10px 0;
-          "
-    ></canvas>
-    <button class="btn-fechar-modal" onclick="fecharJogoSubir()">
+            height="400" class="estilo-canvas-subir"></canvas>
+    <div class="fect-jogo-controles">
+      <button type="button" data-direcao="ArrowLeft" aria-label="Mover à esquerda">←</button>
+      <button type="button" data-direcao="ArrowRight" aria-label="Mover à direita">→</button>
+    </div>
+    <p id="resultadoSubir" class="fect-jogo-feedback" role="status"></p>
+    <button class="btn-fechar-modal estilo-btn-fechar-modal" type="button" onclick="abrirJogoSubir()">Recomeçar</button>
+    <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharJogoSubir()">
       Fechar
     </button>
   </div>
 </div>
 
-<div id="modalCacaPalavras" class="modal-overlay">
-  <div class="modal-content modal-largo">
-    <h2>🔤 Caça-Palavras das Emoções</h2>
-    <p>Clique na primeira letra e arraste até a última da palavra!</p>
-    <div class="game-placar">
+<div id="modalCacaPalavras" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content modal-largo estilo-modal-content">
+    <h2 class="estilo-modal-content-subtitulo"><span class="estilo-jogo-icone-detalhe" aria-hidden="true"></span>  Caça-Palavras das Emoções</h2>
+    <p>Selecione a primeira e a última letra de cada palavra.</p>
+    <div class="game-placar estilo-game-placar">
       <div>🔤 Encontradas: <span id="palavrasEncontradas">0/8</span></div>
       <div>💡 Dicas: <span id="dicasRestantes">3</span></div>
     </div>
     <div
-            id="gradeCacaPalavras"
-            style="display: grid; gap: 2px; margin: 15px auto; user-select: none"
-    ></div>
+            id="gradeCacaPalavras" class="estilo-grade-caca-palavras"></div>
     <div
-            id="listaPalavras"
-            style="
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 10px;
-          "
-    ></div>
-    <div style="display: flex; gap: 10px">
-      <button class="btn-fechar-modal" onclick="usarDica()" id="btnDica">
+            id="listaPalavras" class="estilo-lista-palavras"></div>
+    <div class="estilo-modal-content-div">
+      <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="usarDica()" id="btnDica">
         💡 Dica
       </button>
-      <button class="btn-fechar-modal" onclick="fecharCacaPalavras()">
+      <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharCacaPalavras()">
         Fechar
       </button>
     </div>
   </div>
 </div>
 
-<div id="modalVerDiario" class="modal-overlay">
-  <div class="modal-content">
-    <span class="x-fechar" onclick="fecharModalVerDiario()">&times;</span>
-    <h2>📖 Meus Registros</h2>
-    <div id="containerListaDiario" class="modal-body-scroll"></div>
-    <button class="btn-fechar-modal" onclick="fecharModalVerDiario()">
+<div id="modalVerDiario" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content estilo-modal-content-2">
+    <span class="x-fechar estilo-x-fechar" onclick="fecharModalVerDiario()">&times;</span>
+    <h2 class="estilo-modal-content-subtitulo"><span class="ui-icon ui-icon--book estilo-ui-icon--book" aria-hidden="true"></span> Meus Registros</h2>
+    <div id="containerListaDiario" class="modal-body-scroll estilo-historico"></div>
+    <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharModalVerDiario()">
       Fechar
     </button>
   </div>
 </div>
 
-<div id="modalAvatar" class="modal-overlay">
-  <div class="modal-content">
-    <h2>Escolha seu Avatar</h2>
-    <div class="grid-avatars">
-          <span onclick="mudarAvatar('😊')">😊</span
-          ><span onclick="mudarAvatar('😎')">😎</span>
-      <span onclick="mudarAvatar('🐱')">🐱</span
-      ><span onclick="mudarAvatar('🦊')">🦊</span>
-      <span onclick="mudarAvatar('🐼')">🐼</span
-      ><span onclick="mudarAvatar('🚀')">🚀</span>
-      <span onclick="mudarAvatar('🤖')">🤖</span
-      ><span onclick="mudarAvatar('🦄')">🦄</span>
+<div id="modalAvatar" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content estilo-modal-content-2">
+    <h2 class="estilo-modal-content-subtitulo">Escolha seu Avatar</h2>
+    <div class="grid-avatars estilo-grid-avatars">
+          <span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('😊')">😊</span
+          ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('😎')">😎</span>
+      <span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🐱')">🐱</span
+      ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🦊')">🦊</span>
+      <span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🐼')">🐼</span
+      ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🚀')">🚀</span>
+      <span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🤖')">🤖</span
+      ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatar('🦄')">🦄</span>
     </div>
-    <button class="btn-fechar-modal" onclick="fecharModalAvatar()">
+    <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharModalAvatar()">
       Cancelar
     </button>
   </div>
 </div>
 
+<script src="js/imagens-emocoes.js"></script>
 <script src="js/api.js"></script>
+<p id="avisoPainel" hidden role="status" aria-atomic="true"
+  class="estilo-aviso-painel"></p>
+
+<template id="modeloSemDados">
+  <p data-texto="mensagem" class="estilo-mensagem"></p>
+</template>
+
+<template id="modeloBolaPopIt">
+  <button type="button" class="bola-game estilo-bola-game"></button>
+</template>
+
+<template id="modeloNotaAluno">
+  <div class="estilo-modelo-nota-aluno-div">
+    <strong data-texto="data"></strong>
+    <p data-texto="texto" class="estilo-texto-2"></p>
+    <small data-texto="compartilhamento" class="estilo-compartilhamento"></small>
+  </div>
+</template>
+
+<template id="modeloHistoricoAluno">
+  <div class="estilo-modelo-historico-aluno-div">
+    <strong data-texto="resumo"></strong><span data-descricao><br><small
+      data-texto="descricao"></small></span><br><small data-texto="data"></small>
+  </div>
+</template>
+
+<template id="modeloMensagemAluno">
+  <div class="estilo-modelo-historico-aluno-div">
+    <strong data-texto="autor"></strong> <small data-texto="data"></small>
+    <p data-texto="texto" class="estilo-texto-2"></p>
+  </div>
+</template>
+
+<template id="modeloAtividadeAluno">
+  <div class="estilo-modelo-historico-aluno-div">
+    <strong data-texto="titulo"></strong><br><small data-texto="detalhes"></small>
+  </div>
+</template>
+
+<template id="modeloAvisoAluno">
+  <div class="estilo-modelo-historico-aluno-div">
+    <strong>📢 Aviso</strong><p data-texto="texto" class="estilo-texto-2"></p><small data-texto="data"></small>
+  </div>
+</template>
+
+<template id="modeloConquistaAluno">
+  <div class="estilo-modelo-conquista-aluno-div">
+    <span data-texto="icone" class="estilo-icone-2"></span>
+    <div><strong data-texto="titulo"></strong><p data-texto="descricao" class="estilo-descricao"></p></div>
+  </div>
+</template>
+
+<script src="js/estados-visuais.js"></script>
+<script src="js/fect.js"></script>
 <script src="js/aluno.js"></script>
 
-<!-- ===== MENU MOBILE ===== -->
-<script>
-  function toggleMenuMobile() {
-    var sidebar = document.getElementById("sidebarAluno");
-    var overlay = document.getElementById("menuOverlayMobile");
-    if (!sidebar || !overlay) return;
-    sidebar.classList.toggle("sidebar-aberta");
-    overlay.classList.toggle("ativo");
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    var itens = document.querySelectorAll(".menu-sidebar .menu-item");
-    itens.forEach(function (item) {
-      item.addEventListener("click", function () {
-        if (window.innerWidth <= 1024) {
-          var sidebar = document.getElementById("sidebarAluno");
-          var overlay = document.getElementById("menuOverlayMobile");
-          if (sidebar) sidebar.classList.remove("sidebar-aberta");
-          if (overlay) overlay.classList.remove("ativo");
-        }
-      });
-    });
-  });
-
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") {
-      var sidebar = document.getElementById("sidebarAluno");
-      var overlay = document.getElementById("menuOverlayMobile");
-      if (sidebar) sidebar.classList.remove("sidebar-aberta");
-      if (overlay) overlay.classList.remove("ativo");
-    }
-  });
-</script>
+<script src="js/menu-mobile.js"></script>
 </body>
 </html>

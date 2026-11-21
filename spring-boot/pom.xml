@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.6</version>
+		<version>4.1.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.projetoSpringBoot</groupId>
@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>3.0.2</version>
+			<version>3.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -81,14 +81,62 @@
 		</dependency>
 
 		<dependency>
-    		<groupId>org.postgresql</groupId>
-    		<artifactId>postgresql</artifactId>
-    		<scope>runtime</scope>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>frontend/**</exclude>
+					<exclude>**/*:Zone.Identifier</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>${project.build.directory}/generated-resources/frontend</directory>
+				<targetPath>static</targetPath>
+			</resource>
+		</resources>
 		<plugins>
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<workingDirectory>src/main/resources/frontend</workingDirectory>
+					<installDirectory>${project.build.directory}/frontend</installDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install-node</id>
+						<phase>generate-resources</phase>
+						<goals><goal>install-node-and-npm</goal></goals>
+						<configuration>
+							<nodeVersion>v22.23.4</nodeVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<id>install-frontend-dependencies</id>
+						<phase>generate-resources</phase>
+						<goals><goal>npm</goal></goals>
+						<configuration>
+							<arguments>ci --no-fund</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>build-tailwind-css</id>
+						<phase>generate-resources</phase>
+						<goals><goal>npm</goal></goals>
+						<configuration>
+							<arguments>run build</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

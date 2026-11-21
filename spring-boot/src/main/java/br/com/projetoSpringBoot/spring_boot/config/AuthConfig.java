@@ -23,23 +23,19 @@ public class AuthConfig implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        System.out.println(" Buscando usuário: " + email);
 
         // Buscar como aluno
         Optional<Aluno> alunoOpt = alunoService.findByEmail(email);
         if (alunoOpt.isPresent()) {
-            System.out.println(" Usuário encontrado como ALUNO: " + email);
             return alunoOpt.get();
         }
 
         // Buscar como professor
         Optional<Professor> professorOpt = professorService.findProfessorByEmail(email);
         if (professorOpt.isPresent()) {
-            System.out.println(" Usuário encontrado como PROFESSOR: " + email);
             return professorOpt.get();
         }
 
-        System.out.println("Usuário não encontrado: " + email);
         throw new UsernameNotFoundException("Usuário não encontrado: " + email);
     }
 }

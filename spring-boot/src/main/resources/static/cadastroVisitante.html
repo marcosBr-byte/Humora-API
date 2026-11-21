@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f4ff">
+  <title>Humora | Cadastro visitante</title>
+  <link rel="stylesheet" href="css/fect.css">
+  <script src="js/cadastroVisitante.js" defer></script>
+</head>
+<body class="fect-entrada">
+  <main class="fect-acesso">
+    <section class="fect-boas-vindas" aria-labelledby="fect-titulo">
+      <a class="fect-marca" href="index.html"><img src="imagens/cerebro.png" alt=""> Humora</a>
+      <p class="fect-etiqueta">FECT</p>
+      <h1 id="fect-titulo">Como você está se sentindo?</h1>
+      <p>Escolha uma amora e descubra como o termômetro reage à intensidade da sua emoção.</p>
+      <div class="fect-amoras" aria-hidden="true">
+        <img src="imagens/emocoes/calmo.webp" alt="">
+        <img src="imagens/emocoes/feliz.webp" alt="">
+        <img src="imagens/emocoes/ansioso.webp" alt="">
+      </div>
+    </section>
+    <section class="fect-formulario">
+      <a class="fect-link" href="login.html">← Voltar ao login</a>
+      <h2>Cadastro visitante</h2>
+      <form id="formVisitante">
+        <label for="primeiroNome">Primeiro nome</label>
+        <input id="primeiroNome" name="primeiroNome" autocomplete="given-name" maxlength="40" required>
+        <label for="cidade">Cidade</label>
+        <input id="cidade" name="cidade" autocomplete="address-level2" maxlength="80" required>
+        <button class="fect-acao" type="submit">Ir para o termômetro <span aria-hidden="true">→</span></button>
+        <p id="feedbackVisitante" role="status"></p>
+      </form>
+      <p class="fect-nota">Seu nome, sua cidade e seu diário ficam nesta sessão. O painel da feira recebe a emoção e a intensidade, sem identificação.</p>
+    </section>
+  </main>
+</body>
+</html>

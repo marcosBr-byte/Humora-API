@@ -1,5 +1,12 @@
 // js/api.js
-const API_URL = 'https://humora-api.onrender.com';
+const API_URL = window.location.origin;
+
+function textoHTML(valor) {
+    const caracteres = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+    return String(valor ?? "").replace(/[&<>"']/g, caractere => caracteres[caractere]);
+}
+
+localStorage.removeItem('token');
 
 const EMOCAO_MAP = {
     'feliz': 'FELIZ', 'triste': 'TRISTE', 'irritado': 'IRRITADO',
@@ -13,7 +20,7 @@ const EMOCAO_REVERSE = {
 
 const api = {
     getHeaders() {
-        const token = localStorage.getItem('token');
+        const token = sessionStorage.getItem('token');
         const h = { 'Content-Type': 'application/json' };
         if (token) h['Authorization'] = `Bearer ${token}`;
         return h;
@@ -46,46 +53,30 @@ const api = {
     async registerProfessor(data) {
         return fetch(`${API_URL}/auth/register/professor`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: this.getHeaders(),
             body: JSON.stringify(data)
         });
     },
 
-    // ===== ALUNO =====
     async getAllAlunos() {
-        return fetch(`${API_URL}/aluno`, { headers: this.getHeaders() });
+        return fetch(`${API_URL}/professor/alunos`, { headers: this.getHeaders() });
     },
-    async getAlunoByEmail(email) {
-        const res = await this.getAllAlunos();
-        if (!res.ok) return null;
-        const lista = await res.json();
-        if (!Array.isArray(lista)) return null;
-        return lista.find(a => a.email === email) || null;
-    },
-
-    // ===== PROFESSOR =====
-    async getAllProfessores() {
-        return fetch(`${API_URL}/professor`, { headers: this.getHeaders() });
-    },
-    async getProfessorByEmail(email) {
-        const res = await this.getAllProfessores();
-        if (!res.ok) return null;
-        const lista = await res.json();
-        if (!Array.isArray(lista)) return null;
-        return lista.find(p => p.email === email) || null;
+    async getPerfil(tipo) {
+        const rota = tipo === 'aluno' ? '/aluno/me' : '/professor/me';
+        return fetch(`${API_URL}${rota}`, { headers: this.getHeaders() });
     },
 
     // ===== DIÁRIO =====
-    async getDiario(email) {
-        return fetch(`${API_URL}/aluno/diario?email=${encodeURIComponent(email)}`, {
+    async getDiario() {
+        return fetch(`${API_URL}/aluno/diario`, {
             headers: this.getHeaders()
         });
     },
-    async createDiario(email, emocoes) {
+    async createDiario(emocoes) {
         return fetch(`${API_URL}/aluno/diario`, {
             method: 'POST',
             headers: this.getHeaders(),
-            body: JSON.stringify({ email, emocoes })
+            body: JSON.stringify({ emocoes })
         });
     },
     async updateDiario(id, data) {
@@ -104,8 +95,8 @@ const api = {
 
     // ===== SESSÃO =====
     logout() {
-        ['token', 'usuarioLogado', 'tipoUsuario', 'email'].forEach(k =>
-            localStorage.removeItem(k)
+        ['token', 'usuarioLogado', 'tipoUsuario', 'email', 'humoraVisitanteDados'].forEach(k =>
+            sessionStorage.removeItem(k)
         );
     }
 };

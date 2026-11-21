@@ -19,33 +19,20 @@ const TURMA_MAP = {
 };
 
 async function cadastrarAluno() {
-    const nome  = document.getElementById("nome").value.trim();
-    const email = document.getElementById("email").value.trim().toLowerCase();
-    const senha = document.getElementById("senha").value.trim();
-    const turma = document.getElementById("sala").value;
+    await executarEnvioFormulario('cadastrarAluno', async () => {
+        const nome = document.getElementById('nome').value.trim();
+        const email = document.getElementById('email').value.trim().toLowerCase();
+        const senha = document.getElementById('senha').value.trim();
+        const turmaInfo = TURMA_MAP[document.getElementById('sala').value];
 
-    if (!nome || !email || !senha || !turma) return alert("❌ Preencha todos os campos.");
-    if (senha.length < 8) return alert("❌ A senha deve possuir no mínimo 8 caracteres.");
-
-    const turmaInfo = TURMA_MAP[turma];
-    if (!turmaInfo) return alert("❌ Turma inválida. Selecione uma turma válida.");
-
-    try {
-        const response = await api.registerAluno({
-            nome, email, senha,
-            turma: turmaInfo.turma,
-            serie: turmaInfo.serie
-        });
-
-        const texto = await response.text();
-        if (response.ok) {
-            alert("✅ " + texto);
-            window.location.href = "login.html";
-        } else {
-            alert("❌ " + texto);
+        if (!nome || !email || senha.length < 8 || !turmaInfo) {
+            feedbackFormulario('Preencha os dados, escolha sua turma e informe uma senha de 8 caracteres ou mais.', true);
+            return;
         }
-    } catch (error) {
-        console.error("❌ Erro:", error);
-        alert("❌ Erro ao conectar com o servidor.\n\n" + error.message);
-    }
+        const resposta = await api.registerAluno({ nome, email, senha, ...turmaInfo });
+        if (resposta.ok) concluirCadastro();
+        else feedbackFormulario(await erroDoFormulario(resposta, 'Não foi possível concluir o cadastro.'), true);
+    });
 }
+
+habilitarEnvioPorTeclado('cadastrarAluno');

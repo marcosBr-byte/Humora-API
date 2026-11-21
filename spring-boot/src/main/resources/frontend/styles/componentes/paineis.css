@@ -1,0 +1,490 @@
+@layer components {
+  .estilo-menu-item {
+    @apply tw:flex tw:items-center tw:gap-[10px] tw:[padding:9px_14px] tw:rounded-[10px] tw:cursor-pointer
+      tw:[transition:all_0.3s_ease] tw:text-humora-muted tw:text-[13px] tw:font-medium
+      tw:[border:1px_solid_transparent] tw:[background:none] tw:w-full tw:text-left tw:shrink-0
+      tw:[:where(&).menu-item:hover]:[background:rgba(168,_85,_247,_0.15)]
+      tw:[:where(&).menu-item:hover]:[color:#f3e8ff]
+      tw:[:where(&).menu-item:hover]:[border-color:rgba(168,_85,_247,_0.3)]
+      tw:[:where(&).menu-item.ativo]:[background:rgba(168,_85,_247,_0.25)] tw:[:where(&).menu-item.ativo]:text-white
+      tw:[:where(&).menu-item.ativo]:border-humora-accent
+      tw:[:where(&).menu-item.ativo]:[box-shadow:0_0_15px_rgba(168,_85,_247,_0.3)]
+      tw:[button:where(&)]:[font:inherit] tw:min-h-10 tw:max-[1025px]:min-h-11 tw:motion-safe:active:scale-[.98]
+      tw:[&.ativo]:[background:linear-gradient(110deg,#4b2f71,#332644)]! tw:[&.ativo]:[border-color:#a984da85]!
+      tw:hover:text-white!;
+  }
+
+  .estilo-streak-card {
+    @apply tw:[padding:10px] tw:[background:rgba(168,_85,_247,_0.15)] tw:[border:1px_solid_rgba(168,_85,_247,_0.3)]
+      tw:rounded-[12px] tw:flex tw:items-center tw:gap-[10px] tw:shrink-0;
+  }
+
+  .estilo-ui-icon--menu {
+    @apply tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)] tw:[height:var(--icon-size)]
+      tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:13] tw:[--icon-size:1.35rem]
+      tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)]
+      tw:text-[#dfcaff]!;
+  }
+
+  .estilo-dias-streak {
+    @apply tw:[.streak-card_strong:where(&)]:text-[13px] tw:[.streak-card_strong:where(&)]:[color:#f3e8ff]
+      tw:[.streak-card_strong:where(&)]:block;
+  }
+
+  .estilo-topo-conteudo-titulo {
+    @apply tw:[.topo-conteudo_h1:where(&)]:text-[26px] tw:[.topo-conteudo_h1:where(&)]:font-bold
+      tw:max-[769px]:[.topo-conteudo_h1:where(&)]:[font-size:1.4rem]
+      tw:max-[481px]:[.topo-conteudo_h1:where(&)]:[font-size:1.2rem];
+  }
+
+  .estilo-mensagem {
+    @apply tw:text-humora-secondary tw:data-[formato=amplo]:p-5 tw:data-[formato=compacto]:p-[15px]
+      tw:data-[formato=pequeno]:text-[12px] tw:data-[centralizado=true]:text-center;
+  }
+
+  .estilo-streak-card-legenda {
+    @apply tw:[.streak-card_small:where(&)]:[color:#94a3b8] tw:[.streak-card_small:where(&)]:text-[10px];
+  }
+
+  .estilo-grid-avatars-detalhe {
+    @apply tw:[.grid-avatars_span:where(&)]:cursor-pointer tw:[.grid-avatars_span:where(&)]:[padding:10px]
+      tw:[.grid-avatars_span:where(&)]:rounded-[10px]
+      tw:[.grid-avatars_span:where(&)]:[background:rgba(255,_255,_255,_0.05)]
+      tw:[.grid-avatars_span:where(&)]:[transition:0.3s]
+      tw:[.grid-avatars_span:where(&):hover]:[background:rgba(168,_85,_247,_0.3)]
+      tw:[.grid-avatars_span:where(&):hover]:[transform:scale(1.1)]
+      tw:max-[481px]:[.grid-avatars_span:where(&)]:[font-size:1.6rem]
+      tw:max-[481px]:[.grid-avatars_span:where(&)]:[padding:8px];
+  }
+
+  .estilo-jogo-icone {
+    @apply tw:text-[48px] tw:mb-[15px] tw:max-[481px]:[font-size:2rem] tw:mx-auto tw:grid tw:size-12
+      tw:place-items-center tw:rounded-xl tw:bg-[#ad85e31c] tw:text-[#e2ccff] tw:ring-1 tw:ring-[#9e79c447];
+  }
+
+  .estilo-avatar-atual {
+    @apply tw:w-[42px] tw:h-[42px] tw:[border-radius:50%] tw:flex tw:justify-center tw:items-center tw:text-[24px]
+      tw:[background:rgba(168,_85,_247,_0.2)] tw:[border:2px_solid_#a855f7] tw:cursor-pointer tw:[transition:0.3s]
+      tw:shrink-0 tw:[:where(&).avatar:hover]:[transform:scale(1.08)] tw:[:where(&).avatar:hover]:border-humora-soft
+      tw:focus-visible:outline-2 tw:focus-visible:outline-offset-4 tw:focus-visible:outline-violet-200;
+  }
+
+  .estilo-menu-toggle-mobile {
+    @apply tw:[button:where(&)]:[font:inherit] tw:hidden tw:fixed tw:[top:12px] tw:[left:12px] tw:z-[1100] tw:w-[46px]
+      tw:h-[46px] tw:rounded-[12px] tw:[border:1px_solid_rgba(168,_85,_247,_0.5)]
+      tw:[background:rgba(46,_8,_84,_0.95)] tw:text-white tw:[font-size:1.4rem] tw:cursor-pointer
+      tw:[box-shadow:0_4px_14px_rgba(0,_0,_0,_0.4)] tw:max-[1025px]:flex tw:max-[1025px]:items-center
+      tw:max-[1025px]:justify-center tw:max-[481px]:[top:8px] tw:max-[481px]:[left:8px] tw:max-[481px]:[width:42px]
+      tw:max-[481px]:[height:42px] tw:min-h-11 tw:min-w-11 tw:[background:#2b2440]! tw:[border-color:#80709b55]!
+      tw:text-[#efe6ff]! tw:hover:[background:#3d3055]!
+      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
+      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:disabled:opacity-60;
+  }
+
+  .estilo-aviso-painel {
+    @apply tw:fixed tw:inset-x-3 tw:bottom-4 tw:z-[1200] tw:rounded-xl tw:border tw:border-violet-300/35 tw:bg-[#2b203e]
+      tw:px-4 tw:py-3 tw:text-sm tw:text-[#f5eaff] tw:shadow-xl tw:sm:left-auto tw:sm:right-6 tw:sm:max-w-[26rem]
+      tw:motion-safe:animate-humora-aviso tw:data-[erro=true]:border-rose-300/45;
+  }
+
+  .estilo-perfil {
+    @apply tw:flex tw:items-center tw:gap-[10px] tw:[padding:8px] tw:[background:rgba(168,_85,_247,_0.1)]
+      tw:rounded-[12px] tw:shrink-0;
+  }
+
+  .estilo-topo-sidebar {
+    @apply tw:flex tw:flex-col tw:gap-[12px] tw:[flex:1] tw:overflow-hidden;
+  }
+
+  .estilo-sidebar-aluno {
+    @apply tw:w-[280px] tw:[min-width:280px] tw:max-w-[280px] tw:[padding:20px_18px]
+      tw:[background:rgba(20,_5,_38,_0.97)] tw:[border-right:1px_solid_rgba(168,_85,_247,_0.3)] tw:h-screen tw:flex
+      tw:flex-col tw:justify-between tw:fixed tw:left-0 tw:top-0 tw:z-[100] tw:overflow-hidden
+      tw:max-[769px]:[min-width:100%] tw:max-[769px]:shrink-0 tw:max-[1367px]:[width:260px] tw:max-[1025px]:fixed
+      tw:max-[1025px]:top-0 tw:max-[1025px]:[left:-300px] tw:max-[1025px]:w-[280px] tw:max-[1025px]:[max-width:85vw]
+      tw:max-[1025px]:[height:100dvh] tw:max-[1025px]:overflow-y-auto tw:max-[1025px]:z-[1050]
+      tw:max-[1025px]:[transition:left_0.3s_ease] tw:max-[1025px]:[:where(&).sidebar.sidebar-aberta]:left-0
+      tw:max-[1025px]:[.pagina_:where(&).sidebar]:left-0 tw:max-[1025px]:[.pagina_:where(&).sidebar]:invisible
+      tw:max-[1025px]:[.pagina_:where(&).sidebar]:[transform:translateX(-100%)]
+      tw:max-[1025px]:[.pagina_:where(&).sidebar]:[transition:transform_280ms_var(--ui-ease),_visibility_0s_linear_280ms]
+      tw:max-[1025px]:[.pagina_:where(&).sidebar.sidebar-aberta]:visible
+      tw:max-[1025px]:[.pagina_:where(&).sidebar.sidebar-aberta]:[transform:translateX(0)]
+      tw:max-[1025px]:[.pagina_:where(&).sidebar.sidebar-aberta]:[transition-delay:0s]
+      tw:[background:linear-gradient(165deg,#251934,#171224)]! tw:[border-color:#9e79c436]! tw:min-h-0
+      tw:max-[1025px]:w-[min(86vw,320px)]! tw:max-[1025px]:max-w-[320px]! tw:max-[1025px]:min-w-0!
+      tw:max-[1025px]:pt-16! tw:max-[1025px]:[box-shadow:1rem_0_3rem_#07051255];
+  }
+
+  .estilo-jogo-icone-detalhe {
+    @apply tw:inline-block tw:size-6 tw:shrink-0 tw:bg-current tw:align-[-0.24em]
+      tw:[mask:url('/imagens/icones-interface.png')_-360px_center/auto_100%_no-repeat];
+  }
+
+  .estilo-logo-area {
+    @apply tw:text-center tw:[padding:12px] tw:[background:rgba(168,_85,_247,_0.15)] tw:rounded-[12px]
+      tw:[border:1px_solid_rgba(168,_85,_247,_0.3)] tw:shrink-0;
+  }
+
+  .estilo-pagina {
+    @apply tw:flex tw:h-screen tw:w-full tw:overflow-hidden tw:max-[769px]:flex-col tw:max-[1025px]:block;
+  }
+
+  .estilo-ui-icon--chart {
+    @apply tw:[--icon-size:1.2em] tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)]
+      tw:[height:var(--icon-size)] tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:1] tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)];
+  }
+
+  .estilo-modal-historico {
+    @apply tw:fixed tw:top-0 tw:left-0 tw:w-screen tw:h-screen tw:[background:rgba(0,_0,_0,_0.85)] tw:hidden
+      tw:justify-center tw:items-center tw:z-[1000] tw:animate-humora-fundo tw:backdrop-blur-[4px] tw:[padding:12px]
+      tw:max-sm:[padding:10px] tw:data-[exibicao=nenhum]:hidden! tw:data-[exibicao=bloco]:block!
+      tw:data-[exibicao=flex]:flex! tw:data-[exibicao=grade]:grid!;
+  }
+
+  .estilo-documento-aluno {
+    @apply tw:[:where(&)_*]:m-0 tw:[:where(&)_*]:p-0 tw:[:where(&)_*]:box-border
+      tw:[:where(&)_*]:[font-family:'Poppins',_sans-serif] tw:m-0 tw:p-0 tw:box-border
+      tw:[font-family:'Poppins',_sans-serif] tw:[-webkit-text-size-adjust:100%]
+      tw:[--ui-ease:cubic-bezier(0.2,_0.75,_0.25,_1)] tw:[--ui-interaction:180ms] tw:[--ui-lavender:#d8b4fe]
+      tw:motion-reduce:[:where(&)_*]:animate-none! tw:motion-reduce:[:where(&)_*]:transition-none!
+      tw:motion-reduce:[:where(&)_*]:scroll-auto! tw:motion-reduce:animate-none! tw:motion-reduce:transition-none!
+      tw:motion-reduce:scroll-auto! tw:motion-reduce:[:where(&)_*::before]:animate-none!
+      tw:motion-reduce:[:where(&)_*::before]:transition-none! tw:motion-reduce:[:where(&)_*::before]:scroll-auto!
+      tw:motion-reduce:[:where(&)_*::after]:animate-none! tw:motion-reduce:[:where(&)_*::after]:transition-none!
+      tw:motion-reduce:[:where(&)_*::after]:scroll-auto!;
+  }
+
+  .estilo-ui-icon--trophy {
+    @apply tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)] tw:[height:var(--icon-size)]
+      tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:5] tw:[--icon-size:1.35rem]
+      tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)]
+      tw:text-[#dfcaff]!;
+  }
+
+  .estilo-barra-tempo-progresso {
+    @apply tw:h-full tw:w-full tw:[background:#3b82f6] tw:rounded-[10px] tw:data-[contagem=on]:w-0
+      tw:data-[contagem=on]:transition-[width] tw:data-[contagem=on]:ease-linear tw:data-[tempo=3]:duration-[3s]
+      tw:data-[tempo=5]:duration-[5s];
+  }
+
+  .estilo-marca-sidebar {
+    @apply tw:[img:where(&)]:[max-width:100%] tw:[width:1.3em] tw:[height:1.3em] tw:object-contain;
+  }
+
+  .estilo-jogo-icone-detalhe-2 {
+    @apply tw:inline-block tw:size-6 tw:shrink-0 tw:bg-current tw:align-[-0.24em]
+      tw:[mask:url('/imagens/icones-interface.png')_-72px_center/auto_100%_no-repeat];
+  }
+
+  .estilo-jogo-icone-detalhe-3 {
+    @apply tw:inline-block tw:size-6 tw:shrink-0 tw:bg-current tw:align-[-0.24em]
+      tw:[mask:url('/imagens/icones-interface.png')_-96px_center/auto_100%_no-repeat];
+  }
+
+  .estilo-game-placar {
+    @apply tw:flex tw:justify-between tw:w-full tw:text-[13px] tw:[margin:10px_0] tw:[padding:10px_15px]
+      tw:[background:rgba(255,_255,_255,_0.05)] tw:rounded-[10px] tw:max-[769px]:flex-wrap tw:max-[769px]:gap-[8px]
+      tw:max-[769px]:justify-center;
+  }
+
+  .estilo-menu-overlay-mobile {
+    @apply tw:hidden tw:fixed tw:inset-0 tw:[background:rgba(0,_0,_0,_0.55)] tw:z-[999]
+      tw:[:where(&).menu-overlay-mobile.ativo]:block
+      tw:[:where(&)_.menu-overlay-mobile.ativo]:animate-humora-revelar tw:backdrop-blur-[3px];
+  }
+
+  .estilo-grid-bolas-game {
+    @apply tw:grid tw:[grid-template-columns:repeat(4,_1fr)] tw:gap-[12px] tw:mb-[15px]
+      tw:max-[769px]:[grid-template-columns:repeat(4,_1fr)]!;
+  }
+
+  .estilo-grade-caca-palavras {
+    @apply tw:grid tw:grid-cols-[repeat(10,32px)] tw:gap-[2px] tw:my-[15px] tw:mx-auto tw:select-none;
+  }
+
+  .estilo-jogos-grid {
+    @apply tw:grid tw:[grid-template-columns:repeat(2,_1fr)] tw:gap-[20px]
+      tw:max-[1025px]:[grid-template-columns:repeat(2,_1fr)] tw:max-[769px]:[grid-template-columns:1fr];
+  }
+
+  .estilo-card-painel {
+    @apply tw:mb-[20px] tw:[padding:22px] tw:[background:rgba(22,_9,_44,_0.8)] tw:rounded-[20px]
+      tw:[border:1px_solid_rgba(168,_85,_247,_0.25)] tw:max-[481px]:[padding:14px_12px]
+      tw:max-[481px]:rounded-[12px] tw:[background:linear-gradient(155deg,#211830,#191326)]!
+      tw:[border-color:#7d64a347]! tw:[box-shadow:0_12px_30px_#0906134d,inset_0_1px_0_#ffffff06]!;
+  }
+
+  .estilo-modal-content {
+    @apply tw:[background:#18032b] tw:[padding:30px] tw:rounded-[24px] tw:[border:1px_solid_#a855f7] tw:text-center
+      tw:flex tw:flex-col tw:items-center tw:[width:90%] tw:[max-height:85vh] tw:overflow-y-auto tw:relative
+      tw:max-w-[600px] tw:max-[769px]:[width:92vw] tw:max-[769px]:[max-width:92vw] tw:max-[769px]:[max-height:90dvh]
+      tw:max-[769px]:overflow-y-auto tw:max-[769px]:[padding:20px_16px]
+      tw:max-[769px]:[:where(&).modal-content.modal-largo]:[width:95vw] tw:animate-humora-modal
+      tw:[background:linear-gradient(155deg,#211830,#191326)]! tw:[border-color:#7d64a347]!
+      tw:[box-shadow:0_12px_30px_#0906134d,inset_0_1px_0_#ffffff06]! tw:max-h-[min(88dvh,720px)]!
+      tw:overscroll-contain;
+  }
+
+  .estilo-grafico-semana {
+    @apply tw:[canvas:where(&)]:[max-width:100%] tw:max-[769px]:[.canvas-container_canvas:where(&)]:[max-height:260px];
+  }
+
+  .estilo-ui-icon--game {
+    @apply tw:[--icon-size:1.2em] tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)]
+      tw:[height:var(--icon-size)] tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:3] tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)];
+  }
+
+  .estilo-menu-sidebar {
+    @apply tw:flex tw:flex-col tw:gap-[3px] tw:shrink-0;
+  }
+
+  .estilo-barra-tempo-container {
+    @apply tw:w-full tw:h-[6px] tw:[background:rgba(255,_255,_255,_0.1)] tw:rounded-[10px] tw:overflow-hidden
+      tw:mb-[12px];
+  }
+
+  .estilo-lista-palavras {
+    @apply tw:flex tw:flex-wrap tw:gap-[10px] tw:justify-center tw:mb-[10px];
+  }
+
+  .estilo-ui-icon--book {
+    @apply tw:[--icon-size:1.2em] tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)]
+      tw:[height:var(--icon-size)] tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:2] tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)];
+  }
+
+  .estilo-jogo-card {
+    @apply tw:[background:rgba(168,_85,_247,_0.12)] tw:[border:1px_solid_rgba(168,_85,_247,_0.25)] tw:rounded-[20px]
+      tw:[padding:25px] tw:text-center tw:cursor-pointer tw:[transition:all_0.3s_ease]
+      tw:[:where(&).jogo-card:hover]:[background:rgba(168,_85,_247,_0.22)]
+      tw:[:where(&).jogo-card:hover]:[transform:translateY(-5px)]
+      tw:[:where(&).jogo-card:hover]:[box-shadow:0_10px_30px_rgba(168,_85,_247,_0.2)]
+      tw:max-[481px]:[padding:16px_12px] tw:[background:linear-gradient(150deg,#2b203d,#22182f)]!
+      tw:[border-color:#8872a958]! tw:motion-safe:transition-[transform,box-shadow] tw:motion-safe:duration-300
+      tw:motion-safe:hover:-translate-y-1 tw:motion-safe:active:scale-[.98]
+      tw:hover:[box-shadow:0_12px_26px_#0a061650]! tw:focus-visible:outline-2 tw:focus-visible:outline-offset-4
+      tw:focus-visible:outline-violet-200;
+  }
+
+  .estilo-ui-icon--home {
+    @apply tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)] tw:[height:var(--icon-size)]
+      tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:0] tw:[--icon-size:1.35rem]
+      tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)]
+      tw:text-[#dfcaff]!;
+  }
+
+  .estilo-x-fechar {
+    @apply tw:absolute tw:[top:12px] tw:[right:18px] tw:text-[26px] tw:cursor-pointer tw:text-humora-soft tw:z-[5];
+  }
+
+  .estilo-jogo-icone-detalhe-4 {
+    @apply tw:inline-block tw:size-6 tw:shrink-0 tw:bg-current tw:align-[-0.24em]
+      tw:[mask:url('/imagens/icones-interface.png')_-48px_center/auto_100%_no-repeat];
+  }
+
+  .estilo-ui-icon--bell {
+    @apply tw:[--icon-size:1.2em] tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)]
+      tw:[height:var(--icon-size)] tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:7] tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)];
+  }
+
+  .estilo-btn-sair {
+    @apply tw:w-full tw:[padding:10px] tw:[border:none] tw:rounded-[12px] tw:cursor-pointer tw:text-white tw:text-[13px]
+      tw:[background:#e74c3c] tw:font-semibold tw:[transition:0.3s] tw:shrink-0
+      tw:[:where(&).btn-sair:hover]:[background:#c0392b] tw:[button:where(&)]:[font:inherit]
+      tw:[background:#2b2440]! tw:[border-color:#80709b55]! tw:text-[#efe6ff]! tw:hover:[background:#3d3055]!
+      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
+      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:disabled:opacity-60 tw:min-h-11;
+  }
+
+  .estilo-turma-aluno-sidebar {
+    @apply tw:[.perfil-info_p:where(&)]:text-humora-soft tw:[.perfil-info_p:where(&)]:text-[10px];
+  }
+
+  .estilo-topo-conteudo {
+    @apply tw:flex tw:justify-between tw:items-center tw:mb-[25px] tw:flex-wrap tw:gap-[15px]
+      tw:[border-bottom:1px_solid_#9e79c436] tw:pb-4 tw:max-sm:pb-3;
+  }
+
+  .estilo-ui-icon--edit {
+    @apply tw:[--icon-size:1.2em] tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)]
+      tw:[height:var(--icon-size)] tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:11] tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)];
+  }
+
+  .estilo-ui-icon--book-2 {
+    @apply tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)] tw:[height:var(--icon-size)]
+      tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:2] tw:[--icon-size:1.35rem]
+      tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)]
+      tw:text-[#dfcaff]!;
+  }
+
+  .estilo-bola-game {
+    @apply tw:data-[cor=vermelho]:bg-[#ef4444]! tw:data-[cor=azul]:bg-[#3b82f6]! tw:data-[cor=verde]:bg-[#22c55e]!
+      tw:data-[cor=amarelo]:bg-[#eab308]! tw:data-[cor=roxo]:bg-humora-accent!
+      tw:data-[estourada=true]:[transform:scale(0)]! tw:data-[estourada=true]:opacity-0!;
+  }
+
+  .estilo-ui-icon--logout {
+    @apply tw:[--icon-size:1.2em] tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)]
+      tw:[height:var(--icon-size)] tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:12] tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)];
+  }
+
+  .estilo-grid-memoria {
+    @apply tw:grid tw:[grid-template-columns:repeat(4,_1fr)] tw:gap-[10px] tw:[margin:20px_0]
+      tw:max-[769px]:[grid-template-columns:repeat(4,_1fr)]!;
+  }
+
+  .estilo-modal-content-div {
+    @apply tw:flex tw:gap-[10px];
+  }
+
+  .estilo-logo-area-titulo {
+    @apply tw:[.logo-area_h1:where(&)]:text-[22px] tw:[.logo-area_h1:where(&)]:font-bold
+      tw:[.logo-area_h1:where(&)]:[color:#f3e8ff] tw:[.logo-area_h1:where(&)]:inline-flex
+      tw:[.logo-area_h1:where(&)]:items-center tw:[.logo-area_h1:where(&)]:[gap:0.38em];
+  }
+
+  .estilo-conteudo {
+    @apply tw:[flex:1] tw:[width:calc(100%_-_280px)] tw:[padding:25px_35px] tw:overflow-y-auto tw:ml-[280px] tw:h-screen
+      tw:[background:transparent] tw:[:where(&).conteudo::-webkit-scrollbar]:w-[6px]
+      tw:[:where(&).conteudo::-webkit-scrollbar-thumb]:[background:rgba(168,_85,_247,_0.5)]
+      tw:[:where(&).conteudo::-webkit-scrollbar-thumb]:rounded-[10px] tw:max-[769px]:h-auto
+      tw:max-[1367px]:[padding:24px] tw:max-[1025px]:ml-0 tw:max-[1025px]:[padding:72px_20px_20px]
+      tw:max-[1025px]:w-full tw:max-[769px]:[padding:68px_14px_20px] tw:max-[481px]:[padding:64px_10px_16px]
+      tw:min-w-0;
+  }
+
+  .estilo-modal-content-2 {
+    @apply tw:[background:#18032b] tw:[padding:30px] tw:rounded-[24px] tw:[border:1px_solid_#a855f7] tw:text-center
+      tw:flex tw:flex-col tw:items-center tw:max-w-[500px] tw:[width:90%] tw:[max-height:85vh] tw:overflow-y-auto
+      tw:relative tw:max-[769px]:[width:92vw] tw:max-[769px]:[max-width:92vw] tw:max-[769px]:[max-height:90dvh]
+      tw:max-[769px]:overflow-y-auto tw:max-[769px]:[padding:20px_16px]
+      tw:max-[769px]:[:where(&).modal-content.modal-largo]:[width:95vw] tw:animate-humora-modal
+      tw:[background:linear-gradient(155deg,#211830,#191326)]! tw:[border-color:#7d64a347]!
+      tw:[box-shadow:0_12px_30px_#0906134d,inset_0_1px_0_#ffffff06]! tw:max-h-[min(88dvh,720px)]!
+      tw:overscroll-contain;
+  }
+
+  .estilo-ui-icon--chart-2 {
+    @apply tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)] tw:[height:var(--icon-size)]
+      tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:1] tw:[--icon-size:1.35rem]
+      tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)]
+      tw:text-[#dfcaff]!;
+  }
+
+  .estilo-cor-alvo-texto {
+    @apply tw:data-[cor=vermelho]:text-[#ef4444]! tw:data-[cor=azul]:text-[#3b82f6]! tw:data-[cor=verde]:text-[#22c55e]!
+      tw:data-[cor=amarelo]:text-[#eab308]! tw:data-[cor=roxo]:text-humora-accent!;
+  }
+
+  .estilo-ui-icon--game-2 {
+    @apply tw:inline-block tw:[flex:0_0_auto] tw:[width:var(--icon-size)] tw:[height:var(--icon-size)]
+      tw:[vertical-align:-0.22em] tw:[background-color:currentColor]
+      tw:[mask:url('/imagens/icones-interface.png')_calc(-1_*_var(--icon-index)_*_var(--icon-size))_center_/_auto_100%_no-repeat]
+      tw:[--icon-index:3] tw:[--icon-size:1.35rem]
+      tw:[.topo-conteudo_h1_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.modal-content_h2_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[.menu-item_:where(&).ui-icon]:[color:var(--ui-lavender)]
+      tw:[:where(.menu-item,.emocao,.tipo-btn)_:where(&).ui-icon]:[transition:transform_var(--ui-interaction)_var(--ui-ease)]
+      tw:[.emocao.selecionada_:where(&).ui-icon]:[transform:scale(1.09)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[:is(.menu-item,.tipo-btn):hover_:where(&).ui-icon]:[transform:translateX(2px)]
+      tw:[@media(hover:_hover)_and_(pointer:_fine)]:[.emocao:hover:not(.selecionada)_:where(&).ui-icon]:[transform:translateY(-2px)]
+      tw:text-[#dfcaff]!;
+  }
+
+  .estilo-compartilhamento {
+    @apply tw:text-humora-soft;
+  }
+
+  .estilo-subtitulo {
+    @apply tw:text-humora-muted tw:text-[13px] tw:mt-[2px] tw:max-[769px]:[font-size:0.9rem] tw:text-[#c3b6d4]!;
+  }
+}

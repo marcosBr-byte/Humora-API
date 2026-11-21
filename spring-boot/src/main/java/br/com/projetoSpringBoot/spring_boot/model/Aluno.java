@@ -1,5 +1,6 @@
 package br.com.projetoSpringBoot.spring_boot.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import br.com.projetoSpringBoot.spring_boot.enumeradores.Serie;
 import br.com.projetoSpringBoot.spring_boot.enumeradores.Turma;
 import jakarta.persistence.*;
@@ -22,11 +23,12 @@ public class Aluno implements UserDetails {
 
     @Column(name = "id", nullable = false,unique = true)
         private Long id;
-    @Column(name = "nome", nullable = false,unique = true)
+    @Column(name = "nome", nullable = false)
         private String nome;
     @Column(name = "email", nullable = false,unique = true)
         private String email;
     @Column(name = "senha", nullable = false,unique = false)
+    @JsonIgnore
         private String senha;
     @Enumerated(EnumType.STRING)
         private Serie serie;
@@ -53,6 +55,7 @@ public class Aluno implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public @Nullable String getPassword() {
         return this.senha;
     }

@@ -2,9 +2,10 @@
 // js/professor.js - Painel do Professor Humora
 // ===================================================================
 
-var usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-if (!usuarioLogado) {
-    window.location.href = "login.html";
+var usuarioLogado = JSON.parse(sessionStorage.getItem("usuarioLogado"));
+if (usuarioLogado?.tipo !== "professor" || !sessionStorage.getItem("token")) {
+    window.location.replace("login.html");
+    throw new Error("Sessão inválida");
 }
 
 // ========== ESTADO GLOBAL ==========
@@ -62,21 +63,13 @@ var bancoPalavrasProf = [
     "LACO", "APOIO", "LIVRE", "HUMORA", "ENSINAR", "SABER"
 ];
 
-var coresGame = [
-    { nome: "Vermelho", hex: "#ef4444" },
-    { nome: "Azul", hex: "#3b82f6" },
-    { nome: "Verde", hex: "#22c55e" },
-    { nome: "Amarelo", hex: "#eab308" },
-    { nome: "Roxo", hex: "#a855f7" }
-];
-
-var emocoesMeta = {
-    feliz:    { emoji: "😊", nome: "Feliz",    cor: "#FFD700" },
-    triste:   { emoji: "😔", nome: "Triste",   cor: "#4A90E2" },
-    cansado:  { emoji: "😴", nome: "Cansado",  cor: "#B0B0B0" },
-    calmo:    { emoji: "😌", nome: "Calmo",    cor: "#00C896" },
-    ansioso:  { emoji: "😰", nome: "Ansioso",  cor: "#FF8C00" },
-    irritado: { emoji: "😡", nome: "Irritado", cor: "#E74C3C" }
+const coresEmocoes = {
+    feliz:    "#FFD700",
+    triste:   "#4A90E2",
+    cansado:  "#B0B0B0",
+    calmo:    "#00C896",
+    ansioso:  "#FF8C00",
+    irritado: "#E74C3C"
 };
 
 // ==========================================================
@@ -101,6 +94,13 @@ document.addEventListener("DOMContentLoaded", function () {
     carregarGraficoGeral();
     carregarGraficosFiltrados();
     sincronizarAlunosAPI();
+    montarPainelFectProfessor();
+    fetch('/professor/permissoes', { headers: api.getHeaders() })
+        .then(resposta => resposta.ok ? resposta.json() : null)
+        .then(permissoes => {
+            document.getElementById('cadastroProfessorAdmin').hidden = !permissoes?.administrador;
+        })
+        .catch(() => {});
 });
 
 // ==========================================================
@@ -113,15 +113,15 @@ async function sincronizarAlunosAPI() {
         const daApi = await res.json();
         if (!Array.isArray(daApi)) return;
 
-        var mapaLocal = {};
+        var mapaLocal = new Map();
         for (var i = 0; i < alunos.length; i++) {
-            mapaLocal[alunos[i].email] = alunos[i];
+            mapaLocal.set(alunos[i].email, alunos[i]);
         }
 
         var mesclados = [];
         for (var k = 0; k < daApi.length; k++) {
             var a = daApi[k];
-            var local = mapaLocal[a.email] || {};
+            var local = mapaLocal.get(a.email) || {};
             mesclados.push({
                 id: a.id || local.id,
                 nome: a.nome || local.nome || "Sem nome",
@@ -167,6 +167,7 @@ function trocarTab(nomeTab, elemento) {
     var tab = document.getElementById("tab-" + nomeTab);
     if (tab) tab.classList.add("ativo");
     if (elemento) elemento.classList.add("ativo");
+    sincronizarAbaPainel(tab, elemento);
 
     if (nomeTab === "dashboard") {
         setTimeout(function () { carregarGraficoGeral(); }, 200);
@@ -206,7 +207,7 @@ function popularFiltros() {
         if (sel) {
             sel.innerHTML = '<option value="">Todas as Turmas</option>';
             for (var j = 0; j < turmasUnicas.length; j++) {
-                sel.innerHTML += '<option value="' + turmasUnicas[j] + '">' + turmasUnicas[j] + '</option>';
+                sel.add(new Option(turmasUnicas[j], turmasUnicas[j]));
             }
         }
     }
@@ -215,7 +216,7 @@ function popularFiltros() {
     if (selAg) {
         selAg.innerHTML = '<option value="">Selecione a Turma</option>';
         for (var k = 0; k < turmasUnicas.length; k++) {
-            selAg.innerHTML += '<option value="' + turmasUnicas[k] + '">' + turmasUnicas[k] + '</option>';
+            selAg.add(new Option(turmasUnicas[k], turmasUnicas[k]));
         }
     }
 
@@ -223,7 +224,7 @@ function popularFiltros() {
     if (selAviso) {
         selAviso.innerHTML = '<option value="">Todas as turmas</option>';
         for (var m = 0; m < turmasUnicas.length; m++) {
-            selAviso.innerHTML += '<option value="' + turmasUnicas[m] + '">' + turmasUnicas[m] + '</option>';
+            selAviso.add(new Option(turmasUnicas[m], turmasUnicas[m]));
         }
     }
 }
@@ -233,8 +234,8 @@ function popularSelectAlunos() {
     if (!sel) return;
     sel.innerHTML = '<option value="">Selecione um aluno...</option>';
     for (var i = 0; i < alunos.length; i++) {
-        sel.innerHTML += '<option value="' + alunos[i].email + '">' +
-            alunos[i].nome + " (" + (alunos[i].turma || "Sem Turma") + ")</option>";
+        const aluno = alunos[i];
+        sel.add(new Option(aluno.nome + " (" + (aluno.turma || "Sem Turma") + ")", aluno.email));
     }
 }
 
@@ -317,76 +318,47 @@ function atualizarCardsResumo(lista) {
 // ==========================================================
 // LISTA DE ALUNOS
 // ==========================================================
-function renderizarListaAlunos(lista) {
-    var c = document.getElementById("listaAlunosTurma");
-    if (!c) return;
-    c.innerHTML = "";
-
-    if (lista.length === 0) {
-        c.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:20px;">Nenhum aluno encontrado.</p>';
+function renderizarListaAlunos(alunosDaTurma) {
+    const lista = document.getElementById("listaAlunosTurma");
+    if (!lista) return;
+    if (!alunosDaTurma.length) {
+        mostrarSemDados(lista, "Nenhum aluno encontrado.", "amplo", true);
         return;
     }
-
-    for (var i = 0; i < lista.length; i++) {
-        var a = lista[i];
-        var ult = null;
-        if (a.historico && a.historico.length > 0) {
-            ult = a.historico[a.historico.length - 1];
-        }
-
-        var info = "Sem registros";
-        if (ult && emocoesMeta[ult.emocao]) {
-            info = emocoesMeta[ult.emocao].emoji + " " + emocoesMeta[ult.emocao].nome;
-        }
-
-        var alerta = ult && ["triste", "ansioso", "irritado"].indexOf(ult.emocao) !== -1;
-
-        c.innerHTML +=
-            '<div class="aluno-card ' + (alerta ? "alerta" : "") + '">' +
-                '<div>' +
-                    '<strong>' + a.nome + '</strong> ' +
-                    '<small class="turma-tag">(' + (a.turma || "Sem Turma") + ')</small>' +
-                    '<br>' +
-                    '<small>Último humor: <b>' + info + '</b></small>' +
-                '</div>' +
-                '<div class="acoes-aluno-card">' +
-                    '<button class="btn-msg" onclick="abrirModalMensagem(\'' + a.email + '\',\'' + a.nome + '\')">💬</button>' +
-                    '<button class="btn-badge" onclick="abrirModalBadge(\'' + a.email + '\',\'' + a.nome + '\')">🌟</button>' +
-                '</div>' +
-            '</div>';
-    }
+    const itens = alunosDaTurma.map(aluno => {
+        const ultima = aluno.historico?.at(-1);
+        const tipo = ultima?.emocao;
+        const temEmocao = Object.hasOwn(nomesEmocoes, tipo);
+        const card = copiarModeloPainel("modeloAlunoProfessor", {
+            nome: aluno.nome,
+            turma: `(${aluno.turma || "Sem Turma"})`,
+            humor: temEmocao ? nomesEmocoes[tipo] : "Sem registros"
+        });
+        if (temEmocao) card.querySelector('[data-texto="humor"]').prepend(criarImagemEmocao(tipo), " ");
+        card.classList.toggle("alerta", ["triste", "ansioso", "irritado"].includes(ultima?.emocao));
+        card.querySelector(".btn-msg").onclick = () => abrirModalMensagem(aluno.email, aluno.nome);
+        card.querySelector(".btn-badge").onclick = () => abrirModalBadge(aluno.email, aluno.nome);
+        return card;
+    });
+    lista.replaceChildren(...itens);
 }
 
-function atualizarListaAlerta(lista) {
-    var c = document.getElementById("listaAlunosAlerta");
-    if (!c) return;
-
-    var alertas = [];
-    for (var i = 0; i < lista.length; i++) {
-        var a = lista[i];
-        var u = null;
-        if (a.historico && a.historico.length > 0) {
-            u = a.historico[a.historico.length - 1];
-        }
-        if (u && ["triste", "ansioso", "irritado"].indexOf(u.emocao) !== -1) {
-            alertas.push(a);
-        }
-    }
-
-    if (alertas.length === 0) {
-        c.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:15px;">✅ Nenhum aluno em estado de alerta.</p>';
+function atualizarListaAlerta(alunosDaTurma) {
+    const lista = document.getElementById("listaAlunosAlerta");
+    if (!lista) return;
+    const alertas = alunosDaTurma.filter(aluno => ["triste", "ansioso", "irritado"].includes(aluno.historico?.at(-1)?.emocao));
+    if (!alertas.length) {
+        mostrarSemDados(lista, "✅ Nenhum aluno em estado de alerta.", "compacto", true);
         return;
     }
-
-    c.innerHTML = "";
-    for (var j = 0; j < alertas.length; j++) {
-        c.innerHTML +=
-            '<div class="aluno-card alerta">' +
-                '<div><strong>' + alertas[j].nome + '</strong></div>' +
-                '<button class="btn-msg" onclick="abrirModalMensagem(\'' +
-                alertas[j].email + '\',\'' + alertas[j].nome + '\')">💬 Apoiar</button>' +
-            '</div>';
-    }
+    const itens = alertas.map(aluno => {
+        const tipo = aluno.historico.at(-1).emocao;
+        const card = copiarModeloPainel("modeloAlertaProfessor", { nome: aluno.nome });
+        card.querySelector('[data-texto="nome"]').prepend(criarImagemEmocao(tipo, nomesEmocoes[tipo]), " ");
+        card.querySelector(".btn-msg").onclick = () => abrirModalMensagem(aluno.email, aluno.nome);
+        return card;
+    });
+    lista.replaceChildren(...itens);
 }
 
 // ==========================================================
@@ -410,12 +382,12 @@ function carregarGraficoGeral() {
     var labels = [];
     var dados = [];
     var cores = [];
-    var chaves = Object.keys(emocoesMeta);
+    var chaves = Object.keys(nomesEmocoes);
     for (var k = 0; k < chaves.length; k++) {
-        var e = emocoesMeta[chaves[k]];
-        labels.push(e.emoji + " " + e.nome);
-        dados.push(cont[chaves[k]]);
-        cores.push(e.cor);
+        const tipo = chaves[k];
+        labels.push(nomesEmocoes[tipo]);
+        dados.push(cont[tipo]);
+        cores.push(coresEmocoes[tipo]);
     }
 
     graficoGeral = new Chart(ctx, {
@@ -435,9 +407,9 @@ function carregarGraficoGeral() {
             scales: {
                 y: {
                     beginAtZero: true,
-                    ticks: { stepSize: 1, color: "#94a3b8" }
+                    ticks: { stepSize: 1, color: "#615375" }
                 },
-                x: { ticks: { color: "#f3e8ff" } }
+                x: { ticks: { color: "#281b40" } }
             }
         }
     });
@@ -505,8 +477,8 @@ function carregarGraficoBarra(lista) {
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1, color: "#94a3b8" } },
-                x: { ticks: { color: "#f3e8ff" } }
+                y: { beginAtZero: true, ticks: { stepSize: 1, color: "#615375" } },
+                x: { ticks: { color: "#281b40" } }
             }
         }
     });
@@ -530,12 +502,12 @@ function carregarGraficoPizza(lista) {
     var labels = [];
     var dados = [];
     var cores = [];
-    var chaves = Object.keys(emocoesMeta);
+    var chaves = Object.keys(nomesEmocoes);
     for (var k = 0; k < chaves.length; k++) {
-        var e = emocoesMeta[chaves[k]];
-        labels.push(e.emoji + " " + e.nome);
-        dados.push(cont[chaves[k]]);
-        cores.push(e.cor);
+        const tipo = chaves[k];
+        labels.push(nomesEmocoes[tipo]);
+        dados.push(cont[tipo]);
+        cores.push(coresEmocoes[tipo]);
     }
 
     graficoPizza = new Chart(ctx, {
@@ -546,7 +518,7 @@ function carregarGraficoPizza(lista) {
                 data: dados,
                 backgroundColor: cores,
                 borderWidth: 2,
-                borderColor: "#18032b"
+                borderColor: "#ffffff"
             }]
         },
         options: {
@@ -555,7 +527,7 @@ function carregarGraficoPizza(lista) {
             plugins: {
                 legend: {
                     position: "bottom",
-                    labels: { color: "#cbd5e1", padding: 15, font: { size: 11 } }
+                    labels: { color: "#615375", padding: 15, font: { size: 11 } }
                 }
             }
         }
@@ -582,12 +554,12 @@ function abrirModalMensagem(email, nome) {
     var el = document.getElementById("nomeAlunoModal");
     if (el) el.innerText = nome || "Aluno";
     var modal = document.getElementById("modalMensagem");
-    if (modal) modal.style.display = "flex";
+    if (modal) exibirElemento(modal, "flex");
 }
 
 function fecharModal() {
     var modal = document.getElementById("modalMensagem");
-    if (modal) modal.style.display = "none";
+    if (modal) exibirElemento(modal, "nenhum");
     var texto = document.getElementById("textoMensagemModal");
     if (texto) texto.value = "";
     alunoSelecionadoEmail = null;
@@ -596,7 +568,7 @@ function fecharModal() {
 function enviarMensagem() {
     var elTexto = document.getElementById("textoMensagemModal");
     var texto = elTexto ? elTexto.value.trim() : "";
-    if (!texto) return alert("Digite uma mensagem!");
+    if (!texto) return notificarPainel("Digite uma mensagem.", true);
 
     var idx = -1;
     for (var i = 0; i < alunos.length; i++) {
@@ -616,7 +588,7 @@ function enviarMensagem() {
         });
         alunos[idx].mensagensVisualizadas = false;
         localStorage.setItem("alunosHumora", JSON.stringify(alunos));
-        alert("Mensagem enviada! 📩");
+        notificarPainel("Mensagem registrada.");
         fecharModal();
     }
 }
@@ -627,8 +599,8 @@ function enviarMensagemDireta() {
     if (!sel || !elTexto) return;
 
     var texto = elTexto.value.trim();
-    if (!sel.value) return alert("Selecione um aluno!");
-    if (!texto) return alert("Digite uma mensagem!");
+    if (!sel.value) return notificarPainel("Selecione um aluno.", true);
+    if (!texto) return notificarPainel("Digite uma mensagem.", true);
 
     var idx = -1;
     for (var i = 0; i < alunos.length; i++) {
@@ -648,7 +620,7 @@ function enviarMensagemDireta() {
         });
         alunos[idx].mensagensVisualizadas = false;
         localStorage.setItem("alunosHumora", JSON.stringify(alunos));
-        alert("Mensagem enviada! 📩");
+        notificarPainel("Mensagem registrada.");
         elTexto.value = "";
     }
 }
@@ -661,12 +633,12 @@ function abrirModalBadge(email, nome) {
     var el = document.getElementById("nomeAlunoBadge");
     if (el) el.innerText = nome;
     var modal = document.getElementById("modalBadge");
-    if (modal) modal.style.display = "flex";
+    if (modal) exibirElemento(modal, "flex");
 }
 
 function fecharModalBadge() {
     var modal = document.getElementById("modalBadge");
-    if (modal) modal.style.display = "none";
+    if (modal) exibirElemento(modal, "nenhum");
     alunoSelecionadoEmail = null;
 }
 
@@ -687,7 +659,7 @@ function enviarBadge(badge) {
             data: new Date().toLocaleDateString("pt-BR")
         });
         localStorage.setItem("alunosHumora", JSON.stringify(alunos));
-        alert("Reconhecimento enviado! 🎉");
+        notificarPainel("Reconhecimento registrado.");
         fecharModalBadge();
     }
 }
@@ -722,7 +694,7 @@ function salvarAgendamento(e) {
     if (form) form.reset();
 
     renderizarAgendamentos();
-    alert("Atividade agendada!");
+    notificarPainel("Atividade agendada.");
 }
 
 function renderizarAgendamentos() {
@@ -730,7 +702,7 @@ function renderizarAgendamentos() {
     if (!c) return;
 
     if (agendamentos.length === 0) {
-        c.innerHTML = '<p style="color:#94a3b8;font-size:12px;">Nenhuma atividade.</p>';
+        mostrarSemDados(c, "Nenhuma atividade.", "pequeno");
         return;
     }
 
@@ -740,12 +712,12 @@ function renderizarAgendamentos() {
         c.innerHTML +=
             '<div class="item-mini">' +
                 '<div>' +
-                    '<strong>' + a.titulo + '</strong> ' +
-                    '<small>(' + a.turma + ')</small>' +
+                    '<strong>' + textoHTML(a.titulo) + '</strong> ' +
+                    '<small>(' + textoHTML(a.turma) + ')</small>' +
                     '<br>' +
-                    '<small>📅 ' + a.data + '</small>' +
+                    '<small>📅 ' + textoHTML(a.data) + '</small>' +
                 '</div>' +
-                '<button onclick="removerAgendamento(' + a.id + ')" class="btn-deletar">&times;</button>' +
+                '<button onclick="removerAgendamento(' + Number(a.id) + ')" class="btn-deletar">&times;</button>' +
             '</div>';
     }
 }
@@ -766,7 +738,7 @@ function removerAgendamento(id) {
 function publicarAvisoTurma() {
     var elTexto = document.getElementById("textoAvisoTurma");
     var texto = elTexto ? elTexto.value.trim() : "";
-    if (!texto) return alert("Digite o aviso!");
+    if (!texto) return notificarPainel("Digite o aviso.", true);
 
     var elTurma = document.getElementById("turmaAviso");
     var turma = elTurma ? elTurma.value : "";
@@ -789,23 +761,23 @@ function renderizarAvisos() {
     if (!c) return;
 
     if (avisosTurma.length === 0) {
-        c.innerHTML = '<p style="color:#94a3b8;font-size:12px;">Nenhum aviso.</p>';
+        mostrarSemDados(c, "Nenhum aviso.", "pequeno");
         return;
     }
 
     c.innerHTML = "";
     for (var i = 0; i < avisosTurma.length; i++) {
         var a = avisosTurma[i];
-        var tagTurma = a.turma ? "(" + a.turma + ")" : "(Todas)";
+        var tagTurma = a.turma ? "(" + textoHTML(a.turma) + ")" : "(Todas)";
         c.innerHTML +=
             '<div class="item-mini">' +
                 '<div>' +
-                    '<span>📌 "' + a.texto + '"</span> ' +
-                    '<small>' + tagTurma + '</small>' +
+                    '<span>📌 "' + textoHTML(a.texto) + '"</span> ' +
+                    '<small>' + textoHTML(tagTurma) + '</small>' +
                     '<br>' +
-                    '<small>' + a.data + '</small>' +
+                    '<small>' + textoHTML(a.data) + '</small>' +
                 '</div>' +
-                '<button onclick="removerAviso(' + a.id + ')" class="btn-deletar">&times;</button>' +
+                '<button onclick="removerAviso(' + Number(a.id) + ')" class="btn-deletar">&times;</button>' +
             '</div>';
     }
 }
@@ -826,7 +798,7 @@ function removerAviso(id) {
 function adicionarAnotacao() {
     var el = document.getElementById("novaAnotacaoTexto");
     var texto = el ? el.value.trim() : "";
-    if (!texto) return alert("Digite uma anotação!");
+    if (!texto) return notificarPainel("Digite uma anotação.", true);
 
     anotacoesProfessor.push({
         id: Date.now(),
@@ -838,7 +810,7 @@ function adicionarAnotacao() {
     localStorage.setItem("anotacoesProfessorHumora", JSON.stringify(anotacoesProfessor));
     el.value = "";
     renderizarAnotacoes();
-    alert("📝 Anotação salva!");
+    notificarPainel("Anotação salva.");
 }
 
 function renderizarAnotacoes() {
@@ -846,7 +818,7 @@ function renderizarAnotacoes() {
     if (!c) return;
 
     if (anotacoesProfessor.length === 0) {
-        c.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:20px;">📋 Nenhuma anotação.</p>';
+        mostrarSemDados(c, "📋 Nenhuma anotação.", "pequeno", true);
         return;
     }
 
@@ -855,9 +827,9 @@ function renderizarAnotacoes() {
         var a = anotacoesProfessor[i];
         c.innerHTML +=
             '<div class="anotacao-card">' +
-                '<span onclick="removerAnotacao(' + a.id + ')" class="fechar-anotacao">&times;</span>' +
-                '<p>' + a.texto + '</p>' +
-                '<p class="anotacao-data">📅 ' + a.data + '</p>' +
+                '<span onclick="removerAnotacao(' + Number(a.id) + ')" class="fechar-anotacao">&times;</span>' +
+                '<p>' + textoHTML(a.texto) + '</p>' +
+                '<p class="anotacao-data">📅 ' + textoHTML(a.data) + '</p>' +
             '</div>';
     }
 }
@@ -876,33 +848,17 @@ function removerAnotacao(id) {
 // DIÁRIOS COMPARTILHADOS
 // ==========================================================
 function renderizarDiariosCompartilhados() {
-    var c = document.getElementById("containerDiariosCompartilhados");
-    if (!c) return;
-    c.innerHTML = "";
-
-    var encontrados = 0;
-    for (var i = 0; i < alunos.length; i++) {
-        var a = alunos[i];
-        if (a.diario) {
-            for (var j = 0; j < a.diario.length; j++) {
-                if (a.diario[j].compartilhado) {
-                    encontrados++;
-                    c.innerHTML +=
-                        '<div class="item-mini flex-col">' +
-                            '<div>' +
-                                '<strong>' + a.nome + ' (' + (a.turma || "Sem Turma") + ')</strong>' +
-                                '<small> ' + (a.diario[j].data || "Hoje") + '</small>' +
-                            '</div>' +
-                            '<p style="font-size:13px;color:#cbd5e1;">📖 "' + a.diario[j].texto + '"</p>' +
-                        '</div>';
-                }
-            }
-        }
-    }
-
-    if (encontrados === 0) {
-        c.innerHTML = '<p style="color:#94a3b8;font-size:12px;">Nenhum diário compartilhado.</p>';
-    }
+    const lista = document.getElementById("containerDiariosCompartilhados");
+    if (!lista) return;
+    const diarios = alunos.flatMap(aluno => (aluno.diario || [])
+        .filter(nota => nota.compartilhado)
+        .map(nota => copiarModeloPainel("modeloDiarioProfessor", {
+            aluno: `${aluno.nome ?? ""} (${aluno.turma || "Sem Turma"})`,
+            data: nota.data || "Hoje",
+            texto: `📖 "${nota.texto ?? ""}"`
+        })));
+    if (diarios.length) lista.replaceChildren(...diarios);
+    else mostrarSemDados(lista, "Nenhum diário compartilhado.", "pequeno");
 }
 
 // ==========================================================
@@ -959,16 +915,14 @@ function renderizarConquistasProf() {
         }
     ];
 
-    c.innerHTML = "";
-    for (var j = 0; j < conquistas.length; j++) {
-        var con = conquistas[j];
-        c.innerHTML +=
-            '<div class="conquista-prof-card ' + (con.desbloqueada ? "ativa" : "bloqueada") + '">' +
-                '<span style="font-size:32px;">' + con.icone + '</span>' +
-                '<strong>' + con.titulo + '</strong>' +
-                '<small>' + con.desc + '</small>' +
-            '</div>';
-    }
+    const itens = conquistas.map(conquista => {
+        const item = copiarModeloPainel("modeloConquistaProfessor", {
+            icone: conquista.icone, titulo: conquista.titulo, descricao: conquista.desc
+        });
+        item.classList.add(conquista.desbloqueada ? "ativa" : "bloqueada");
+        return item;
+    });
+    c.replaceChildren(...itens);
 }
 
 // ==========================================================
@@ -981,13 +935,13 @@ function abrirModalGameProf() {
     if (elPontos) elPontos.innerText = "0";
     gerarRodadaGameProf();
     var modal = document.getElementById("modalGameProf");
-    if (modal) modal.style.display = "flex";
+    if (modal) exibirElemento(modal, "flex");
 }
 
 function fecharModalGameProf() {
     clearInterval(tempoGameIntervalProf);
     var modal = document.getElementById("modalGameProf");
-    if (modal) modal.style.display = "none";
+    if (modal) exibirElemento(modal, "nenhum");
 }
 
 function gerarRodadaGameProf() {
@@ -999,7 +953,7 @@ function gerarRodadaGameProf() {
     var elAlvo = document.getElementById("corAlvoTextoProf");
     if (elAlvo) {
         elAlvo.innerText = sort.nome;
-        elAlvo.style.color = sort.hex;
+        colorirAlvoPopIt(elAlvo, sort);
     }
 
     var grid = document.getElementById("gridBolasGameProf");
@@ -1014,9 +968,7 @@ function gerarRodadaGameProf() {
 
     for (var j = 0; j < bolas.length; j++) {
         (function (cor) {
-            var bola = document.createElement("div");
-            bola.className = "bola-game";
-            bola.style.backgroundColor = cor.hex;
+            const bola = criarBolaPopIt(cor);
             bola.onclick = function () { clicarBolaGameProf(cor.nome, bola); };
             grid.appendChild(bola);
         })(bolas[j]);
@@ -1029,12 +981,7 @@ function gerarRodadaGameProf() {
 function iniciarTimerGameProf(tempo) {
     var barra = document.getElementById("barraTempoProgressoProf");
     if (barra) {
-        barra.style.transition = "none";
-        barra.style.width = "100%";
-        setTimeout(function () {
-            barra.style.transition = "width " + tempo + "s linear";
-            barra.style.width = "0%";
-        }, 50);
+        animarBarraPopIt(barra, tempo);
     }
 
     var r = tempo;
@@ -1063,8 +1010,7 @@ function clicarBolaGameProf(cor, el) {
         bolasEstouradasProf++;
         var elP = document.getElementById("gamePontosProf");
         if (elP) elP.innerText = pontosGameProf;
-        el.style.transform = "scale(0)";
-        el.style.opacity = "0";
+        el.dataset.estourada = "true";
         setTimeout(function () { gerarRodadaGameProf(); }, 200);
     } else {
         el.classList.add("erro-shake");
@@ -1076,7 +1022,7 @@ function clicarBolaGameProf(cor, el) {
 // JOGO MEMÓRIA
 // ==========================================================
 function abrirJogoMemoriaProf() {
-    var emojis = ["😊", "😔", "😴", "😌", "😰", "😡", "🥰", "😎"];
+    var emojis = [...Object.keys(nomesEmocoes), "🥰", "😎"];
     cartasMemoriaProf = emojis.concat(emojis).sort(function () { return Math.random() - 0.5; });
     cartasViradasProf = [];
     paresEncontradosProf = 0;
@@ -1086,14 +1032,14 @@ function abrirJogoMemoriaProf() {
     if (elT) elT.innerText = "0";
 
     var modal = document.getElementById("modalMemoriaProf");
-    if (modal) modal.style.display = "flex";
+    if (modal) exibirElemento(modal, "flex");
 
     renderizarMemoriaProf();
 }
 
 function fecharJogoMemoriaProf() {
     var modal = document.getElementById("modalMemoriaProf");
-    if (modal) modal.style.display = "none";
+    if (modal) exibirElemento(modal, "nenhum");
 }
 
 function renderizarMemoriaProf() {
@@ -1118,7 +1064,7 @@ function virarCartaProf(carta, emoji) {
         carta.classList.contains("par")) return;
 
     carta.classList.add("virada");
-    carta.innerText = emoji;
+    exibirCartaMemoria(carta, emoji);
     cartasViradasProf.push({ carta: carta, emoji: emoji });
 
     if (cartasViradasProf.length === 2) {
@@ -1157,7 +1103,7 @@ function virarCartaProf(carta, emoji) {
 // ==========================================================
 function abrirJogoSubirProf() {
     var modal = document.getElementById("modalSubirProf");
-    if (modal) modal.style.display = "flex";
+    if (modal) exibirElemento(modal, "flex");
 
     setTimeout(function () {
         canvasSubirProf = document.getElementById("canvasSubirProf");
@@ -1216,7 +1162,7 @@ function fecharJogoSubirProf() {
     document.removeEventListener("keyup", keyupSubirProf);
 
     var modal = document.getElementById("modalSubirProf");
-    if (modal) modal.style.display = "none";
+    if (modal) exibirElemento(modal, "nenhum");
 
     if (pontosSubirProf > melhorPontuacaoSubirProf) {
         melhorPontuacaoSubirProf = pontosSubirProf;
@@ -1399,12 +1345,12 @@ function abrirCacaPalavrasProf() {
     gerarGradeCacaProf();
 
     var modal = document.getElementById("modalCacaPalavrasProf");
-    if (modal) modal.style.display = "flex";
+    if (modal) exibirElemento(modal, "flex");
 }
 
 function fecharCacaPalavrasProf() {
     var modal = document.getElementById("modalCacaPalavrasProf");
-    if (modal) modal.style.display = "none";
+    if (modal) exibirElemento(modal, "nenhum");
 }
 
 function gerarGradeCacaProf() {
@@ -1473,7 +1419,6 @@ function renderizarGradeCacaProf() {
     var c = document.getElementById("gradeCacaPalavrasProf");
     if (!c) return;
     c.innerHTML = "";
-    c.style.gridTemplateColumns = "repeat(10, 32px)";
 
     for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
@@ -1619,12 +1564,12 @@ function usarDicaProf() {
 // ==========================================================
 function abrirModalAvatarProf() {
     var modal = document.getElementById("modalAvatarProf");
-    if (modal) modal.style.display = "flex";
+    if (modal) exibirElemento(modal, "flex");
 }
 
 function fecharModalAvatarProf() {
     var modal = document.getElementById("modalAvatarProf");
-    if (modal) modal.style.display = "none";
+    if (modal) exibirElemento(modal, "nenhum");
 }
 
 function mudarAvatarProf(emoji) {

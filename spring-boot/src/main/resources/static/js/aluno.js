@@ -1,12 +1,15 @@
 // js/aluno.js
-var usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-if (!usuarioLogado) {
-    window.location.href = "login.html";
+var usuarioLogado = JSON.parse(sessionStorage.getItem("usuarioLogado"));
+const modoVisitante = window.location.pathname === '/visitante.html';
+if (modoVisitante ? usuarioLogado?.tipo !== "visitante"
+    : usuarioLogado?.tipo !== "aluno" || !sessionStorage.getItem("token")) {
+    window.location.replace("login.html");
+    throw new Error("Sessão inválida");
 }
 
 // Inicializar dados do aluno
-var alunos = JSON.parse(localStorage.getItem("alunosHumora")) || [];
-var alunoAtual = null;
+var alunos = modoVisitante ? [] : JSON.parse(localStorage.getItem("alunosHumora")) || [];
+var alunoAtual = modoVisitante ? JSON.parse(sessionStorage.getItem("humoraVisitanteDados")) : null;
 for (var i = 0; i < alunos.length; i++) {
     if (alunos[i].email === usuarioLogado.email) {
         alunoAtual = alunos[i];
@@ -43,12 +46,14 @@ if (!alunoAtual.badges) alunoAtual.badges = [];
 
 // Variáveis globais
 var emocaoSelecionada = null;
+let registroFectPendente;
 var graficoSemana = null, graficoRadar = null;
 var intervalRespiracao = null, intervalBloqueio = null;
 var pontosGame = 0, bolasEstouradas = 0, corAlvoAtual = "", tempoGameInterval = null;
 var cartasMemoria = [], cartasViradas = [], paresEncontrados = 0, tentativasMemoria = 0;
 var canvasSubir, ctxSubir, jogadorSubir, plataformasSubir, pontosSubir, gameLoopSubir, teclasSubir;
 var melhorPontuacaoSubir = 0;
+let proximaRodadaPopIt, rodadaPopItAtiva, retornoMemoria, inicioSubir;
 var gradeCaca = [], palavrasCaca = [], palavrasEncontradasCaca = [], dicasCaca = 3;
 var selecaoCaca = { ativa: false, inicioRow: -1, inicioCol: -1, celulas: [] };
 
@@ -59,23 +64,6 @@ var bancoPalavras = [
     "DANCAR", "CANTAR", "MENTE", "CORPO", "SERENO", "PLENO", "AFETO",
     "LACO", "APOIO", "LIVRE", "HUMORA"
 ];
-
-var coresGame = [
-    { nome: "Vermelho", hex: "#ef4444" },
-    { nome: "Azul", hex: "#3b82f6" },
-    { nome: "Verde", hex: "#22c55e" },
-    { nome: "Amarelo", hex: "#eab308" },
-    { nome: "Roxo", hex: "#a855f7" }
-];
-
-var emocoes = {
-    feliz: { emoji: "😊", nome: "Feliz" },
-    triste: { emoji: "😔", nome: "Triste" },
-    cansado: { emoji: "😴", nome: "Cansado" },
-    calmo: { emoji: "😌", nome: "Calmo" },
-    ansioso: { emoji: "😰", nome: "Ansioso" },
-    irritado: { emoji: "😡", nome: "Irritado" }
-};
 
 var conquistasLista = [
     { id: "primeiro_registro", icone: "🌱", titulo: "Primeiro Passo", desc: "Registrou sua primeira emoção." },
@@ -92,18 +80,31 @@ var conquistasLista = [
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("nomeAluno").innerText = alunoAtual.nome;
     document.getElementById("nomeAlunoSidebar").innerText = alunoAtual.nome;
-    document.getElementById("turmaAlunoSidebar").innerText = alunoAtual.turma || "Sem turma";
+    document.getElementById("turmaAlunoSidebar").innerText = modoVisitante ? usuarioLogado.cidade : alunoAtual.turma || "Sem turma";
     document.getElementById("avatarAtual").innerText = alunoAtual.avatar || "😊";
     atualizarStreak();
     carregarHistorico();
-    atualizarBadgeNotificacoes();
     carregarConquistasTab();
-    iniciarMonitorBloqueio();
-    carregarDiariosBackend();
+    if (modoVisitante) {
+        document.title = "Humora | Visitante FECT";
+        document.body.classList.add("fect-visitante");
+        const diario = document.getElementById("tab-diario");
+        diario.querySelectorAll('[data-apenas-aluno]').forEach(elemento => elemento.remove());
+        document.querySelector('[onclick="abrirModalNotificacoes()"]').hidden = true;
+        montarTermometroVisitante();
+    } else {
+        atualizarBadgeNotificacoes();
+        iniciarMonitorBloqueio();
+        carregarDiariosBackend();
+    }
 });
 
 // ========== FUNÇÕES AUXILIARES ==========
 function salvarAlunos() {
+    if (modoVisitante) {
+        sessionStorage.setItem("humoraVisitanteDados", JSON.stringify(alunoAtual));
+        return;
+    }
     for (var i = 0; i < alunos.length; i++) {
         if (alunos[i].email === alunoAtual.email) {
             alunos[i] = alunoAtual;
@@ -122,7 +123,7 @@ function desbloquearConquista(id) {
         salvarAlunos();
         for (var i = 0; i < conquistasLista.length; i++) {
             if (conquistasLista[i].id === id) {
-                alert("🏆 " + conquistasLista[i].icone + " " + conquistasLista[i].titulo + "!");
+                notificarPainel("Conquista desbloqueada: " + conquistasLista[i].titulo + "!");
                 break;
             }
         }
@@ -151,7 +152,7 @@ function atualizarBadgeNotificacoes() {
     var badge = document.getElementById("badgeNotificacao");
     if (!badge) return;
     if (alunoAtual.mensagensVisualizadas) {
-        badge.style.display = "none";
+        exibirElemento(badge, "nenhum");
         return;
     }
     var msgs = alunoAtual.mensagensProfessor || [];
@@ -169,9 +170,9 @@ function atualizarBadgeNotificacoes() {
 
     if (total > 0) {
         badge.innerText = total;
-        badge.style.display = "flex";
+        exibirElemento(badge, "flex");
     } else {
-        badge.style.display = "none";
+        exibirElemento(badge, "nenhum");
     }
 }
 
@@ -184,6 +185,7 @@ function trocarTab(nomeTab, elemento) {
     var tab = document.getElementById("tab-" + nomeTab);
     if (tab) tab.classList.add("ativo");
     if (elemento) elemento.classList.add("ativo");
+    sincronizarAbaPainel(tab, elemento);
     if (nomeTab === "graficos") {
         setTimeout(function () {
             carregarGraficoSemana();
@@ -195,38 +197,55 @@ function trocarTab(nomeTab, elemento) {
 
 // ========== EMOÇÕES ==========
 function selecionarEmocao(event, tipo) {
+    if (document.getElementById("btnEnviarEmocao").getAttribute("aria-busy") === "true") return;
     emocaoSelecionada = tipo;
-    var els = document.querySelectorAll(".emocao");
-    for (var i = 0; i < els.length; i++) els[i].classList.remove("selecionada");
-    if (event && event.currentTarget)
-        event.currentTarget.classList.add("selecionada");
-    document.getElementById("nomeEmocaoSelecionada").innerText =
-        emocoes[tipo].emoji + " " + emocoes[tipo].nome;
-    document.getElementById("emocaoSelecionadaTexto").style.display = "block";
+    atualizarSelecaoEmocao(event.currentTarget);
+    document.getElementById("nomeEmocaoSelecionada").replaceChildren(
+        criarImagemEmocao(tipo), " " + nomesEmocoes[tipo]
+    );
+    exibirElemento(document.getElementById("emocaoSelecionadaTexto"), "bloco");
     document.getElementById("btnEnviarEmocao").disabled = false;
+}
+
+function atualizarSelecaoEmocao(selecionada) {
+    document.querySelectorAll(".emocao").forEach(botao => {
+        const ativa = botao === selecionada;
+        botao.classList.toggle("selecionada", ativa);
+        botao.setAttribute("aria-pressed", String(ativa));
+    });
 }
 
 // ========== ENVIAR EMOÇÃO PARA BACKEND ==========
 async function enviarEmocao() {
     if (!emocaoSelecionada) {
-        alert("Selecione uma emoção!");
-        return;
-    }
-
-    const email = (alunoAtual && alunoAtual.email) || localStorage.getItem("email");
-    if (!email) {
-        alert("Usuário não autenticado.");
+        notificarPainel("Selecione uma emoção.", true);
         return;
     }
 
     const emocaoBackend = EMOCAO_MAP[emocaoSelecionada];
     if (!emocaoBackend) {
-        alert("Emoção inválida.");
+        notificarPainel("Emoção inválida.", true);
         return;
     }
 
+    const botao = document.getElementById("btnEnviarEmocao");
+    if (botao.disabled) return;
+    botao.disabled = true;
+    botao.setAttribute("aria-busy", "true");
+
     try {
-        const response = await api.createDiario(email, emocaoBackend);
+        const intensidade = Number(document.getElementById("intensidadeEmocao").value);
+        const dadosFect = { emocao: emocaoBackend, intensidade };
+        if (modoVisitante && (registroFectPendente?.emocao !== emocaoBackend || registroFectPendente?.intensidade !== intensidade)) {
+            registroFectPendente = { id: idRegistroFect(), ...dadosFect };
+        }
+        const response = modoVisitante
+            ? await fetch("/fect/registros", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(registroFectPendente)
+            })
+            : await api.createDiario(emocaoBackend);
 
         if (!response.ok) {
             let errorMsg = "Erro ao registrar emoção.";
@@ -234,13 +253,15 @@ async function enviarEmocao() {
                 const error = await response.text();
                 if (error) errorMsg = error;
             } catch (e) {}
-            return alert("❌ " + errorMsg);
+            return notificarPainel(errorMsg, true);
         }
+
+        registroFectPendente = null;
 
         // Atualizar dados locais
         var registro = {
             emocao: emocaoSelecionada,
-            intensidade: parseInt(document.getElementById("intensidadeEmocao").value) || 1,
+            intensidade,
             descricao: document.getElementById("motivo").value.trim(),
             data: new Date().toLocaleDateString("pt-BR"),
             hora: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
@@ -254,30 +275,33 @@ async function enviarEmocao() {
         desbloquearConquista("primeiro_registro");
         atualizarStreak();
         salvarAlunos();
-        iniciarMonitorBloqueio();
+        if (!modoVisitante) iniciarMonitorBloqueio();
         carregarHistorico();
 
         document.getElementById("motivo").value = "";
         document.getElementById("btnEnviarEmocao").disabled = true;
-        document.getElementById("emocaoSelecionadaTexto").style.display = "none";
+        exibirElemento(document.getElementById("emocaoSelecionadaTexto"), "nenhum");
         emocaoSelecionada = null;
-        document.querySelectorAll(".emocao").forEach(el => el.classList.remove("selecionada"));
+        atualizarSelecaoEmocao(null);
 
-        alert("✅ Emoção registrada! 💜");
+        if (modoVisitante) {
+            document.querySelector(".fect-visitante-painel").dispatchEvent(new Event("fect:registrado"));
+        }
+        notificarPainel(modoVisitante ? "Emoção registrada no painel da FECT." : "Emoção registrada.");
 
     } catch (error) {
         console.error("Erro ao enviar emoção:", error);
-        alert("❌ Erro ao conectar com o servidor.");
+        notificarPainel("Não foi possível registrar a emoção. Tente novamente.", true);
+    } finally {
+        botao.removeAttribute("aria-busy");
+        botao.disabled = !emocaoSelecionada;
     }
 }
 
 // ========== CARREGAR DIÁRIOS DO BACKEND ==========
 async function carregarDiariosBackend() {
-    const email = (alunoAtual && alunoAtual.email) || localStorage.getItem("email");
-    if (!email) return;
-
     try {
-        const response = await api.getDiario(email);
+        const response = await api.getDiario();
         if (!response.ok) return;
 
         const diarios = await response.json();
@@ -327,19 +351,16 @@ function atualizarStatusBloqueio() {
             h = Math.floor(restante / 3600000),
             m = Math.floor((restante % 3600000) / 60000),
             s = Math.floor((restante % 60000) / 1000);
-        document.getElementById("emocoes").style.display = "none";
-        document.getElementById("motivoContainer").style.display = "none";
-        document.getElementById("bloqueioHumora").style.display = "block";
-        document.getElementById("bloqueioHumora").innerHTML =
-            '<h3>✅ Emoção registrada!</h3><p>Próximo registro em:</p><strong style="font-size:24px;color:#c084fc;">⏳ ' +
-            String(h).padStart(2, "0") + ":" +
-            String(m).padStart(2, "0") + ":" +
-            String(s).padStart(2, "0") + "</strong>";
+        exibirElemento(document.getElementById("emocoes"), "nenhum");
+        exibirElemento(document.getElementById("motivoContainer"), "nenhum");
+        exibirElemento(document.getElementById("bloqueioHumora"), "bloco");
+        document.getElementById("tempoBloqueioHumora").textContent =
+            "⏳ " + [h, m, s].map(valor => String(valor).padStart(2, "0")).join(":");
     } else {
         clearInterval(intervalBloqueio);
-        document.getElementById("emocoes").style.display = "grid";
-        document.getElementById("motivoContainer").style.display = "block";
-        document.getElementById("bloqueioHumora").style.display = "none";
+        exibirElemento(document.getElementById("emocoes"), "grade");
+        exibirElemento(document.getElementById("motivoContainer"), "bloco");
+        exibirElemento(document.getElementById("bloqueioHumora"), "nenhum");
     }
 }
 
@@ -347,44 +368,40 @@ function atualizarStatusBloqueio() {
 function salvarDiario() {
     var texto = document.getElementById("textoDiario").value.trim();
     if (!texto) {
-        alert("Escreva algo!");
+        notificarPainel("Escreva sua nota antes de salvar.", true);
         return;
     }
     if (!alunoAtual.diario) alunoAtual.diario = [];
     alunoAtual.diario.push({
         texto: texto,
-        compartilhado: document.getElementById("compartilharDiario").checked,
+        compartilhado: document.getElementById("compartilharDiario")?.checked ?? false,
         data: new Date().toLocaleDateString("pt-BR") + " - " +
               new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
     });
     desbloquearConquista("diario_mestre");
     salvarAlunos();
     document.getElementById("textoDiario").value = "";
-    document.getElementById("compartilharDiario").checked = false;
-    alert("✅ Diário salvo! 📝");
+    if (!modoVisitante) document.getElementById("compartilharDiario").checked = false;
+    notificarPainel("Nota salva no diário.");
 }
 
 function abrirModalVerDiario() {
-    var c = document.getElementById("containerListaDiario");
-    c.innerHTML = "";
-    var d = alunoAtual.diario || [];
-    if (d.length === 0)
-        c.innerHTML = '<p style="color:#94a3b8;padding:20px;">Nenhuma nota ainda.</p>';
-    else
-        for (var i = d.length - 1; i >= 0; i--)
-            c.innerHTML +=
-                '<div style="padding:12px 0;border-bottom:1px solid rgba(168,85,247,0.2);text-align:left;"><strong>📅 ' +
-                d[i].data +
-                '</strong><p style="color:#e2e8f0;">"' +
-                d[i].texto +
-                '"</p><small style="color:#c084fc;">' +
-                (d[i].compartilhado ? "🔓 Compartilhado" : "🔒 Privado") +
-                "</small></div>";
-    document.getElementById("modalVerDiario").style.display = "flex";
+    const lista = document.getElementById("containerListaDiario");
+    const notas = alunoAtual.diario || [];
+    if (!notas.length) mostrarSemDados(lista, "Nenhuma nota ainda.", "amplo");
+    else {
+        const itens = [...notas].reverse().map(nota => copiarModeloPainel("modeloNotaAluno", {
+            data: "📅 " + (nota.data ?? ""),
+            texto: `"${nota.texto ?? ""}"`,
+            compartilhamento: nota.compartilhado ? "🔓 Compartilhado" : "🔒 Privado"
+        }));
+        lista.replaceChildren(...itens);
+    }
+    exibirElemento(document.getElementById("modalVerDiario"), "flex");
 }
 
 function fecharModalVerDiario() {
-    document.getElementById("modalVerDiario").style.display = "none";
+    exibirElemento(document.getElementById("modalVerDiario"), "nenhum");
 }
 
 // ========== GRÁFICOS ==========
@@ -395,8 +412,8 @@ function carregarGraficoSemana() {
     if (graficoSemana) graficoSemana.destroy();
     var hist = alunoAtual.historico || [],
         ultimos = hist.slice(-7),
-        labels = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
-        dados = [2, 1, 3, 5, 4, 3, 2];
+        labels = [],
+        dados = [];
     if (ultimos.length > 0) {
         labels = [];
         dados = [];
@@ -424,8 +441,8 @@ function carregarGraficoSemana() {
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-                x: { ticks: { color: "#94a3b8" } },
-                y: { min: 1, max: 5, ticks: { stepSize: 1, color: "#94a3b8" } }
+                x: { ticks: { color: modoVisitante ? "#615375" : "#94a3b8" } },
+                y: { min: 1, max: 5, ticks: { stepSize: 1, color: modoVisitante ? "#615375" : "#94a3b8" } }
             }
         }
     });
@@ -449,7 +466,7 @@ function carregarGraficoRadar() {
     graficoRadar = new Chart(ctx, {
         type: "radar",
         data: {
-            labels: ["😊 Feliz", "😔 Triste", "😴 Cansado", "😌 Calmo", "😰 Ansioso", "😡 Irritado"],
+            labels: Object.values(nomesEmocoes),
             datasets: [{
                 data: vals,
                 backgroundColor: "rgba(168,85,247,0.35)",
@@ -502,24 +519,25 @@ function pararRespiracaoTab() {
 
 // ========== HISTÓRICO ==========
 function carregarHistorico() {
-    var c = document.getElementById("historico");
-    if (!c) return;
-    c.innerHTML = "";
-    var h = alunoAtual.historico || [];
-    if (h.length === 0) {
-        c.innerHTML = '<p style="color:#94a3b8;padding:15px;">Nenhum registro ainda.</p>';
+    const lista = document.getElementById("historico");
+    if (!lista) return;
+    const historico = alunoAtual.historico || [];
+    if (!historico.length) {
+        mostrarSemDados(lista, "Nenhum registro ainda.", "compacto");
         return;
     }
-    for (var i = h.length - 1; i >= 0; i--) {
-        var info = emocoes[h[i].emocao] || { emoji: "❓", nome: h[i].emocao };
-        c.innerHTML +=
-            '<div style="padding:10px 0;border-bottom:1px solid rgba(168,85,247,0.2);"><span style="font-size:20px;">' +
-            info.emoji + "</span> <strong>" +
-            info.nome + " (Nível " +
-            (h[i].intensidade || 1) + ")</strong>" +
-            (h[i].descricao ? '<br><small>📝 "' + h[i].descricao + '"</small>' : "") +
-            "<br><small>" + h[i].data + " às " + h[i].hora + "</small></div>";
-    }
+    const itens = [...historico].reverse().map(registro => {
+        const tipo = registro.emocao;
+        const item = copiarModeloPainel("modeloHistoricoAluno", {
+            resumo: `${nomesEmocoes[tipo] ?? tipo ?? ""} (Nível ${registro.intensidade || 1})`,
+            descricao: `📝 "${registro.descricao ?? ""}"`,
+            data: `${registro.data ?? ""} às ${registro.hora ?? ""}`
+        });
+        if (Object.hasOwn(nomesEmocoes, tipo)) item.prepend(criarImagemEmocao(tipo), " ");
+        item.querySelector("[data-descricao]").hidden = !registro.descricao;
+        return item;
+    });
+    lista.replaceChildren(...itens);
 }
 
 // ========== NOTIFICAÇÕES ==========
@@ -536,127 +554,114 @@ function trocarNotifTab(tipo, el) {
 }
 
 function carregarMensagensProfessor() {
-    var c = document.getElementById("mensagensProfessor");
-    if (!c) return;
-    c.innerHTML = "";
-    var msgs = alunoAtual.mensagensProfessor || [];
-    if (msgs.length === 0) {
-        c.innerHTML = '<p style="color:#94a3b8;padding:15px;">Nenhuma mensagem.</p>';
+    const lista = document.getElementById("mensagensProfessor");
+    if (!lista) return;
+    const mensagens = alunoAtual.mensagensProfessor || [];
+    if (!mensagens.length) {
+        mostrarSemDados(lista, "Nenhuma mensagem.", "compacto");
         return;
     }
-    for (var i = msgs.length - 1; i >= 0; i--)
-        c.innerHTML +=
-            '<div style="padding:10px 0;border-bottom:1px solid rgba(168,85,247,0.2);"><strong>👨‍🏫 ' +
-            msgs[i].professor + "</strong><small> " + msgs[i].data +
-            '</small><p style="color:#e2e8f0;">' + msgs[i].texto + "</p></div>";
+    const itens = [...mensagens].reverse().map(mensagem => copiarModeloPainel("modeloMensagemAluno", {
+        autor: "👨‍🏫 " + (mensagem.professor ?? ""),
+        data: mensagem.data,
+        texto: mensagem.texto
+    }));
+    lista.replaceChildren(...itens);
 }
 
 function carregarAtividadesAluno() {
-    var c = document.getElementById("atividadesAluno");
-    if (!c) return;
-    c.innerHTML = "";
-    var ag = JSON.parse(localStorage.getItem("agendamentosHumora")) || [],
-        minhas = [];
-    for (var i = 0; i < ag.length; i++) {
-        if (ag[i].turma === alunoAtual.turma) minhas.push(ag[i]);
-    }
-    if (minhas.length === 0) {
-        c.innerHTML = '<p style="color:#94a3b8;padding:15px;">Nenhuma atividade.</p>';
+    const lista = document.getElementById("atividadesAluno");
+    if (!lista) return;
+    const atividades = (JSON.parse(localStorage.getItem("agendamentosHumora")) || [])
+        .filter(atividade => atividade.turma === alunoAtual.turma);
+    if (!atividades.length) {
+        mostrarSemDados(lista, "Nenhuma atividade.", "compacto");
         return;
     }
-    for (var j = 0; j < minhas.length; j++)
-        c.innerHTML +=
-            '<div style="padding:10px 0;border-bottom:1px solid rgba(168,85,247,0.2);"><strong>📅 ' +
-            minhas[j].titulo + "</strong><br><small>" +
-            minhas[j].turma + " | " + minhas[j].data + "</small></div>";
+    const itens = atividades.map(atividade => copiarModeloPainel("modeloAtividadeAluno", {
+        titulo: "📅 " + (atividade.titulo ?? ""),
+        detalhes: `${atividade.turma ?? ""} | ${atividade.data ?? ""}`
+    }));
+    lista.replaceChildren(...itens);
 }
 
 function carregarAvisosAluno() {
-    var c = document.getElementById("avisosAluno");
-    if (!c) return;
-    c.innerHTML = "";
-    var av = JSON.parse(localStorage.getItem("avisosTurmaHumora")) || [];
-    // Filtra por turma (avisos sem turma = todos)
-    var meus = [];
-    for (var k = 0; k < av.length; k++) {
-        if (!av[k].turma || av[k].turma === alunoAtual.turma) meus.push(av[k]);
-    }
-    if (meus.length === 0) {
-        c.innerHTML = '<p style="color:#94a3b8;padding:15px;">Nenhum aviso.</p>';
+    const lista = document.getElementById("avisosAluno");
+    if (!lista) return;
+    const avisos = (JSON.parse(localStorage.getItem("avisosTurmaHumora")) || [])
+        .filter(aviso => !aviso.turma || aviso.turma === alunoAtual.turma);
+    if (!avisos.length) {
+        mostrarSemDados(lista, "Nenhum aviso.", "compacto");
         return;
     }
-    for (var i = meus.length - 1; i >= 0; i--)
-        c.innerHTML +=
-            '<div style="padding:10px 0;border-bottom:1px solid rgba(168,85,247,0.2);"><strong>📢 Aviso</strong><p style="color:#e2e8f0;">' +
-            meus[i].texto + "</p><small>" + meus[i].data + "</small></div>";
+    const itens = avisos.reverse().map(aviso => copiarModeloPainel("modeloAvisoAluno", {
+        texto: aviso.texto, data: aviso.data
+    }));
+    lista.replaceChildren(...itens);
 }
 
 function abrirModalNotificacoes() {
-    document.getElementById("modalNotificacoes").style.display = "flex";
+    exibirElemento(document.getElementById("modalNotificacoes"), "flex");
     alunoAtual.mensagensVisualizadas = true;
     salvarAlunos();
     var badge = document.getElementById("badgeNotificacao");
-    badge.style.display = "none";
+    exibirElemento(badge, "nenhum");
     badge.innerText = "0";
     carregarMensagensProfessor();
 }
 
 function fecharModalNotificacoes() {
-    document.getElementById("modalNotificacoes").style.display = "none";
+    exibirElemento(document.getElementById("modalNotificacoes"), "nenhum");
 }
 
 function abrirModalHistorico() {
     carregarHistorico();
-    document.getElementById("modalHistorico").style.display = "flex";
+    exibirElemento(document.getElementById("modalHistorico"), "flex");
 }
 
 function fecharModalHistorico() {
-    document.getElementById("modalHistorico").style.display = "none";
+    exibirElemento(document.getElementById("modalHistorico"), "nenhum");
 }
 
 // ========== CONQUISTAS ==========
 function carregarConquistasTab() {
-    var c = document.getElementById("containerConquistasTab");
-    if (!c) return;
-    c.innerHTML = "";
-    var d = alunoAtual.conquistas || [];
-    for (var i = 0; i < conquistasLista.length; i++) {
-        var con = conquistasLista[i],
-            tem = d.indexOf(con.id) !== -1;
-        c.innerHTML +=
-            '<div style="display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:' +
-            (tem ? "rgba(168,85,247,0.2)" : "rgba(255,255,255,0.03)") +
-            ";border:1px solid " +
-            (tem ? "#a855f7" : "rgba(255,255,255,0.1)") +
-            ";margin-bottom:8px;opacity:" +
-            (tem ? "1" : "0.5") +
-            ';"><span style="font-size:28px;">' +
-            con.icone + "</span><div><strong>" +
-            con.titulo + '</strong><p style="font-size:12px;color:#94a3b8;">' +
-            con.desc + "</p></div></div>";
-    }
+    const lista = document.getElementById("containerConquistasTab");
+    if (!lista) return;
+    const obtidas = alunoAtual.conquistas || [];
+    const itens = conquistasLista.map(conquista => {
+        const item = copiarModeloPainel("modeloConquistaAluno", {
+            titulo: conquista.titulo, icone: conquista.icone, descricao: conquista.desc
+        });
+        item.dataset.obtida = String(obtidas.includes(conquista.id));
+        return item;
+    });
+    lista.replaceChildren(...itens);
 }
 
 // ========== JOGOS (Pop-It) ==========
 function abrirModalGame() {
     pontosGame = 0;
     bolasEstouradas = 0;
+    document.getElementById("resultadoPopIt").textContent = "";
     document.getElementById("gamePontos").innerText = "0";
     gerarRodadaGame();
-    document.getElementById("modalGame").style.display = "flex";
+    exibirElemento(document.getElementById("modalGame"), "flex");
 }
 
 function fecharModalGame() {
     clearInterval(tempoGameInterval);
-    document.getElementById("modalGame").style.display = "none";
+    clearTimeout(proximaRodadaPopIt);
+    rodadaPopItAtiva = false;
+    exibirElemento(document.getElementById("modalGame"), "nenhum");
 }
 
 function gerarRodadaGame() {
     clearInterval(tempoGameInterval);
+    rodadaPopItAtiva = true;
     var sort = coresGame[Math.floor(Math.random() * coresGame.length)];
     corAlvoAtual = sort.nome;
     document.getElementById("corAlvoTexto").innerText = sort.nome;
-    document.getElementById("corAlvoTexto").style.color = sort.hex;
+    colorirAlvoPopIt(document.getElementById("corAlvoTexto"), sort);
     var grid = document.getElementById("gridBolasGame");
     grid.innerHTML = "";
     var bolas = [sort];
@@ -665,9 +670,7 @@ function gerarRodadaGame() {
     bolas.sort(function () { return Math.random() - 0.5; });
     for (var j = 0; j < bolas.length; j++) {
         (function (cor) {
-            var bola = document.createElement("div");
-            bola.className = "bola-game";
-            bola.style.backgroundColor = cor.hex;
+            const bola = criarBolaPopIt(cor);
             bola.onclick = function () {
                 clicarBolaGame(cor.nome, bola);
             };
@@ -679,12 +682,7 @@ function gerarRodadaGame() {
 
 function iniciarTimerGame(tempo) {
     var barra = document.getElementById("barraTempoProgresso");
-    barra.style.transition = "none";
-    barra.style.width = "100%";
-    setTimeout(function () {
-        barra.style.transition = "width " + tempo + "s linear";
-        barra.style.width = "0%";
-    }, 50);
+    animarBarraPopIt(barra, tempo);
     var r = tempo;
     document.getElementById("tempoGameTexto").innerText = r + "s";
     tempoGameInterval = setInterval(function () {
@@ -695,24 +693,24 @@ function iniciarTimerGame(tempo) {
             pontosGame = 0;
             bolasEstouradas = 0;
             document.getElementById("gamePontos").innerText = "0";
-            alert("⏰ Tempo esgotado!");
+            document.getElementById("resultadoPopIt").textContent = "Tempo esgotado. Nova rodada!";
             gerarRodadaGame();
         }
     }, 1000);
 }
 
 function clicarBolaGame(cor, el) {
+    if (!rodadaPopItAtiva) return;
     if (cor === corAlvoAtual) {
         clearInterval(tempoGameInterval);
+        rodadaPopItAtiva = false;
+        document.getElementById("resultadoPopIt").textContent = "Acertou!";
         pontosGame += 10;
         bolasEstouradas++;
         document.getElementById("gamePontos").innerText = pontosGame;
         if (pontosGame >= 500) desbloquearConquista("game_500");
-        el.style.transform = "scale(0)";
-        el.style.opacity = "0";
-        setTimeout(function () {
-            gerarRodadaGame();
-        }, 200);
+        el.dataset.estourada = "true";
+        proximaRodadaPopIt = setTimeout(gerarRodadaGame, 200);
     } else {
         el.classList.add("erro-shake");
         setTimeout(function () {
@@ -723,18 +721,24 @@ function clicarBolaGame(cor, el) {
 
 // ========== MEMÓRIA ==========
 function abrirJogoMemoria() {
-    var emojis = ["😊", "😔", "😴", "😌", "😰", "😡", "🥰", "😎"];
-    cartasMemoria = emojis.concat(emojis).sort(function () { return Math.random() - 0.5; });
+    const emocoes = Object.keys(nomesEmocoes);
+    cartasMemoria = emocoes.concat(emocoes);
+    for (let i = cartasMemoria.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cartasMemoria[i], cartasMemoria[j]] = [cartasMemoria[j], cartasMemoria[i]];
+    }
+    document.getElementById("resultadoMemoria").textContent = "";
     cartasViradas = [];
     paresEncontrados = 0;
     tentativasMemoria = 0;
     document.getElementById("tentativasMemoria").innerText = "0";
-    document.getElementById("modalMemoria").style.display = "flex";
+    exibirElemento(document.getElementById("modalMemoria"), "flex");
     renderizarMemoria();
 }
 
 function fecharJogoMemoria() {
-    document.getElementById("modalMemoria").style.display = "none";
+    clearTimeout(retornoMemoria);
+    exibirElemento(document.getElementById("modalMemoria"), "nenhum");
 }
 
 function renderizarMemoria() {
@@ -742,7 +746,10 @@ function renderizarMemoria() {
     grid.innerHTML = "";
     for (var i = 0; i < cartasMemoria.length; i++) {
         (function (emoji) {
-            var carta = document.createElement("div");
+            var carta = document.createElement("button");
+            carta.type = "button";
+            carta.setAttribute("aria-label", `Carta oculta ${i + 1}`);
+            carta.dataset.posicao = i + 1;
             carta.className = "carta-memoria";
             carta.innerText = "?";
             carta.onclick = function () {
@@ -757,7 +764,8 @@ function virarCarta(carta, emoji) {
     if (cartasViradas.length === 2 || carta.classList.contains("virada") || carta.classList.contains("par"))
         return;
     carta.classList.add("virada");
-    carta.innerText = emoji;
+    exibirCartaMemoria(carta, emoji);
+    carta.setAttribute("aria-label", nomesEmocoes[emoji]);
     cartasViradas.push({ carta: carta, emoji: emoji });
     if (cartasViradas.length === 2) {
         tentativasMemoria++;
@@ -767,21 +775,20 @@ function virarCarta(carta, emoji) {
             cartasViradas[1].carta.classList.add("par");
             paresEncontrados++;
             cartasViradas = [];
-            if (paresEncontrados === 8) {
+            if (paresEncontrados === cartasMemoria.length / 2) {
                 if (tentativasMemoria <= 10) desbloquearConquista("memoria_10");
-                setTimeout(function () {
-                    alert("🎉 Parabéns!");
-                    fecharJogoMemoria();
-                }, 500);
+                document.getElementById("resultadoMemoria").textContent =
+                    `Você encontrou todos os pares em ${tentativasMemoria} tentativas!`;
             }
         } else {
             var c1 = cartasViradas[0].carta,
                 c2 = cartasViradas[1].carta;
-            setTimeout(function () {
-                c1.classList.remove("virada");
-                c1.innerText = "?";
-                c2.classList.remove("virada");
-                c2.innerText = "?";
+            retornoMemoria = setTimeout(function () {
+                for (const carta of [c1, c2]) {
+                    carta.classList.remove("virada");
+                    carta.textContent = "?";
+                    carta.setAttribute("aria-label", `Carta oculta ${carta.dataset.posicao}`);
+                }
                 cartasViradas = [];
             }, 800);
         }
@@ -790,8 +797,11 @@ function virarCarta(carta, emoji) {
 
 // ========== CÉREBRO SALTADOR ==========
 function abrirJogoSubir() {
-    document.getElementById("modalSubir").style.display = "flex";
-    setTimeout(function () {
+    exibirElemento(document.getElementById("modalSubir"), "flex");
+    clearTimeout(inicioSubir);
+    clearInterval(gameLoopSubir);
+    document.getElementById("resultadoSubir").textContent = "";
+    inicioSubir = setTimeout(function () {
         canvasSubir = document.getElementById("canvasSubir");
         ctxSubir = canvasSubir.getContext("2d");
         jogadorSubir = {
@@ -828,13 +838,26 @@ function abrirJogoSubir() {
 }
 
 function fecharJogoSubir() {
+    clearTimeout(inicioSubir);
     clearInterval(gameLoopSubir);
     document.removeEventListener("keydown", keydownSubir);
     document.removeEventListener("keyup", keyupSubir);
-    document.getElementById("modalSubir").style.display = "none";
+    exibirElemento(document.getElementById("modalSubir"), "nenhum");
     if (pontosSubir > melhorPontuacaoSubir) melhorPontuacaoSubir = pontosSubir;
     if (pontosSubir >= 50) desbloquearConquista("subir_50");
 }
+
+document.querySelectorAll("[data-direcao]").forEach(botao => {
+    const direcao = botao.dataset.direcao;
+    botao.addEventListener("pointerdown", evento => {
+        if (!teclasSubir) return;
+        botao.setPointerCapture(evento.pointerId);
+        teclasSubir[direcao] = true;
+    });
+    botao.addEventListener("lostpointercapture", () => {
+        if (teclasSubir) teclasSubir[direcao] = false;
+    });
+});
 
 function keydownSubir(e) {
     teclasSubir[e.key] = true;
@@ -918,8 +941,9 @@ function atualizarSubir() {
     if (jogadorSubir.y > 430) {
         clearInterval(gameLoopSubir);
         setTimeout(function () {
-            alert("🧠 Fim de jogo!\nPontuação: " + pontosSubir + "\nMelhor: " + melhorPontuacaoSubir);
-            fecharJogoSubir();
+            document.getElementById("resultadoSubir").textContent =
+                `Fim de jogo. Pontuação: ${pontosSubir}. Melhor: ${melhorPontuacaoSubir}.`;
+            document.getElementById("melhorSubir").textContent = melhorPontuacaoSubir;
         }, 100);
         return;
     }
@@ -967,11 +991,11 @@ function abrirCacaPalavras() {
     document.getElementById("dicasRestantes").innerText = dicasCaca;
     document.getElementById("btnDica").disabled = false;
     gerarGradeCacaPalavras();
-    document.getElementById("modalCacaPalavras").style.display = "flex";
+    exibirElemento(document.getElementById("modalCacaPalavras"), "flex");
 }
 
 function fecharCacaPalavras() {
-    document.getElementById("modalCacaPalavras").style.display = "none";
+    exibirElemento(document.getElementById("modalCacaPalavras"), "nenhum");
 }
 
 function gerarGradeCacaPalavras() {
@@ -989,13 +1013,13 @@ function gerarGradeCacaPalavras() {
                 row, col;
             if (dir === 0) {
                 row = Math.floor(Math.random() * 10);
-                col = Math.floor(Math.random() * (10 - palavra.length));
+                col = Math.floor(Math.random() * (11 - palavra.length));
             } else if (dir === 1) {
-                row = Math.floor(Math.random() * (10 - palavra.length));
+                row = Math.floor(Math.random() * (11 - palavra.length));
                 col = Math.floor(Math.random() * 10);
             } else {
-                row = Math.floor(Math.random() * (10 - palavra.length));
-                col = Math.floor(Math.random() * (10 - palavra.length));
+                row = Math.floor(Math.random() * (11 - palavra.length));
+                col = Math.floor(Math.random() * (11 - palavra.length));
             }
             var cabe = true;
             for (var l = 0; l < palavra.length; l++) {
@@ -1016,6 +1040,15 @@ function gerarGradeCacaPalavras() {
             }
             tentativas++;
         }
+        if (!colocada) {
+            // Se os cruzamentos falharem, distribui as palavras pelas linhas.
+            gradeCaca = Array.from({ length: 10 }, (_, linha) => {
+                const letras = [...(palavrasCaca[linha] || "")];
+                const margem = Math.floor(Math.random() * (11 - letras.length));
+                return Array.from({ length: 10 }, (_, coluna) => letras[coluna - margem] || "");
+            });
+            break;
+        }
     }
     var letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     for (var i = 0; i < 10; i++) {
@@ -1029,52 +1062,48 @@ function gerarGradeCacaPalavras() {
 }
 
 function renderizarGradeCaca() {
-    var container = document.getElementById("gradeCacaPalavras");
-    container.innerHTML = "";
-    container.style.gridTemplateColumns = "repeat(10, 32px)";
-    for (var i = 0; i < 10; i++) {
-        for (var j = 0; j < 10; j++) {
-            (function (row, col) {
-                var cel = document.createElement("div");
-                cel.className = "celula-caca";
-                cel.innerText = gradeCaca[row][col];
-                cel.setAttribute("data-row", row);
-                cel.setAttribute("data-col", col);
-                cel.addEventListener("mousedown", function (e) {
-                    e.preventDefault();
-                    selecaoCaca.ativa = true;
-                    selecaoCaca.inicioRow = row;
-                    selecaoCaca.inicioCol = col;
-                    limparSelecaoCaca();
-                    cel.classList.add("selecionada");
-                    selecaoCaca.celulas.push({ row: row, col: col, el: cel });
-                });
-                cel.addEventListener("mouseenter", function (e) {
-                    if (!selecaoCaca.ativa || selecaoCaca.celulas.length === 0) return;
-                    var ultima = selecaoCaca.celulas[selecaoCaca.celulas.length - 1],
-                        dRow = row - selecaoCaca.inicioRow,
-                        dCol = col - selecaoCaca.inicioCol;
-                    if (selecaoCaca.celulas.length === 1) {
-                        if (dRow === 0 || dCol === 0 || Math.abs(dRow) === Math.abs(dCol)) {
-                            cel.classList.add("selecionada");
-                            selecaoCaca.celulas.push({ row: row, col: col, el: cel });
-                        }
-                    } else {
-                        var dirRow = selecaoCaca.celulas[1].row - selecaoCaca.celulas[0].row,
-                            dirCol = selecaoCaca.celulas[1].col - selecaoCaca.celulas[0].col,
-                            expectedRow = ultima.row + (dirRow !== 0 ? (dirRow > 0 ? 1 : -1) : 0),
-                            expectedCol = ultima.col + (dirCol !== 0 ? (dirCol > 0 ? 1 : -1) : 0);
-                        if (row === expectedRow && col === expectedCol) {
-                            cel.classList.add("selecionada");
-                            selecaoCaca.celulas.push({ row: row, col: col, el: cel });
-                        }
-                    }
-                });
-                container.appendChild(cel);
-            })(i, j);
+    const container = document.getElementById("gradeCacaPalavras");
+    const celulas = gradeCaca.map((linha, row) => linha.map((letra, col) => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "celula-caca";
+        botao.textContent = letra;
+        botao.dataset.row = row;
+        botao.dataset.col = col;
+        return botao;
+    }));
+    container.replaceChildren(...celulas.flat());
+
+    container.onclick = event => {
+        const celula = event.target.closest(".celula-caca");
+        if (!celula) return;
+        const row = Number(celula.dataset.row);
+        const col = Number(celula.dataset.col);
+        if (!selecaoCaca.ativa) {
+            Object.assign(selecaoCaca, { ativa: true, inicioRow: row, inicioCol: col });
+            celula.classList.add("selecionada");
+            selecaoCaca.celulas.push({ row, col, el: celula });
+            return;
         }
-    }
-    document.addEventListener("mouseup", finalizarSelecaoCaca);
+
+        const { inicioRow, inicioCol } = selecaoCaca;
+        const dr = row - inicioRow;
+        const dc = col - inicioCol;
+        if (dr && dc && Math.abs(dr) !== Math.abs(dc)) {
+            selecaoCaca.ativa = false;
+            limparSelecaoCaca();
+            return;
+        }
+        limparSelecaoCaca();
+        for (let passo = 0; passo <= Math.max(Math.abs(dr), Math.abs(dc)); passo++) {
+            const r = inicioRow + passo * Math.sign(dr);
+            const c = inicioCol + passo * Math.sign(dc);
+            const el = celulas[r][c];
+            el.classList.add("selecionada");
+            selecaoCaca.celulas.push({ row: r, col: c, el });
+        }
+        finalizarSelecaoCaca();
+    };
 }
 
 function limparSelecaoCaca() {
@@ -1092,7 +1121,7 @@ function finalizarSelecaoCaca() {
         palavraFormada += gradeCaca[selecaoCaca.celulas[i].row][selecaoCaca.celulas[i].col];
     var encontrou = false;
     for (var j = 0; j < palavrasCaca.length; j++) {
-        if (palavrasCaca[j] === palavraFormada && palavrasEncontradasCaca.indexOf(palavrasCaca[j]) === -1) {
+        if ((palavrasCaca[j] === palavraFormada || palavrasCaca[j] === [...palavraFormada].reverse().join("")) && palavrasEncontradasCaca.indexOf(palavrasCaca[j]) === -1) {
             encontrou = true;
             palavrasEncontradasCaca.push(palavrasCaca[j]);
             for (var k = 0; k < selecaoCaca.celulas.length; k++) {
@@ -1104,7 +1133,7 @@ function finalizarSelecaoCaca() {
             atualizarListaPalavras(palavrasCaca[j]);
             if (palavrasEncontradasCaca.length === 8) {
                 setTimeout(function () {
-                    alert("🎉 Parabéns! Você encontrou todas as palavras!");
+                    notificarPainel("Você encontrou todas as palavras!");
                     fecharCacaPalavras();
                 }, 300);
             }
@@ -1136,7 +1165,7 @@ function usarDica() {
     if (dicasCaca <= 0) return;
     for (var i = 0; i < palavrasCaca.length; i++) {
         if (palavrasEncontradasCaca.indexOf(palavrasCaca[i]) === -1) {
-            alert("💡 A palavra tem " + palavrasCaca[i].length + " letras e começa com '" + palavrasCaca[i][0] + "'");
+            notificarPainel("Dica: a palavra tem " + palavrasCaca[i].length + " letras e começa com " + palavrasCaca[i][0] + ".");
             dicasCaca--;
             document.getElementById("dicasRestantes").innerText = dicasCaca;
             if (dicasCaca <= 0) document.getElementById("btnDica").disabled = true;
@@ -1147,11 +1176,11 @@ function usarDica() {
 
 // ========== AVATAR ==========
 function abrirModalAvatar() {
-    document.getElementById("modalAvatar").style.display = "flex";
+    exibirElemento(document.getElementById("modalAvatar"), "flex");
 }
 
 function fecharModalAvatar() {
-    document.getElementById("modalAvatar").style.display = "none";
+    exibirElemento(document.getElementById("modalAvatar"), "nenhum");
 }
 
 function mudarAvatar(emoji) {

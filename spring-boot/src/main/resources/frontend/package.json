@@ -1,0 +1,14 @@
+{
+  "name": "humora-frontend",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-css.mjs"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "4.3.5",
+    "tailwindcss": "4.3.5"
+  },
+  "dependencies": {
+    "chart.js": "4.6.1"
+  }
+}

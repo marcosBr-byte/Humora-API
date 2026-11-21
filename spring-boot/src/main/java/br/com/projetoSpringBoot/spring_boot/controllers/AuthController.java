@@ -11,11 +11,13 @@ import br.com.projetoSpringBoot.spring_boot.services.AlunoService;
 import br.com.projetoSpringBoot.spring_boot.services.ProfessorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.AuthenticationException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,35 +44,40 @@ public class AuthController {
     private TokenConfig tokenConfig;
 
     @PostMapping("/login/aluno")
-    public ResponseEntity logarAluno(@RequestBody LoginRequestDTO login) {
-
-        UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(login.email(), login.senha());
-        Authentication authentication = authenticationManager.authenticate(userAndPass);
-
-        Aluno aluno = (Aluno) authentication.getPrincipal();
-        String token = tokenConfig.generateToken(aluno);
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+    public ResponseEntity<?> logarAluno(@Valid @RequestBody LoginRequestDTO login) {
+        try {
+            if (autenticar(login) instanceof Aluno aluno) {
+                return ResponseEntity.ok(new LoginResponseDTO(tokenConfig.generateToken(aluno)));
+            }
+        } catch (AuthenticationException e) {
+            return credenciaisInvalidas();
+        }
+        return credenciaisInvalidas();
     }
 
     @PostMapping("/login/professor")
-    public ResponseEntity logarProfessor(@RequestBody LoginRequestDTO login) {
+    public ResponseEntity<?> logarProfessor(@Valid @RequestBody LoginRequestDTO login) {
         try {
-            System.out.println("Professor recebido");
-            UsernamePasswordAuthenticationToken userAndPass = new UsernamePasswordAuthenticationToken(login.email(), login.senha());
-            Authentication authentication = authenticationManager.authenticate(userAndPass);
-
-            Professor professor = (Professor) authentication.getPrincipal();
-            String token = tokenConfig.generateToken(professor);
-            return ResponseEntity.ok(new LoginResponseDTO(token));
-        } catch (Exception e) {
-            System.out.println("Erro no login " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
+            if (autenticar(login) instanceof Professor professor) {
+                return ResponseEntity.ok(new LoginResponseDTO(tokenConfig.generateToken(professor)));
+            }
+        } catch (AuthenticationException e) {
+            return credenciaisInvalidas();
         }
+        return credenciaisInvalidas();
+    }
+
+    private Object autenticar(LoginRequestDTO login) {
+        var credenciais = UsernamePasswordAuthenticationToken.unauthenticated(login.email(), login.senha());
+        return authenticationManager.authenticate(credenciais).getPrincipal();
+    }
+
+    private ResponseEntity<String> credenciaisInvalidas() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
     }
 
     @PostMapping("/register/aluno")
-    public ResponseEntity reistrarAluno(@Valid @RequestBody AlunoDTO alunoDTO) {
+    public ResponseEntity<?> registrarAluno(@Valid @RequestBody AlunoDTO alunoDTO) {
         try {
             if (!alunoDTO.getEmail().contains("@")) {
                 return ResponseEntity.badRequest().body("Email invalido");
@@ -95,12 +102,10 @@ public class AuthController {
             alunoService.create(aluno);
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Aluno criado com sucesso!");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erro ao registrar aluno: " + e);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("E-mail já cadastrado.");
         }
     }
-
-    private final String CHAVE_ACESSO = "HUMORADM2026";
 
     @PostMapping("/register/professor")
     public ResponseEntity<?> registrarProfessor(
@@ -108,10 +113,9 @@ public class AuthController {
 
         try {
 
-            if (!CHAVE_ACESSO.equals(professorDTO.getChaveAcesso())) {
-                return ResponseEntity
-                        .status(HttpStatus.FORBIDDEN)
-                        .body("Chave de acesso inválida!");
+            if (alunoService.findByEmail(professorDTO.getEmail()).isPresent()
+                    || professorService.findProfessorByEmail(professorDTO.getEmail()).isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("E-mail já cadastrado.");
             }
 
             Professor professor = new Professor(
@@ -127,9 +131,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body("Professor criado com sucesso!");
 
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body("Erro ao registrar professor: " + e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("E-mail já cadastrado.");
         }
     }
 }

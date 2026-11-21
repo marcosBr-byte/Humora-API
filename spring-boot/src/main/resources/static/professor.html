@@ -1,587 +1,425 @@
 
 <!doctype html>
-<html lang="pt-BR">
+<html class="estilo-documento-aluno" lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Humora | Painel do Professor</title>
+  <script src="vendor/chart.js"></script>
+
+  <link rel="stylesheet" href="css/fect.css" />
   <link rel="stylesheet" href="css/professor.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- ===== RESPONSIVIDADE ===== -->
-  <style>
-    html { -webkit-text-size-adjust: 100%; }
-    img, canvas, video, svg { max-width: 100%; }
-    button, a, input, select, textarea { font: inherit; }
-
-    /* Botão hambúrguer (escondido no desktop) */
-    .menu-toggle-mobile {
-      display: none;
-      position: fixed;
-      top: 12px;
-      left: 12px;
-      z-index: 1100;
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      border: 1px solid rgba(168, 85, 247, 0.5);
-      background: rgba(46, 8, 84, 0.95);
-      color: #fff;
-      font-size: 1.4rem;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-    }
-    .menu-overlay-mobile {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55);
-      z-index: 999;
-    }
-    .menu-overlay-mobile.ativo { display: block; }
-
-    /* Notebook */
-    @media (max-width: 1366px) {
-      .sidebar { width: 260px; }
-      .conteudo { padding: 24px; }
-      .card-resumo { min-width: 100px; }
-    }
-
-    /* Tablet (1024px) — sidebar vira gaveta */
-    @media (max-width: 1024px) {
-      .pagina { display: block; }
-      .sidebar {
-        position: fixed;
-        top: 0;
-        left: -300px;
-        width: 280px;
-        max-width: 85vw;
-        height: 100dvh;
-        overflow-y: auto;
-        z-index: 1050;
-        transition: left 0.3s ease;
-      }
-      .sidebar.sidebar-aberta { left: 0; }
-      .menu-toggle-mobile { display: flex; align-items: center; justify-content: center; }
-      .conteudo {
-        margin-left: 0;
-        padding: 72px 20px 20px;
-        width: 100%;
-      }
-      .cards-resumo {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .graficos-container,
-      .grid-recursos {
-        grid-template-columns: 1fr;
-      }
-      .grid-anotacoes {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .jogos-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      #containerConquistasProf {
-        grid-template-columns: repeat(2, 1fr) !important;
-      }
-    }
-
-    /* Celular grande / tablet pequeno */
-    @media (max-width: 768px) {
-      .conteudo { padding: 68px 14px 20px; }
-      .topo-conteudo h1 { font-size: 1.4rem; }
-      .subtitulo { font-size: 0.9rem; }
-      .cards-resumo {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-      .card-resumo { padding: 14px 10px; font-size: 0.9rem; }
-      .card-resumo span { font-size: 1.4rem; }
-      .filtros-graficos {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-      }
-      .filtros-graficos select,
-      .filtros-graficos input,
-      .filtros-graficos button {
-        width: 100%;
-      }
-      .form-grid { gap: 10px; }
-      .form-grid textarea,
-      .form-grid input,
-      .form-grid select,
-      .form-grid button { width: 100%; }
-      .grid-anotacoes { grid-template-columns: 1fr; }
-      .jogos-grid { grid-template-columns: 1fr; }
-      #containerConquistasProf {
-        grid-template-columns: 1fr !important;
-      }
-      .canvas-container {
-        height: 260px;
-        position: relative;
-      }
-      .canvas-container canvas { max-height: 260px; }
-      .modal-content {
-        width: 92vw;
-        max-width: 92vw;
-        max-height: 90dvh;
-        overflow-y: auto;
-        padding: 20px 16px;
-      }
-      .modal-content.modal-largo { width: 95vw; }
-      .grid-badges, .grid-avatars {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .game-placar {
-        flex-wrap: wrap;
-        gap: 8px;
-        justify-content: center;
-      }
-      .grid-memoria,
-      .grid-bolas {
-        grid-template-columns: repeat(4, 1fr) !important;
-      }
-      canvas#canvasSubirProf {
-        width: 100% !important;
-        height: auto !important;
-      }
-    }
-
-    /* Celular */
-    @media (max-width: 480px) {
-      .conteudo { padding: 64px 10px 16px; }
-      .topo-conteudo h1 { font-size: 1.2rem; }
-      .cards-resumo { grid-template-columns: 1fr 1fr; gap: 8px; }
-      .card-resumo {
-        padding: 12px 8px;
-        font-size: 0.85rem;
-      }
-      .card-resumo span { font-size: 1.2rem; }
-      .card-painel { padding: 14px 12px; border-radius: 12px; }
-      .card-painel h2 { font-size: 1.05rem; }
-      .jogo-card { padding: 16px 12px; }
-      .jogo-icone { font-size: 2rem; }
-      .perfil-info h2 { font-size: 1rem; }
-      .menu-toggle-mobile { top: 8px; left: 8px; width: 42px; height: 42px; }
-      .grid-badges, .grid-avatars {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-      }
-      .grid-avatars span { font-size: 1.6rem; padding: 8px; }
-    }
-
-    @media (max-width: 360px) {
-      .cards-resumo { grid-template-columns: 1fr; }
-      .card-resumo { font-size: 0.9rem; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        transition-duration: 0.001ms !important;
-      }
-    }
-  </style>
 </head>
-<body>
+<body data-painel-professor class="estilo-fundo-professor">
 <!-- Botão hambúrguer mobile -->
 <button
-        class="menu-toggle-mobile"
+        class="menu-toggle-mobile estilo-menu-toggle-mobile"
         id="menuToggleMobile"
         aria-label="Abrir menu"
-        onclick="toggleMenuMobile()"
+        aria-controls="sidebarProf"
+        aria-expanded="false"
 >
-  ☰
+  <span class="ui-icon ui-icon--menu ui-icon--nav estilo-ui-icon--menu" aria-hidden="true"></span>
 </button>
-<div class="menu-overlay-mobile" id="menuOverlayMobile" onclick="toggleMenuMobile()"></div>
+<div class="menu-overlay-mobile estilo-menu-overlay-mobile" id="menuOverlayMobile"></div>
 
-<div class="pagina">
-  <aside class="sidebar" id="sidebarProf">
-    <div class="topo-sidebar">
-      <div class="logo-area"><h1>🧠 Humora</h1></div>
+<div class="pagina estilo-pagina">
+  <aside class="sidebar estilo-sidebar-aluno" id="sidebarProf">
+    <div class="topo-sidebar estilo-topo-sidebar">
+      <div class="logo-area estilo-logo-area"><h1 class="estilo-logo-area-titulo"><img class="marca-sidebar estilo-marca-sidebar" src="imagens/cerebro.png" alt="" /> Humora</h1></div>
 
-      <div class="perfil">
+      <div class="perfil estilo-perfil">
         <div
-                class="avatar"
-                id="avatarProfAtual"
+                class="avatar estilo-avatar-atual"
+                id="avatarProfAtual" role="button" tabindex="0" aria-label="Mudar avatar"
                 onclick="abrirModalAvatarProf()"
                 title="Mudar avatar"
         >
           👨‍🏫
         </div>
         <div class="perfil-info">
-          <h2 id="nomeProfessor">Professor</h2>
-          <p id="areaProfessor">Docente</p>
+          <h2 class="estilo-nome-professor" id="nomeProfessor">Professor</h2>
+          <p class="estilo-turma-aluno-sidebar" id="areaProfessor">Docente</p>
         </div>
       </div>
 
-      <div class="streak-card">
-        <span class="fogo">👨‍🏫</span>
+      <div class="streak-card estilo-streak-card">
+        <span class="ui-icon ui-icon--teacher ui-icon--streak estilo-ui-icon--teacher-2" aria-hidden="true"></span>
         <div>
-          <strong>Painel do Educador</strong>
-          <small>Acompanhamento emocional</small>
+          <strong class="estilo-dias-streak">Painel do Educador</strong>
+          <small class="estilo-streak-card-legenda">Acompanhamento emocional</small>
         </div>
       </div>
 
-      <nav class="menu-sidebar">
+      <nav class="menu-sidebar estilo-menu-sidebar">
         <button
-                class="menu-item ativo"
+                class="menu-item ativo estilo-menu-item"
                 onclick="trocarTab('dashboard', this)"
-        >
-          <span class="icone-menu">🏠</span> Início
+         aria-current="page">
+          <span class="ui-icon ui-icon--home ui-icon--nav estilo-ui-icon--home" aria-hidden="true"></span> Início
         </button>
-        <button class="menu-item" onclick="trocarTab('graficos', this)">
-          <span class="icone-menu">📊</span> Gráficos
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('graficos', this)">
+          <span class="ui-icon ui-icon--chart ui-icon--nav estilo-ui-icon--chart-2" aria-hidden="true"></span> Gráficos
         </button>
-        <button class="menu-item" onclick="trocarTab('alunos', this)">
-          <span class="icone-menu">👥</span> Alunos
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('alunos', this)">
+          <span class="ui-icon ui-icon--people ui-icon--nav estilo-ui-icon--people" aria-hidden="true"></span> Alunos
         </button>
-        <button class="menu-item" onclick="trocarTab('mensagens', this)">
-          <span class="icone-menu">💬</span> Mensagens
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('mensagens', this)">
+          <span class="ui-icon ui-icon--message ui-icon--nav estilo-ui-icon--message" aria-hidden="true"></span> Mensagens
         </button>
-        <button class="menu-item" onclick="trocarTab('diarios', this)">
-          <span class="icone-menu">📖</span> Diários
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('diarios', this)">
+          <span class="ui-icon ui-icon--book ui-icon--nav estilo-ui-icon--book-2" aria-hidden="true"></span> Diários
         </button>
-        <button class="menu-item" onclick="trocarTab('comunicados', this)">
-          <span class="icone-menu">📢</span> Comunicados
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('comunicados', this)">
+          <span class="ui-icon ui-icon--speaker ui-icon--nav estilo-ui-icon--speaker" aria-hidden="true"></span> Comunicados
         </button>
-        <button class="menu-item" onclick="trocarTab('anotacoes', this)">
-          <span class="icone-menu">📝</span> Anotações
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('anotacoes', this)">
+          <span class="ui-icon ui-icon--edit ui-icon--nav estilo-ui-icon--edit-2" aria-hidden="true"></span> Anotações
         </button>
-        <button class="menu-item" onclick="trocarTab('jogos', this)">
-          <span class="icone-menu">🎮</span> Jogos
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('jogos', this)">
+          <span class="ui-icon ui-icon--game ui-icon--nav estilo-ui-icon--game-2" aria-hidden="true"></span> Jogos
         </button>
-        <button class="menu-item" onclick="trocarTab('conquistas', this)">
-          <span class="icone-menu">🏆</span> Conquistas
+        <button class="menu-item estilo-menu-item" onclick="trocarTab('conquistas', this)">
+          <span class="ui-icon ui-icon--trophy ui-icon--nav estilo-ui-icon--trophy" aria-hidden="true"></span> Conquistas
         </button>
       </nav>
     </div>
-    <button class="btn-sair" onclick="sair()">🚪 Sair</button>
+    <button class="btn-sair estilo-btn-sair" onclick="sair()"><span class="ui-icon ui-icon--logout estilo-ui-icon--logout" aria-hidden="true"></span> Sair</button>
   </aside>
 
-  <main class="conteudo">
-    <div id="tab-dashboard" class="tab-content ativo">
-      <header class="topo-conteudo">
+  <main class="conteudo estilo-conteudo">
+    <div id="tab-dashboard" class="tab-content ativo estilo-tab-dashboard">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>Painel do Professor</h1>
-          <p class="subtitulo">Visão geral das turmas</p>
+          <h1 class="estilo-topo-conteudo-titulo">Painel do Professor</h1>
+          <p class="subtitulo estilo-subtitulo">Visão geral das turmas</p>
         </div>
       </header>
-      <section class="card-painel">
-        <h2>📊 Resumo Emocional</h2>
-        <div class="cards-resumo">
-          <div class="card-resumo" style="border-top: 4px solid #ffd700">
-            😊 <span id="totalFeliz">0</span><small>Feliz</small>
+      <section id="painelFect" class="fect-painel" aria-labelledby="tituloFectProfessor">
+        <div class="fect-cabecalho">
+          <span class="fect-icone ui-icon ui-icon--chart" aria-hidden="true"></span>
+          <div>
+            <p class="fect-etiqueta">FECT</p>
+            <h2 id="tituloFectProfessor">Termômetro da feira</h2>
+            <p class="fect-atualizacao">Carregando registros…</p>
           </div>
-          <div class="card-resumo" style="border-top: 4px solid #4a90e2">
-            😔 <span id="totalTriste">0</span><small>Triste</small>
-          </div>
-          <div class="card-resumo" style="border-top: 4px solid #b0b0b0">
-            😴 <span id="totalCansado">0</span><small>Cansado</small>
-          </div>
-          <div class="card-resumo" style="border-top: 4px solid #00c896">
-            😌 <span id="totalCalmo">0</span><small>Calmo</small>
-          </div>
-          <div class="card-resumo" style="border-top: 4px solid #ff8c00">
-            😰 <span id="totalAnsioso">0</span><small>Ansioso</small>
-          </div>
-          <div class="card-resumo" style="border-top: 4px solid #e74c3c">
-            😡 <span id="totalIrritado">0</span><small>Irritado</small>
-          </div>
+          <a id="cadastroProfessorAdmin" class="fect-link fect-admin" href="cadastroProfessor.html" hidden>Cadastrar professor</a>
         </div>
-        <div class="grafico-card">
-          <h2>Gráfico Geral</h2>
-          <div class="canvas-container">
-            <canvas id="graficoTurma"></canvas>
+        <div class="fect-grade">
+          <div class="fect-mostrador"></div>
+          <div class="fect-controles">
+            <div class="fect-total"><strong id="fectTotal">—</strong> <span id="fectLegendaTotal">registros</span></div>
+            <h3>Distribuição das emoções</h3>
+            <div class="fect-distribuicao"></div>
           </div>
         </div>
       </section>
-      <section class="card-painel">
-        <h2>🚨 Alunos em Alerta</h2>
+      <section class="card-painel estilo-card-painel">
+        <h2 class="estilo-card-painel-subtitulo"><span class="ui-icon ui-icon--chart estilo-ui-icon--chart" aria-hidden="true"></span> Resumo Emocional</h2>
+        <div class="cards-resumo estilo-cards-resumo">
+          <div class="card-resumo estilo-card-resumo">
+            <i class="estilo-card-resumo-i" aria-hidden="true"></i> <span class="estilo-total-feliz" id="totalFeliz">0</span><small class="estilo-card-resumo-legenda">Feliz</small>
+          </div>
+          <div class="card-resumo estilo-card-resumo-2">
+            <i class="estilo-card-resumo-i-2" aria-hidden="true"></i> <span class="estilo-total-feliz" id="totalTriste">0</span><small class="estilo-card-resumo-legenda">Triste</small>
+          </div>
+          <div class="card-resumo estilo-card-resumo-3">
+            <i class="estilo-card-resumo-i-3" aria-hidden="true"></i> <span class="estilo-total-feliz" id="totalCansado">0</span><small class="estilo-card-resumo-legenda">Cansado</small>
+          </div>
+          <div class="card-resumo estilo-card-resumo-4">
+            <i class="estilo-card-resumo-i-4" aria-hidden="true"></i> <span class="estilo-total-feliz" id="totalCalmo">0</span><small class="estilo-card-resumo-legenda">Calmo</small>
+          </div>
+          <div class="card-resumo estilo-card-resumo-5">
+            <i class="estilo-card-resumo-i-5" aria-hidden="true"></i> <span class="estilo-total-feliz" id="totalAnsioso">0</span><small class="estilo-card-resumo-legenda">Ansioso</small>
+          </div>
+          <div class="card-resumo estilo-card-resumo-6">
+            <i class="estilo-card-resumo-i-6" aria-hidden="true"></i> <span class="estilo-total-feliz" id="totalIrritado">0</span><small class="estilo-card-resumo-legenda">Irritado</small>
+          </div>
+        </div>
+        <div class="grafico-card estilo-grafico-card">
+          <h2 class="estilo-grafico-card-subtitulo">Gráfico Geral</h2>
+          <div class="canvas-container estilo-canvas-container">
+            <canvas class="estilo-grafico-semana" id="graficoTurma"></canvas>
+          </div>
+        </div>
+      </section>
+      <section class="card-painel estilo-card-painel">
+        <h2 class="estilo-card-painel-subtitulo"><span class="estilo-card-painel-detalhe" aria-hidden="true"></span>  Alunos em Alerta</h2>
         <div id="listaAlunosAlerta"></div>
       </section>
     </div>
 
-    <div id="tab-graficos" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-graficos" class="tab-content estilo-tab-dashboard">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>📊 Gráficos e Estatísticas</h1>
-          <p class="subtitulo">Análise detalhada das emoções</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--chart estilo-ui-icon--chart" aria-hidden="true"></span> Gráficos e Estatísticas</h1>
+          <p class="subtitulo estilo-subtitulo">Análise detalhada das emoções</p>
         </div>
       </header>
-      <div class="filtros-graficos">
-        <select
+      <div class="filtros-graficos estilo-filtros-graficos">
+        <select class="estilo-filtro-turma-grafico"
                 id="filtroTurmaGrafico"
                 onchange="atualizarGraficosFiltrados()"
         >
-          <option value="">Todas as Turmas</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="">Todas as Turmas</option>
         </select>
-        <select
+        <select class="estilo-filtro-turma-grafico"
                 id="filtroEmocaoGrafico"
                 onchange="atualizarGraficosFiltrados()"
         >
-          <option value="">Todos os Estados</option>
-          <option value="feliz">😊 Feliz</option>
-          <option value="triste">😔 Triste</option>
-          <option value="cansado">😴 Cansado</option>
-          <option value="calmo">😌 Calmo</option>
-          <option value="ansioso">😰 Ansioso</option>
-          <option value="irritado">😡 Irritado</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="">Todos os Estados</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="feliz">Feliz</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="triste">Triste</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="cansado">Cansado</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="calmo">Calmo</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="ansioso">Ansioso</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="irritado">Irritado</option>
         </select>
-        <button class="btn-roxo-peq" onclick="limparFiltrosGraficos()">
+        <button class="btn-roxo-peq estilo-btn-roxo-peq" onclick="limparFiltrosGraficos()">
           Limpar
         </button>
       </div>
-      <div class="graficos-container">
-        <div class="grafico-card">
-          <h2>📊 Distribuição por Turma</h2>
-          <div class="canvas-container">
-            <canvas id="graficoBarra"></canvas>
+      <div class="graficos-container estilo-graficos-container">
+        <div class="grafico-card estilo-grafico-card">
+          <h2 class="estilo-grafico-card-subtitulo-2"><span class="ui-icon ui-icon--chart estilo-ui-icon--chart" aria-hidden="true"></span> Distribuição por Turma</h2>
+          <div class="canvas-container estilo-canvas-container">
+            <canvas class="estilo-grafico-semana" id="graficoBarra"></canvas>
           </div>
         </div>
-        <div class="grafico-card">
-          <h2>🍩 Distribuição Geral</h2>
-          <div class="canvas-container">
-            <canvas id="graficoPizza"></canvas>
+        <div class="grafico-card estilo-grafico-card">
+          <h2 class="estilo-grafico-card-subtitulo-2">🍩 Distribuição Geral</h2>
+          <div class="canvas-container estilo-canvas-container">
+            <canvas class="estilo-grafico-semana" id="graficoPizza"></canvas>
           </div>
         </div>
       </div>
     </div>
 
-    <div id="tab-alunos" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-alunos" class="tab-content estilo-tab-dashboard">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>👥 Gerenciar Alunos</h1>
-          <p class="subtitulo">Busque, filtre e acompanhe seus alunos</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--people estilo-ui-icon--people-2" aria-hidden="true"></span> Gerenciar Alunos</h1>
+          <p class="subtitulo estilo-subtitulo">Busque, filtre e acompanhe seus alunos</p>
         </div>
       </header>
-      <div class="filtros-graficos">
-        <input
+      <div class="filtros-graficos estilo-filtros-graficos">
+        <input class="estilo-busca-aluno"
                 type="text"
                 id="buscaAluno"
                 placeholder="Buscar por nome..."
                 oninput="aplicarFiltros()"
         />
-        <select id="filtroTurma" onchange="aplicarFiltros()">
-          <option value="">Todas as Turmas</option>
+        <select class="estilo-filtro-turma-grafico" id="filtroTurma" onchange="aplicarFiltros()">
+          <option class="estilo-filtro-turma-grafico-opcao" value="">Todas as Turmas</option>
         </select>
-        <select id="filtroEmocao" onchange="aplicarFiltros()">
-          <option value="">Todos os Estados</option>
-          <option value="alerta">⚠️ Em Alerta</option>
-          <option value="feliz">😊 Feliz</option>
-          <option value="triste">😔 Triste</option>
-          <option value="cansado">😴 Cansado</option>
-          <option value="calmo">😌 Calmo</option>
-          <option value="ansioso">😰 Ansioso</option>
-          <option value="irritado">😡 Irritado</option>
+        <select class="estilo-filtro-turma-grafico" id="filtroEmocao" onchange="aplicarFiltros()">
+          <option class="estilo-filtro-turma-grafico-opcao" value="">Todos os Estados</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="alerta">⚠️ Em Alerta</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="feliz">Feliz</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="triste">Triste</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="cansado">Cansado</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="calmo">Calmo</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="ansioso">Ansioso</option>
+          <option class="estilo-filtro-turma-grafico-opcao" value="irritado">Irritado</option>
         </select>
-        <button class="btn-roxo-peq" onclick="limparFiltros()">
+        <button class="btn-roxo-peq estilo-btn-roxo-peq" onclick="limparFiltros()">
           Limpar
         </button>
       </div>
-      <section class="card-painel">
-        <h2>Lista de Alunos</h2>
+      <section class="card-painel estilo-card-painel">
+        <h2 class="estilo-card-painel-subtitulo">Lista de Alunos</h2>
         <div id="listaAlunosTurma"></div>
       </section>
     </div>
 
-    <div id="tab-mensagens" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-mensagens" class="tab-content estilo-tab-dashboard">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>💬 Enviar Mensagem</h1>
-          <p class="subtitulo">Comunique-se com seus alunos</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--message estilo-ui-icon--message-2" aria-hidden="true"></span> Enviar Mensagem</h1>
+          <p class="subtitulo estilo-subtitulo">Comunique-se com seus alunos</p>
         </div>
       </header>
-      <section class="card-painel">
-        <div class="form-grid">
-          <select id="selectAlunoMensagem">
+      <section class="card-painel estilo-card-painel">
+        <div class="form-grid estilo-form-grid">
+          <select class="estilo-select-aluno-mensagem" id="selectAlunoMensagem">
             <option value="">Selecione um aluno...</option>
           </select>
-          <textarea
+          <textarea class="estilo-texto-mensagem-prof"
                   id="textoMensagemProf"
                   placeholder="Escreva sua mensagem de apoio..."
                   rows="4"
           ></textarea>
-          <button class="btn-roxo" onclick="enviarMensagemDireta()">
-            Enviar Mensagem 📩
+          <button class="btn-roxo estilo-btn-roxo" onclick="enviarMensagemDireta()">
+            Enviar Mensagem <span class="ui-icon ui-icon--message estilo-ui-icon--message-2" aria-hidden="true"></span>
           </button>
         </div>
       </section>
     </div>
 
-    <div id="tab-diarios" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-diarios" class="tab-content estilo-tab-dashboard">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>📖 Diários Compartilhados</h1>
-          <p class="subtitulo">Acompanhe os desabafos dos alunos</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--book estilo-ui-icon--book" aria-hidden="true"></span> Diários Compartilhados</h1>
+          <p class="subtitulo estilo-subtitulo">Acompanhe os desabafos dos alunos</p>
         </div>
       </header>
-      <section class="card-painel">
-        <div id="containerDiariosCompartilhados" class="lista-mini"></div>
+      <section class="card-painel estilo-card-painel">
+        <div id="containerDiariosCompartilhados" class="lista-mini estilo-container-diarios-compartilhados"></div>
       </section>
     </div>
 
-    <div id="tab-comunicados" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-comunicados" class="tab-content estilo-tab-dashboard">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>📢 Comunicados e Agendamentos</h1>
-          <p class="subtitulo">Publique avisos e agende atividades</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--speaker estilo-ui-icon--speaker-2" aria-hidden="true"></span> Comunicados e Agendamentos</h1>
+          <p class="subtitulo estilo-subtitulo">Publique avisos e agende atividades</p>
         </div>
       </header>
-      <div class="grid-recursos">
-        <section class="card-painel">
-          <h2>📌 Publicar Aviso</h2>
-          <div class="form-grid">
-                <textarea
+      <div class="grid-recursos estilo-grid-recursos">
+        <section class="card-painel estilo-card-painel">
+          <h2 class="estilo-card-painel-subtitulo"><span class="estilo-card-painel-detalhe-2" aria-hidden="true"></span>  Publicar Aviso</h2>
+          <div class="form-grid estilo-form-grid">
+                <textarea class="estilo-texto-mensagem-prof"
                         id="textoAvisoTurma"
                         placeholder="Escreva um comunicado..."
                         rows="2"
                 ></textarea
-                ><button onclick="publicarAvisoTurma()" class="btn-roxo-peq">
+                ><button onclick="publicarAvisoTurma()" class="btn-roxo-peq estilo-btn-roxo-peq-2">
             Publicar 📌
           </button>
           </div>
-          <div id="listaAvisosProf" class="lista-mini"></div>
+          <div id="listaAvisosProf" class="lista-mini estilo-container-diarios-compartilhados"></div>
         </section>
-        <section class="card-painel">
-          <h2>🗓️ Agendar Atividade</h2>
+        <section class="card-painel estilo-card-painel">
+          <h2 class="estilo-card-painel-subtitulo"><span class="estilo-card-painel-detalhe-3" aria-hidden="true"></span>  Agendar Atividade</h2>
           <form
                   id="formAgendamento"
                   onsubmit="salvarAgendamento(event)"
-                  class="form-grid"
+                  class="form-grid estilo-form-grid"
           >
-            <input
+            <input class="estilo-titulo-atividade"
                     type="text"
                     id="tituloAtividade"
                     placeholder="Título"
                     required
             />
-            <input type="date" id="dataAtividade" required />
-            <select id="turmaAtividade" required>
+            <input class="estilo-titulo-atividade" type="date" id="dataAtividade" required />
+            <select class="estilo-select-aluno-mensagem" id="turmaAtividade" required>
               <option value="">Selecione a Turma</option>
             </select>
-            <button type="submit" class="btn-roxo-peq">Agendar 🔔</button>
+            <button type="submit" class="btn-roxo-peq estilo-btn-roxo-peq-2">Agendar <span class="ui-icon ui-icon--bell estilo-ui-icon--bell" aria-hidden="true"></span></button>
           </form>
-          <div id="listaAgendamentos" class="lista-mini"></div>
+          <div id="listaAgendamentos" class="lista-mini estilo-container-diarios-compartilhados"></div>
         </section>
       </div>
     </div>
 
-    <div id="tab-anotacoes" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-anotacoes" class="tab-content estilo-tab-dashboard">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>📝 Minhas Anotações</h1>
-          <p class="subtitulo">Suas notas pessoais</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--edit estilo-ui-icon--edit" aria-hidden="true"></span> Minhas Anotações</h1>
+          <p class="subtitulo estilo-subtitulo">Suas notas pessoais</p>
         </div>
       </header>
-      <section class="card-painel">
-        <div class="form-grid">
-              <textarea
+      <section class="card-painel estilo-card-painel">
+        <div class="form-grid estilo-form-grid">
+              <textarea class="estilo-texto-mensagem-prof"
                       id="novaAnotacaoTexto"
                       placeholder="Escreva sua anotação..."
                       rows="3"
               ></textarea
-              ><button class="btn-roxo" onclick="adicionarAnotacao()">
+              ><button class="btn-roxo estilo-btn-roxo" onclick="adicionarAnotacao()">
           Salvar Anotação 📝
         </button>
         </div>
         <div
                 id="containerAnotacoes"
-                class="grid-anotacoes"
-                style="margin-top: 20px"
-        ></div>
+                class="grid-anotacoes estilo-container-anotacoes"></div>
       </section>
     </div>
 
-    <div id="tab-jogos" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-jogos" class="tab-content estilo-tab-dashboard">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>🎮 Jogos</h1>
-          <p class="subtitulo">Relaxe com jogos interativos</p>
+          <h1 class="estilo-topo-conteudo-titulo"><span class="ui-icon ui-icon--game estilo-ui-icon--game" aria-hidden="true"></span> Jogos</h1>
+          <p class="subtitulo estilo-subtitulo">Relaxe com jogos interativos</p>
         </div>
       </header>
-      <div class="jogos-grid">
-        <div class="jogo-card" onclick="abrirModalGameProf()">
-          <div class="jogo-icone">🎈</div>
+      <div class="jogos-grid estilo-jogos-grid">
+        <div class="jogo-card estilo-jogo-card" onclick="abrirModalGameProf()" role="button" tabindex="0">
+          <div class="jogo-icone estilo-jogo-icone" aria-hidden="true"><span class="estilo-jogo-icone-detalhe-2" aria-hidden="true"></span></div>
           <h3>Pop-It</h3>
           <p>Estoure as bolhas da cor certa!</p>
         </div>
-        <div class="jogo-card" onclick="abrirJogoMemoriaProf()">
-          <div class="jogo-icone">🃏</div>
+        <div class="jogo-card estilo-jogo-card" onclick="abrirJogoMemoriaProf()" role="button" tabindex="0">
+          <div class="jogo-icone estilo-jogo-icone" aria-hidden="true"><span class="estilo-jogo-icone-detalhe-4" aria-hidden="true"></span></div>
           <h3>Jogo da Memória</h3>
           <p>Encontre os pares de emoções</p>
         </div>
-        <div class="jogo-card" onclick="abrirJogoSubirProf()">
-          <div class="jogo-icone">🧠</div>
+        <div class="jogo-card estilo-jogo-card" onclick="abrirJogoSubirProf()" role="button" tabindex="0">
+          <div class="jogo-icone estilo-jogo-icone" aria-hidden="true"><span class="estilo-jogo-icone-detalhe-3" aria-hidden="true"></span></div>
           <h3>Cérebro Saltador</h3>
           <p>Pule nas plataformas móveis!</p>
         </div>
-        <div class="jogo-card" onclick="abrirCacaPalavrasProf()">
-          <div class="jogo-icone">🔤</div>
+        <div class="jogo-card estilo-jogo-card" onclick="abrirCacaPalavrasProf()" role="button" tabindex="0">
+          <div class="jogo-icone estilo-jogo-icone" aria-hidden="true"><span class="estilo-jogo-icone-detalhe" aria-hidden="true"></span></div>
           <h3>Caça-Palavras</h3>
           <p>Encontre as palavras escondidas!</p>
         </div>
       </div>
     </div>
 
-    <div id="tab-conquistas" class="tab-content">
-      <header class="topo-conteudo">
+    <div id="tab-conquistas" class="tab-content estilo-tab-dashboard">
+      <header class="topo-conteudo estilo-topo-conteudo">
         <div>
-          <h1>🎖️ Minhas Conquistas</h1>
-          <p class="subtitulo">Seu progresso como educador</p>
+          <h1 class="estilo-topo-conteudo-titulo">🎖️ Minhas Conquistas</h1>
+          <p class="subtitulo estilo-subtitulo">Seu progresso como educador</p>
         </div>
       </header>
       <div
-              id="containerConquistasProf"
-              style="
-              display: grid;
-              grid-template-columns: repeat(2, 1fr);
-              gap: 12px;
-            "
-      ></div>
+              id="containerConquistasProf" class="estilo-container-conquistas-prof"></div>
     </div>
   </main>
 </div>
 
-<div id="modalMensagem" class="modal-overlay">
-  <div class="modal-content">
-    <span class="x-fechar" onclick="fecharModal()">&times;</span>
+<div id="modalMensagem" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content estilo-modal-content-2">
+    <span class="x-fechar estilo-x-fechar" onclick="fecharModal()">&times;</span>
     <h2>
-      Mensagem para <span id="nomeAlunoModal" style="color: #c084fc"></span>
+      Mensagem para <span id="nomeAlunoModal" class="estilo-compartilhamento"></span>
     </h2>
-    <textarea
+    <textarea class="estilo-texto-mensagem-modal"
             id="textoMensagemModal"
             placeholder="Escreva sua mensagem..."
             rows="4"
     ></textarea
-    ><button class="btn-roxo" onclick="enviarMensagem()">Enviar 📩</button>
+    ><button class="btn-roxo estilo-btn-roxo-2" onclick="enviarMensagem()">Enviar 📩</button>
   </div>
 </div>
-<div id="modalBadge" class="modal-overlay">
-  <div class="modal-content">
-    <span class="x-fechar" onclick="fecharModalBadge()">&times;</span>
+<div id="modalBadge" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content estilo-modal-content-2">
+    <span class="x-fechar estilo-x-fechar" onclick="fecharModalBadge()">&times;</span>
     <h2>
-      Reconhecer: <span id="nomeAlunoBadge" style="color: #c084fc"></span>
+      Reconhecer: <span id="nomeAlunoBadge" class="estilo-compartilhamento"></span>
     </h2>
-    <div class="grid-badges">
+    <div class="grid-badges estilo-grid-badges">
       <button
-              class="badge-option"
+              class="badge-option estilo-badge-option"
               onclick="enviarBadge('🌟 Destaque de Empatia')"
       >
         🌟 Empatia</button
       ><button
-            class="badge-option"
+            class="badge-option estilo-badge-option"
             onclick="enviarBadge('🔥 Super Focado')"
     >
       🔥 Focado</button
     ><button
-            class="badge-option"
+            class="badge-option estilo-badge-option"
             onclick="enviarBadge('🚀 Evolução Incrível')"
     >
       🚀 Evolução</button
     ><button
-            class="badge-option"
+            class="badge-option estilo-badge-option"
             onclick="enviarBadge('🤝 Trabalho em Equipe')"
     >
       🤝 Equipe
@@ -589,150 +427,149 @@
     </div>
   </div>
 </div>
-<div id="modalAvatarProf" class="modal-overlay">
-  <div class="modal-content">
+<div id="modalAvatarProf" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content estilo-modal-content-2">
     <h2>Escolha seu Avatar</h2>
-    <div class="grid-avatars">
-          <span onclick="mudarAvatarProf('👨‍🏫')">👨‍🏫</span
-          ><span onclick="mudarAvatarProf('👩‍🏫')">👩‍🏫</span
-    ><span onclick="mudarAvatarProf('🧠')">🧠</span
-    ><span onclick="mudarAvatarProf('☕')">☕</span
-    ><span onclick="mudarAvatarProf('😎')">😎</span
-    ><span onclick="mudarAvatarProf('🚀')">🚀</span>
+    <div class="grid-avatars estilo-grid-avatars">
+          <span class="estilo-grid-avatars-detalhe" onclick="mudarAvatarProf('👨‍🏫')">👨‍🏫</span
+          ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatarProf('👩‍🏫')">👩‍🏫</span
+    ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatarProf('🧠')">🧠</span
+    ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatarProf('☕')">☕</span
+    ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatarProf('😎')">😎</span
+    ><span class="estilo-grid-avatars-detalhe" onclick="mudarAvatarProf('🚀')">🚀</span>
     </div>
-    <button class="btn-fechar-modal" onclick="fecharModalAvatarProf()">
+    <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharModalAvatarProf()">
       Cancelar
     </button>
   </div>
 </div>
 
-<div id="modalGameProf" class="modal-overlay">
-  <div class="modal-content">
-    <h2>🎈 Pop-It</h2>
+<div id="modalGameProf" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content estilo-modal-content-2">
+    <h2><span class="estilo-jogo-icone-detalhe-2" aria-hidden="true"></span>  Pop-It</h2>
     <p>Estoure a cor certa!</p>
-    <div class="game-placar">
-      <div>Cor: <strong id="corAlvoTextoProf">...</strong></div>
+    <div class="game-placar estilo-game-placar">
+      <div>Cor: <strong id="corAlvoTextoProf" class="estilo-cor-alvo-texto">...</strong></div>
       <div>⏱️ <span id="tempoGameTextoProf">5s</span></div>
       <div>Pontos: <span id="gamePontosProf">0</span></div>
     </div>
-    <div class="barra-tempo-container">
-      <div id="barraTempoProgressoProf" class="barra-tempo-progresso"></div>
+    <div class="barra-tempo-container estilo-barra-tempo-container">
+      <div id="barraTempoProgressoProf" class="barra-tempo-progresso estilo-barra-tempo-progresso"></div>
     </div>
-    <div id="gridBolasGameProf" class="grid-bolas"></div>
-    <button class="btn-fechar-modal" onclick="fecharModalGameProf()">
+    <div id="gridBolasGameProf" class="grid-bolas estilo-grid-bolas-game"></div>
+    <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharModalGameProf()">
       Fechar
     </button>
   </div>
 </div>
-<div id="modalMemoriaProf" class="modal-overlay">
-  <div class="modal-content">
-    <h2>🃏 Jogo da Memória</h2>
+<div id="modalMemoriaProf" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content estilo-modal-content-2">
+    <h2><span class="estilo-jogo-icone-detalhe-4" aria-hidden="true"></span>  Jogo da Memória</h2>
     <p>Encontre os pares!</p>
-    <div id="gridMemoriaProf" class="grid-memoria"></div>
+    <div id="gridMemoriaProf" class="grid-memoria estilo-grid-memoria"></div>
     <p>Tentativas: <span id="tentativasMemoriaProf">0</span></p>
-    <button class="btn-fechar-modal" onclick="fecharJogoMemoriaProf()">
+    <button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharJogoMemoriaProf()">
       Fechar
     </button>
   </div>
 </div>
-<div id="modalSubirProf" class="modal-overlay">
-  <div class="modal-content modal-largo">
-    <h2>🧠 Cérebro Saltador</h2>
+<div id="modalSubirProf" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content modal-largo estilo-modal-content">
+    <h2><span class="estilo-jogo-icone-detalhe-3" aria-hidden="true"></span>  Cérebro Saltador</h2>
     <p>Use ← → para mover e pule nas plataformas!</p>
-    <div class="game-placar">
+    <div class="game-placar estilo-game-placar">
       <div>🧠 Pontos: <span id="pontosSubirProf">0</span></div>
       <div>🏆 Melhor: <span id="melhorSubirProf">0</span></div>
     </div>
     <canvas
             id="canvasSubirProf"
             width="400"
-            height="400"
-            style="
-            border: 2px solid #a855f7;
-            border-radius: 12px;
-            background: #1a0a2e;
-            margin: 10px 0;
-          "
-    ></canvas
-    ><button class="btn-fechar-modal" onclick="fecharJogoSubirProf()">
+            height="400" class="estilo-canvas-subir-prof"></canvas
+    ><button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharJogoSubirProf()">
     Fechar
   </button>
   </div>
 </div>
-<div id="modalCacaPalavrasProf" class="modal-overlay">
-  <div class="modal-content modal-largo">
-    <h2>🔤 Caça-Palavras</h2>
+<div id="modalCacaPalavrasProf" class="modal-overlay estilo-modal-historico">
+  <div class="modal-content modal-largo estilo-modal-content">
+    <h2><span class="estilo-jogo-icone-detalhe" aria-hidden="true"></span>  Caça-Palavras</h2>
     <p>Clique e arraste para selecionar!</p>
-    <div class="game-placar">
+    <div class="game-placar estilo-game-placar">
       <div>
         🔤 Encontradas: <span id="palavrasEncontradasProf">0/8</span>
       </div>
       <div>💡 Dicas: <span id="dicasRestantesProf">3</span></div>
     </div>
     <div
-            id="gradeCacaPalavrasProf"
-            style="display: grid; gap: 2px; margin: 15px auto; user-select: none"
-    ></div>
+            id="gradeCacaPalavrasProf" class="estilo-grade-caca-palavras"></div>
     <div
-            id="listaPalavrasProf"
-            style="
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 10px;
-          "
-    ></div>
-    <div style="display: flex; gap: 10px">
+            id="listaPalavrasProf" class="estilo-lista-palavras"></div>
+    <div class="estilo-modal-content-div">
       <button
-              class="btn-fechar-modal"
+              class="btn-fechar-modal estilo-btn-fechar-modal"
               onclick="usarDicaProf()"
               id="btnDicaProf"
       >
         💡 Dica</button
-      ><button class="btn-fechar-modal" onclick="fecharCacaPalavrasProf()">
+      ><button class="btn-fechar-modal estilo-btn-fechar-modal" onclick="fecharCacaPalavrasProf()">
       Fechar
     </button>
     </div>
   </div>
 </div>
+<script src="js/imagens-emocoes.js"></script>
 <script src="js/api.js"></script>
+<p id="avisoPainel" hidden role="status" aria-atomic="true"
+  class="estilo-aviso-painel"></p>
+
+<template id="modeloSemDados">
+  <p data-texto="mensagem" class="estilo-mensagem"></p>
+</template>
+
+<template id="modeloBolaPopIt">
+  <div class="bola-game estilo-bola-game"></div>
+</template>
+
+<template id="modeloAlunoProfessor">
+  <div class="aluno-card">
+    <div>
+      <strong data-texto="nome"></strong> <small data-texto="turma" class="turma-tag"></small>
+      <br><small>Último humor: <b data-texto="humor"></b></small>
+    </div>
+    <div class="acoes-aluno-card">
+      <button class="btn-msg estilo-btn-msg" aria-label="Enviar mensagem"><span aria-hidden="true"
+        class="estilo-btn-msg-detalhe"></span></button>
+      <button class="btn-badge estilo-btn-msg" aria-label="Enviar reconhecimento"><span aria-hidden="true"
+        class="estilo-btn-badge-detalhe"></span></button>
+    </div>
+  </div>
+</template>
+
+<template id="modeloAlertaProfessor">
+  <div class="aluno-card alerta">
+    <div><strong data-texto="nome"></strong></div>
+    <button class="btn-msg estilo-btn-msg"><span class="estilo-btn-msg-detalhe" aria-hidden="true"></span> Apoiar</button>
+  </div>
+</template>
+
+<template id="modeloDiarioProfessor">
+  <div class="item-mini flex-col">
+    <div><strong data-texto="aluno"></strong> <small data-texto="data"></small></div>
+    <p data-texto="texto" class="estilo-texto-2"></p>
+  </div>
+</template>
+
+<template id="modeloConquistaProfessor">
+  <div class="conquista-prof-card">
+    <span data-texto="icone" class="estilo-icone-2"></span>
+    <strong data-texto="titulo"></strong><small data-texto="descricao"></small>
+  </div>
+</template>
+
+<script src="js/estados-visuais.js"></script>
+<script src="js/fect.js"></script>
 <script src="js/professor.js"></script>
 
-<!-- ===== MENU MOBILE ===== -->
-<script>
-  function toggleMenuMobile() {
-    var sidebar = document.getElementById("sidebarProf");
-    var overlay = document.getElementById("menuOverlayMobile");
-    if (!sidebar || !overlay) return;
-    sidebar.classList.toggle("sidebar-aberta");
-    overlay.classList.toggle("ativo");
-  }
-
-  // Fecha o menu ao clicar em qualquer item do menu (apenas em telas pequenas)
-  document.addEventListener("DOMContentLoaded", function () {
-    var itens = document.querySelectorAll(".menu-sidebar .menu-item");
-    itens.forEach(function (item) {
-      item.addEventListener("click", function () {
-        if (window.innerWidth <= 1024) {
-          var sidebar = document.getElementById("sidebarProf");
-          var overlay = document.getElementById("menuOverlayMobile");
-          if (sidebar) sidebar.classList.remove("sidebar-aberta");
-          if (overlay) overlay.classList.remove("ativo");
-        }
-      });
-    });
-  });
-
-  // Fechar com ESC
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") {
-      var sidebar = document.getElementById("sidebarProf");
-      var overlay = document.getElementById("menuOverlayMobile");
-      if (sidebar) sidebar.classList.remove("sidebar-aberta");
-      if (overlay) overlay.classList.remove("ativo");
-    }
-  });
-</script>
+<script src="js/menu-mobile.js"></script>
 </body>
 </html>

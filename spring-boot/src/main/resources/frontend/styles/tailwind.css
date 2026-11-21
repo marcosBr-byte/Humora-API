@@ -1,0 +1,52 @@
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities) source(none) prefix(tw);
+
+@theme {
+  --color-humora-accent: #a855f7;
+  --color-humora-soft: #c084fc;
+  --color-humora-secondary: #94a3b8;
+  --color-humora-muted: #cbd5e1;
+  --color-humora-game: #1a0a2e;
+
+  --ease-humora-resposta: cubic-bezier(0.2, 0.75, 0.25, 1);
+
+  --animate-humora-esteira: humora-esteira 44s linear infinite;
+  --animate-humora-emocao: humora-emocao 5s ease-in-out infinite;
+  --animate-humora-aviso: humora-aviso 240ms var(--tw-ease-humora-resposta) both;
+  --animate-humora-fundo: humora-aparecer 160ms ease-out both;
+  --animate-humora-modal: humora-modal 240ms var(--ui-ease) both;
+  --animate-humora-pagina: humora-entrar 420ms var(--ui-ease) both;
+  --animate-humora-revelar: humora-aparecer 200ms ease-out both;
+  --animate-humora-secao: humora-entrar 330ms var(--ui-ease) both;
+
+  @keyframes humora-aparecer {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes humora-entrar {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes humora-esteira {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+  }
+
+  @keyframes humora-emocao {
+    0%, 100% { transform: translateY(1px) scale(0.98); }
+    50% { transform: translateY(-2px) scale(1.035); }
+  }
+
+  @keyframes humora-aviso {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes humora-modal {
+    from { opacity: 0; transform: translateY(14px) scale(0.975); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+}

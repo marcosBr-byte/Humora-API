@@ -1,0 +1,13 @@
+@layer components {
+  .imagem-emocao {
+    @apply tw:inline-block tw:size-[1.5em] tw:object-contain tw:align-middle;
+  }
+
+  .emocao > .imagem-emocao {
+    @apply tw:size-[clamp(2.5rem,8vw,4.5rem)] tw:shrink-0;
+  }
+
+  .carta-memoria > .imagem-emocao {
+    @apply tw:size-3/4;
+  }
+}

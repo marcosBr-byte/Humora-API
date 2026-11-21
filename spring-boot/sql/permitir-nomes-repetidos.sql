@@ -1,0 +1,9 @@
+BEGIN;
+
+ALTER TABLE IF EXISTS alunotabela
+    DROP CONSTRAINT IF EXISTS uk9hwt6w13ey86jef0hmqpfmja3;
+
+ALTER TABLE IF EXISTS professortabela
+    DROP CONSTRAINT IF EXISTS ukdqwtb7si4g4umnrm4rmu45o8s;
+
+COMMIT;

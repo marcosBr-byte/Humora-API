@@ -1,74 +1,42 @@
-// js/cadastroProfessor.js
-function inicializarCadastroProfessor() {
-    const botoesTurma = document.querySelectorAll(".turma-btn");
-    const inputHidden = document.getElementById("turmasSelecionadas");
-    if (!botoesTurma.length) return;
+const formProfessor = document.getElementById('formProfessor');
+const feedbackProfessor = document.getElementById('feedbackProfessor');
 
-    botoesTurma.forEach(b => b.classList.remove("selecionado"));
-    if (inputHidden) inputHidden.value = "[]";
-
-    function atualizarTurmas() {
-        const selecionadas = [...document.querySelectorAll(".turma-btn.selecionado")]
-            .map(b => b.dataset.value);
-        if (inputHidden) {
-            inputHidden.value = selecionadas.includes("Todas")
-                ? JSON.stringify(["Todas"])
-                : JSON.stringify(selecionadas);
-        }
-    }
-
-    botoesTurma.forEach(botao => {
-        botao.addEventListener("click", function (e) {
-            e.stopPropagation();
-            const valor = this.dataset.value;
-
-            if (valor === "Todas") {
-                const marcado = this.classList.toggle("selecionado");
-                if (marcado) {
-                    document.querySelectorAll(".turma-btn:not(.todas)")
-                        .forEach(b => b.classList.remove("selecionado"));
-                }
-            } else {
-                const todas = document.querySelector(".turma-btn.todas");
-                if (todas) todas.classList.remove("selecionado");
-                this.classList.toggle("selecionado");
-            }
-            atualizarTurmas();
-        });
-    });
-}
-
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", inicializarCadastroProfessor);
-} else {
-    inicializarCadastroProfessor();
-}
-
-async function cadastrarProfessor() {
-    const nome        = document.getElementById("nome").value.trim();
-    const email       = document.getElementById("email").value.trim().toLowerCase();
-    const senha       = document.getElementById("senha").value.trim();
-    const area        = document.getElementById("area").value;
-    const chaveAcesso = document.getElementById("chaveAcesso").value.trim();
-
-    if (!nome || !email || !senha || !area) return alert("❌ Preencha todos os campos obrigatórios.");
-    if (senha.length < 8) return alert("❌ A senha deve possuir no mínimo 8 caracteres.");
-    if (chaveAcesso !== "HUMORADM2026") return alert("❌ Chave de acesso inválida! Use: HUMORADM2026");
-
+async function verificarCadastroProfessor() {
     try {
-        const response = await api.registerProfessor({
-            nome, email, senha, chaveAcesso, materia: area
-        });
-
-        const texto = await response.text();
-        if (response.ok) {
-            alert("✅ " + texto);
-            window.location.href = "login.html";
-        } else {
-            alert("❌ " + texto);
+        const resposta = await fetch('/professor/permissoes', { headers: api.getHeaders() });
+        if (resposta.ok && (await resposta.json()).administrador) {
+            formProfessor.hidden = false;
+            feedbackProfessor.textContent = '';
+            return;
         }
-    } catch (error) {
-        console.error("❌ Erro:", error);
-        alert("❌ Erro ao conectar com o servidor.\n\n" + error.message);
+        feedbackProfessor.textContent = 'Entre com a conta de administrador para cadastrar professores.';
+    } catch {
+        feedbackProfessor.textContent = 'Não foi possível verificar o acesso. Recarregue a página.';
     }
 }
+
+formProfessor.addEventListener('submit', async event => {
+    event.preventDefault();
+    const botao = formProfessor.querySelector('button');
+    botao.disabled = true;
+    const dados = Object.fromEntries(new FormData(formProfessor));
+    dados.nome = dados.nome.trim();
+    dados.email = dados.email.trim().toLowerCase();
+    try {
+        const resposta = await api.registerProfessor(dados);
+        if (resposta.ok) {
+            formProfessor.reset();
+            feedbackProfessor.textContent = 'Professor cadastrado com sucesso.';
+        } else {
+            feedbackProfessor.textContent = resposta.status === 409
+                ? 'Este e-mail já foi cadastrado.'
+                : 'Não foi possível cadastrar o professor. Confira os dados e sua sessão.';
+        }
+    } catch {
+        feedbackProfessor.textContent = 'Falha de conexão. Tente novamente.';
+    } finally {
+        botao.disabled = false;
+    }
+});
+
+verificarCadastroProfessor();

@@ -21,4 +21,5 @@ spring:
         format_sql: true
 
 server:
-  port: 8080
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  port: ${SERVER_PORT:8080}

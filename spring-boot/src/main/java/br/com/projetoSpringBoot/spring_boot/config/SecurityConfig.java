@@ -14,11 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -32,8 +28,6 @@ public class SecurityConfig {
 
         return http
                 .csrf(csrf -> csrf.disable())
-
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -54,9 +48,12 @@ public class SecurityConfig {
                                 "/aluno.html",
                                 "/professor.html",
                                 "/cadastroAluno.html",
+                                "/cadastroVisitante.html",
+                                "/visitante.html",
                                 "/cadastroProfessor.html",
                                 "/css/**",
                                 "/js/**",
+                                "/vendor/chart.js",
                                 "/imagens/**",
                                 "/images/**",
                                 "/favicon.ico"
@@ -93,8 +90,10 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 HttpMethod.POST,
-                                "/auth/register/professor"
+                                "/fect/registros"
                         ).permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/auth/register/professor").hasRole("ADMIN")
 
                         // =========================
                         // ÁREA DO ALUNO
@@ -123,51 +122,6 @@ public class SecurityConfig {
                 )
 
                 .build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5500",
-                "http://127.0.0.1:5500",
-                "http://localhost:8080",
-                "http://localhost:3000",
-                "http://127.0.0.1:3000",
-                "null"
-        ));
-
-        configuration.setAllowedMethods(Arrays.asList(
-                "GET",
-                "POST",
-                "PUT",
-                "DELETE",
-                "PATCH",
-                "OPTIONS"
-        ));
-
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-
-        configuration.setExposedHeaders(Arrays.asList(
-                "Authorization",
-                "Content-Type"
-        ));
-
-        configuration.setAllowCredentials(true);
-
-        configuration.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration(
-                "/**",
-                configuration
-        );
-
-        return source;
     }
 
     @Bean

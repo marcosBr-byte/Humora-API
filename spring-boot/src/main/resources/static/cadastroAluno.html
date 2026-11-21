@@ -1,175 +1,120 @@
 
 <!doctype html>
-<html lang="pt-BR">
+<html class="estilo-documento-login" lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Humora | Cadastro de Aluno</title>
-  <link rel="stylesheet" href="css/login.css" />
 
-  <!-- ===== RESPONSIVIDADE ===== -->
-  <style>
-    html { -webkit-text-size-adjust: 100%; }
-    img, canvas, video, svg { max-width: 100%; height: auto; }
-    input, select, textarea, button { font: inherit; }
-
-    /* Notebook */
-    @media (max-width: 1366px) {
-      .container { max-width: 1100px; }
-      .apresentacao h2 { font-size: clamp(1.5rem, 2.2vw, 2rem); }
-    }
-
-    /* Tablet */
-    @media (max-width: 1024px) {
-      .container {
-        flex-direction: column;
-        width: 100%;
-        max-width: 720px;
-        min-height: auto;
-        margin: 20px auto;
-        border-radius: 20px;
-      }
-      .apresentacao,
-      .login-card {
-        width: 100%;
-        padding: 32px 24px;
-      }
-      .apresentacao { text-align: center; }
-      .apresentacao .logo { justify-content: center; }
-      .texto { justify-content: center; }
-      .apresentacao .cerebro { display: none; } /* opcional: esconde no tablet/mobile */
-    }
-
-    /* Celular */
-    @media (max-width: 768px) {
-      body {
-        padding: 16px;
-        min-height: 100dvh;
-        align-items: flex-start;
-      }
-      .container {
-        margin: 0 auto;
-        border-radius: 16px;
-      }
-      .apresentacao,
-      .login-card { padding: 24px 18px; }
-      .login-card h1 { font-size: 1.4rem; }
-      .login-card > p { font-size: 0.9rem; }
-      .apresentacao h2 { font-size: 1.4rem; line-height: 1.3; }
-      .texto p { font-size: 0.9rem; }
-      input, select { padding: 12px 14px; font-size: 16px; }
-      .login-card button { width: 100%; padding: 14px; }
-      .cadastro { flex-direction: column; gap: 10px; text-align: center; }
-    }
-
-    /* Celular pequeno */
-    @media (max-width: 480px) {
-      body { padding: 10px; }
-      .apresentacao { padding: 20px 14px; }
-      .login-card { padding: 20px 14px; }
-      .apresentacao h2 { font-size: 1.2rem; }
-      .texto p { font-size: 0.85rem; }
-      .logo img { width: 60px; }
-      .logo h1 { font-size: 1.4rem; }
-      select { font-size: 15px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.001ms !important;
-        transition-duration: 0.001ms !important;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="css/cadastroAluno.css" />
 </head>
 
-<body>
-<div class="nuvens-container">
-  <div class="nuvem nuvem-1"></div>
-  <div class="nuvem nuvem-2"></div>
-  <div class="nuvem nuvem-3"></div>
+<body class="estilo-fundo-cadastro-aluno">
+<div data-emojis-flutuantes aria-hidden="true"
+  class="estilo-emojis-flutuantes">
+  <div data-emoji-fileira="0" class="estilo-emoji-fileira-0-2"></div>
+  <div data-emoji-fileira="1" class="estilo-emoji-fileira-1"></div>
+  <div data-emoji-fileira="2" class="estilo-emoji-fileira-2-2"></div>
 </div>
 
-<div class="container">
-  <section class="apresentacao">
-    <div class="logo">
-      <img src="imagens/cerebro.png" alt="Humora" />
-      <h1>Humora</h1>
+<div class="container estilo-container">
+  <section class="apresentacao estilo-apresentacao">
+    <div class="logo estilo-logo">
+      <img class="estilo-logo-imagem" src="imagens/cerebro.png" alt="Humora" />
+      <h1 class="estilo-logo-titulo">Humora</h1>
     </div>
 
-    <h2>
+    <h2 class="estilo-apresentacao-subtitulo">
       Comece sua jornada<br />
       de autocuidado.
     </h2>
 
-    <div class="texto">
-      <div class="icone">💜</div>
-      <p>
+    <div class="texto estilo-texto">
+      <div class="icone estilo-icone"><span class="ui-icon ui-icon--heart estilo-ui-icon--heart" aria-hidden="true"></span></div>
+      <p class="estilo-texto-texto">
         Cadastre-se para registrar suas emoções e contribuir para uma escola
         mais acolhedora e preparada para compreender seus estudantes.
       </p>
     </div>
 
-    <img src="imagens/cerebro.png" class="cerebro" alt="Humora" />
+    <img src="imagens/cerebro.png" class="cerebro estilo-cerebro" alt="Humora" />
   </section>
 
-  <section class="login-card">
-    <h1>🎓 Cadastro Aluno</h1>
+  <section class="login-card estilo-login-card">
+    <h1 class="estilo-login-card-titulo"><span class="ui-icon ui-icon--school estilo-ui-icon--school" aria-hidden="true"></span> Cadastro Aluno</h1>
 
-    <p>Preencha seus dados.</p>
+    <p class="estilo-login-card-texto">Preencha seus dados.</p>
 
-    <input type="text" id="nome" placeholder="Nome completo" />
+    <input class="estilo-nome" type="text" id="nome" placeholder="Nome completo" aria-label="Nome completo" autocomplete="name" required />
 
-    <input type="email" id="email" placeholder="E-mail" />
+    <input class="estilo-email" type="email" id="email" placeholder="E-mail" aria-label="E-mail" autocomplete="email" required />
 
-    <input
+    <input class="estilo-senha"
             type="password"
             id="senha"
             placeholder="Senha (mínimo 8 caracteres)"
-            minlength="8"
-    />
+            minlength="8" aria-label="Senha" autocomplete="new-password" required />
 
-    <select id="sala">
-      <option value="">Selecione sua turma</option>
-      <option value="1º AGROECOLOGIA - A">1º AGROECOLOGIA - A</option>
-      <option value="1º ANÁLISES CLÍNICAS - B">
+    <select class="estilo-sala" id="sala" aria-label="Turma" required>
+      <option class="estilo-sala-opcao" value="">Selecione sua turma</option>
+      <option class="estilo-sala-opcao" value="1º AGROECOLOGIA - A">1º AGROECOLOGIA - A</option>
+      <option class="estilo-sala-opcao" value="1º ANÁLISES CLÍNICAS - B">
         1º ANÁLISES CLÍNICAS - B
       </option>
-      <option value="1º ANÁLISES CLÍNICAS - C">
+      <option class="estilo-sala-opcao" value="1º ANÁLISES CLÍNICAS - C">
         1º ANÁLISES CLÍNICAS - C
       </option>
-      <option value="1º INFORMÁTICA - D">1º INFORMÁTICA - D</option>
-      <option value="1º INFORMÁTICA - E">1º INFORMÁTICA - E</option>
+      <option class="estilo-sala-opcao" value="1º INFORMÁTICA - D">1º INFORMÁTICA - D</option>
+      <option class="estilo-sala-opcao" value="1º INFORMÁTICA - E">1º INFORMÁTICA - E</option>
 
-      <option value="2º AGROECOLOGIA - F">2º AGROECOLOGIA - F</option>
-      <option value="2º ANÁLISES CLÍNICAS - G">
+      <option class="estilo-sala-opcao" value="2º AGROECOLOGIA - F">2º AGROECOLOGIA - F</option>
+      <option class="estilo-sala-opcao" value="2º ANÁLISES CLÍNICAS - G">
         2º ANÁLISES CLÍNICAS - G
       </option>
-      <option value="2º INFORMÁTICA - H">2º INFORMÁTICA - H</option>
-      <option value="2º INFORMÁTICA - I">2º INFORMÁTICA - I</option>
-      <option value="2º INFORMÁTICA - J">2º INFORMÁTICA - J</option>
+      <option class="estilo-sala-opcao" value="2º INFORMÁTICA - H">2º INFORMÁTICA - H</option>
+      <option class="estilo-sala-opcao" value="2º INFORMÁTICA - I">2º INFORMÁTICA - I</option>
+      <option class="estilo-sala-opcao" value="2º INFORMÁTICA - J">2º INFORMÁTICA - J</option>
 
-      <option value="3º AGROECOLOGIA - K">3º AGROECOLOGIA - K</option>
-      <option value="3º ANÁLISES CLÍNICAS - L">
+      <option class="estilo-sala-opcao" value="3º AGROECOLOGIA - K">3º AGROECOLOGIA - K</option>
+      <option class="estilo-sala-opcao" value="3º ANÁLISES CLÍNICAS - L">
         3º ANÁLISES CLÍNICAS - L
       </option>
-      <option value="3º ANÁLISES CLÍNICAS - M">
+      <option class="estilo-sala-opcao" value="3º ANÁLISES CLÍNICAS - M">
         3º ANÁLISES CLÍNICAS - M
       </option>
-      <option value="3º INFORMÁTICA - N">3º INFORMÁTICA - N</option>
-      <option value="3º INFORMÁTICA - O">3º INFORMÁTICA - O</option>
-      <option value="3º INFORMÁTICA - P">3º INFORMÁTICA - P</option>
+      <option class="estilo-sala-opcao" value="3º INFORMÁTICA - N">3º INFORMÁTICA - N</option>
+      <option class="estilo-sala-opcao" value="3º INFORMÁTICA - O">3º INFORMÁTICA - O</option>
+      <option class="estilo-sala-opcao" value="3º INFORMÁTICA - P">3º INFORMÁTICA - P</option>
     </select>
 
-    <button onclick="cadastrarAluno()">Cadastrar</button>
+    <button class="estilo-login-card-acao" onclick="cadastrarAluno()">Cadastrar</button>
+    <p id="feedbackFormulario" hidden aria-live="polite" aria-atomic="true"
+  class="estilo-feedback-formulario"></p>
 
-    <div class="cadastro">
-      <a href="login.html"> ← Voltar para Login </a>
+    <div class="cadastro estilo-cadastro">
+      <a class="estilo-cadastro-link" href="login.html"> ← Voltar para Login </a>
     </div>
   </section>
 </div>
 
 <script src="js/api.js"></script>
+<template id="modeloIndicadorFormulario">
+  <span aria-hidden="true" class="estilo-modelo-indicador-formulario-detalhe"></span>
+</template>
+<script src="js/formularios.js"></script>
 <script src="js/cadastroAluno.js"></script>
+<template id="modeloFileiraEmojis">
+  <div class="estilo-esteira-emocoes">
+    <div class="estilo-grupo-emojis" data-grupo-emojis>
+      <template data-modelo-emocao>
+        <span class="estilo-celula-emocao">
+          <span data-medalhao class="estilo-medalhao"></span>
+        </span>
+      </template>
+    </div>
+  </div>
+</template>
+<script src="js/imagens-emocoes.js"></script>
+<script src="js/emojis.js"></script>
 </body>
 </html>
