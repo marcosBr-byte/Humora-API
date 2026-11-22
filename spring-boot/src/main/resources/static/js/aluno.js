@@ -47,6 +47,7 @@ if (!alunoAtual.badges) alunoAtual.badges = [];
 // Variáveis globais
 var emocaoSelecionada = null;
 let registroFectPendente;
+const registrosFectEnviadosAqui = new Set();
 let atualizarTermometroIndividual;
 var intervalBloqueio = null;
 var pontosGame = 0, bolasEstouradas = 0, corAlvoAtual = "", tempoGameInterval = null;
@@ -89,6 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (modoVisitante) {
         document.title = "Humora | Visitante FECT";
         document.body.classList.add("fect-visitante");
+        acompanharAmorasVisitante(id => registrosFectEnviadosAqui.has(id));
         const diario = document.getElementById("tab-diario");
         diario.querySelectorAll('[data-apenas-aluno]').forEach(elemento => elemento.remove());
         document.querySelector('[onclick="abrirModalNotificacoes()"]').hidden = true;
@@ -238,6 +240,10 @@ async function enviarEmocao() {
         const dadosFect = { emocao: emocaoBackend, intensidade };
         if (modoVisitante && (registroFectPendente?.emocao !== emocaoBackend || registroFectPendente?.intensidade !== intensidade)) {
             registroFectPendente = { id: idRegistroFect(), ...dadosFect };
+            registrosFectEnviadosAqui.add(registroFectPendente.id);
+            if (registrosFectEnviadosAqui.size > 32) {
+                registrosFectEnviadosAqui.delete(registrosFectEnviadosAqui.values().next().value);
+            }
         }
         const response = modoVisitante
             ? await fetch("/fect/registros", {

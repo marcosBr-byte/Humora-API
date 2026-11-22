@@ -37,19 +37,19 @@ public class FectController {
     @PostMapping("/fect/registros")
     public ResponseEntity<Void> registrar(@Valid @RequestBody Registro registro) {
         if (registros.registrar(registro.id(), registro.emocao().name(), registro.intensidade()) == 1) {
-            conexoes.forEach(conexao -> enviar(conexao, SseEmitter.event().data(registro.emocao().name())));
+            conexoes.forEach(conexao -> enviar(conexao, SseEmitter.event().id(registro.id().toString()).data(registro.emocao().name())));
         }
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(path = "/professor/fect/ao-vivo", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(path = {"/fect/ao-vivo", "/professor/fect/ao-vivo"}, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> aoVivo() {
         var conexao = new SseEmitter(55_000L);
         conexao.onCompletion(() -> conexoes.remove(conexao));
         conexao.onTimeout(() -> conexoes.remove(conexao));
         conexao.onError(erro -> conexoes.remove(conexao));
         conexoes.add(conexao);
-        enviar(conexao, SseEmitter.event().comment("conectado"));
+        enviar(conexao, SseEmitter.event().reconnectTime(1500).comment("conectado"));
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(conexao);
     }
 

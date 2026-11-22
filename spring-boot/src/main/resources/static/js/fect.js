@@ -142,6 +142,28 @@ function celebrarEmocaoFect(emocao) {
     setTimeout(() => camada.remove(), 2500);
 }
 
+function acompanharAmorasVisitante(foiEnviadoAqui) {
+    let eventos;
+
+    function conectar() {
+        if (document.hidden || eventos) return;
+        eventos = new EventSource('/fect/ao-vivo');
+        eventos.onmessage = evento => {
+            if (!foiEnviadoAqui(evento.lastEventId)) celebrarEmocaoFect(EMOCAO_REVERSE[evento.data]);
+        };
+    }
+
+    function desconectar() {
+        eventos?.close();
+        eventos = null;
+    }
+
+    conectar();
+    document.addEventListener('visibilitychange', () => document.hidden ? desconectar() : conectar());
+    window.addEventListener('pagehide', desconectar);
+    window.addEventListener('pageshow', conectar);
+}
+
 function montarPainelFectProfessor(encerrarSessao) {
     const painel = document.getElementById('painelFect');
     const grade = document.getElementById('fectDistribuicao');

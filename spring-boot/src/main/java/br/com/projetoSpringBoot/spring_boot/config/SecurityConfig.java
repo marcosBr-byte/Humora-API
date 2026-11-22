@@ -92,6 +92,8 @@ public class SecurityConfig {
                                 "/fect/registros"
                         ).permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/fect/ao-vivo").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/auth/register/professor").hasRole("ADMIN")
 
                         // =========================
