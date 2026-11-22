@@ -29,5 +29,5 @@ public interface RegistroFectRepository extends JpaRepository<RegistroFect, UUID
             insert into registro_fect (id, emocao, intensidade) values (:id, :emocao, :intensidade)
             on conflict (id) do nothing
             """, nativeQuery = true)
-    void registrar(UUID id, String emocao, int intensidade);
+    int registrar(UUID id, String emocao, int intensidade);
 }

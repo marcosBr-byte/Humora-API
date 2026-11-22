@@ -64,8 +64,8 @@ Em bancos existentes, execute [o script SQL](spring-boot/sql/permitir-nomes-repe
 ### Apresentação na FECT
 
 1. Na página inicial ou no login, escolha **Visitante** para abrir o cadastro.
-2. Informe o primeiro nome e a cidade. Escolha uma amora, ajuste a intensidade de 1 a 5 e registre a emoção. O termômetro mostra a intensidade escolhida.
-3. Em outro navegador, escolha **Admin** e entre com uma conta de professor ou administrador. O **Termômetro da feira** atualiza a intensidade média e a distribuição das emoções a cada cinco segundos.
+2. Informe o primeiro nome e a cidade. Escolha uma amora, arraste no termômetro para ajustar a intensidade de 1 a 5 e registre a emoção. O termômetro mostra a intensidade escolhida.
+3. Em outro navegador, escolha **Admin** e entre com uma conta de professor ou administrador. O **Termômetro da feira** mostra seis termômetros com os percentuais de cada emoção. Novos registros chegam ao vivo e acionam a animação da amora correspondente.
 
 O banco guarda as emoções e intensidades enviadas à FECT. Nome, cidade, anotações, diário e histórico particular do visitante ficam na sessão do navegador. Use a rede local do evento ou um endereço HTTPS para apresentar.
 
@@ -103,6 +103,7 @@ POST	/auth/register/aluno	Público	Cadastro de aluno
 POST	/auth/register/professor	Administrador	Cadastro de professor
 POST	/fect/registros	Público	Registro anônimo de emoção na feira
 GET	/professor/fect	Professor	Contagem e intensidade agregada das emoções da FECT
+GET	/professor/fect/ao-vivo	Professor	Eventos em tempo real dos registros da feira
 POST	/auth/login/aluno	Público	Login do aluno (retorna token JWT)
 POST	/auth/login/professor	Público	Login do professor (retorna token JWT)
 GET	/aluno/me	Aluno	Consultar o próprio perfil

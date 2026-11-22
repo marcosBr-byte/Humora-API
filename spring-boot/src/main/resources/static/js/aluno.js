@@ -283,6 +283,7 @@ async function enviarEmocao() {
         atualizarSelecaoEmocao(null);
 
         atualizarTermometroIndividual();
+        if (modoVisitante) celebrarEmocaoFect(registro.emocao);
         notificarPainel(modoVisitante ? "Emoção registrada no painel da FECT." : "Emoção registrada.");
 
     } catch (error) {

@@ -9,7 +9,6 @@
   <script src="js/api.js" defer></script>
   <script src="js/imagens-emocoes.js" defer></script>
   <script src="js/fect.js" defer></script>
-  <script src="js/termometros.js" defer></script>
   <script src="js/professor.js" defer></script>
 </head>
 <body data-humora-painel class="fect-admin-pagina">
@@ -27,14 +26,11 @@
           <p class="fect-atualizacao">Carregando registros…</p>
         </div>
       </div>
-      <div class="fect-grade">
-        <div class="fect-mostrador"></div>
-        <div class="fect-controles">
-          <div class="fect-total"><strong id="fectTotal">—</strong> <span id="fectLegendaTotal">registros</span></div>
-          <h3>Escolha uma emoção</h3>
-          <div id="fectDistribuicao"></div>
-        </div>
+      <div class="fect-resumo-feira">
+        <div class="fect-total"><strong id="fectTotal">—</strong> <span id="fectLegendaTotal">registros</span></div>
+        <div class="fect-total"><strong id="fectMedia">—</strong> <span>intensidade média de 5</span></div>
       </div>
+      <div id="fectDistribuicao" class="fect-termometros-feira" aria-label="Percentuais por emoção"></div>
     </section>
   </main>
 </body>

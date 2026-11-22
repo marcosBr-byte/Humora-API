@@ -587,3 +587,123 @@ html[data-movimento="parado"] :is(.respiracao-onda, .respiracao-palco img) { tra
     animation: painel-revelar 380ms ease-out both;
   }
 }
+
+.fect-instrumento-ajustavel {
+  cursor: ns-resize;
+  touch-action: none;
+  user-select: none;
+  min-width: 48px;
+  border-radius: 20px;
+}
+.fect-instrumento-ajustavel:focus-within { outline: 2px solid var(--fect-roxo); outline-offset: 4px; }
+.fect-ajuste-vertical {
+  position: absolute;
+  width: 1px !important;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  writing-mode: vertical-lr;
+  direction: rtl;
+}
+.fect-instrumento-ajustavel .fect-tubo::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: clamp(4px, var(--fect-nivel), calc(100% - 4px));
+  height: 3px;
+  background: var(--fect-superficie);
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px var(--fect-borda-destaque);
+}
+
+.fect-resumo-feira, .fect-termometros-feira { display: grid; gap: 12px; }
+.fect-resumo-feira { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 14px; }
+.fect-resumo-feira .fect-total { margin: 0; }
+.fect-termometros-feira { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.fect-medida-feira {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--fect-borda);
+  border-radius: 16px;
+  background: linear-gradient(150deg, var(--fect-elevado), var(--fect-superficie));
+}
+.fect-medida-feira h3 {
+  margin: 0 0 8px;
+  color: var(--fect-texto);
+  font-size: 1rem;
+}
+.fect-medida-feira .fect-termometro {
+  grid-template-columns: min-content 40px minmax(0, 1fr);
+  width: min(100%, 195px);
+}
+.fect-medida-feira .fect-instrumento { height: 150px; }
+.fect-medida-feira .fect-tubo { height: 125px; width: 21px; }
+.fect-medida-feira .fect-escala { height: 99px; transform: translateY(-13px); }
+.fect-medida-feira .fect-reservatorio { width: 39px; height: 39px; }
+.fect-medida-feira .fect-valor { font-size: clamp(1.15rem, 3.5vw, 2.1rem); white-space: nowrap; }
+.fect-medida-feira .fect-legenda { font-size: .75rem; }
+.fect-medida-feira .fect-amora-leitura, .fect-medida-feira .fect-amora-leitura img { height: 38px; width: 38px; }
+@media (width <= 680px) {
+  .fect-termometros-feira { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .fect-resumo-feira { gap: 7px; }
+  .fect-resumo-feira .fect-total { padding-inline: 8px; }
+  .fect-medida-feira { padding: 8px 6px; }
+  .fect-medida-feira .fect-leitura { padding-left: 1px; }
+  .fect-medida-feira .fect-termometro { grid-template-columns: min-content 33px minmax(0, 1fr); gap: 3px; }
+  .fect-medida-feira .fect-escala span::after { width: 3px; }
+  .fect-medida-feira .fect-reservatorio { width: 32px; height: 32px; }
+}
+
+.fect-celebracao {
+  position: fixed;
+  inset: 0;
+  z-index: 1150;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+html[data-movimento="parado"] .fect-celebracao { display: none; }
+.fect-celebracao-centro {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: min(52vw, 270px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--fect-roxo) 32%, transparent), transparent 69%);
+  animation: fect-amora-destaque 1650ms cubic-bezier(.2,.72,.24,1) both;
+}
+.fect-celebracao-centro img {
+  width: 57%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px var(--fect-sombra));
+}
+.fect-celebracao-amora {
+  position: absolute;
+  top: 0;
+  left: var(--chuva-x);
+  width: var(--chuva-tamanho);
+  aspect-ratio: 1;
+  object-fit: contain;
+  animation: fect-chuva-amora 2s var(--chuva-espera) cubic-bezier(.27,.15,.62,1) both;
+}
+@keyframes fect-chuva-amora {
+  0% { opacity: 0; transform: translate3d(0,-65px,0) rotate(calc(-1 * var(--chuva-rotacao))); }
+  15% { opacity: .94; }
+  76% { opacity: .86; }
+  100% { opacity: 0; transform: translate3d(22px,105dvh,0) rotate(var(--chuva-rotacao)); }
+}
+@keyframes fect-amora-destaque {
+  0% { opacity: 0; transform: translate3d(0,25px,0) scale(.56) rotate(-9deg); }
+  24% { opacity: 1; transform: translate3d(0,0,0) scale(1.05) rotate(4deg); }
+  70% { opacity: .95; transform: translate3d(0,-18px,0) scale(.95) rotate(0); }
+  100% { opacity: 0; transform: translate3d(0,-52px,0) scale(.78); }
+}
+html[data-movimento="animado"] .fect-medida-chegou { animation: fect-medida-destaque 1.4s ease-out; }
+@keyframes fect-medida-destaque {
+  20% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--fect-roxo) 55%, transparent); }
+  100% { box-shadow: none; }
+}

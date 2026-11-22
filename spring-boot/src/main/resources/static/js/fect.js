@@ -49,7 +49,7 @@ function montarTermometroIndividual(visitante) {
             <div>
                 ${visitante ? '<p class="fect-etiqueta">FECT</p>' : ''}
                 <h2 id="tituloTermometro">Termômetro das emoções</h2>
-                <p>Escolha uma amora e ajuste a intensidade de 1 a 5.</p>
+                <p>${visitante ? 'Escolha uma amora e arraste no termômetro para ajustar de 1 a 5.' : 'Escolha uma amora e ajuste a intensidade de 1 a 5.'}</p>
             </div>
         </div>
         <div class="fect-grade">
@@ -66,12 +66,17 @@ function montarTermometroIndividual(visitante) {
     inicio.querySelector('header').after(card);
 
     const intensidade = document.getElementById('intensidadeEmocao');
+    if (visitante) {
+        intensidade.value = alunoAtual.historico.at(-1)?.intensidade ?? 1;
+        intensidade.dispatchEvent(new Event('input'));
+        habilitarAjusteTermometro(termometro, intensidade);
+    }
     function atualizar() {
         // Leituras recuperadas do diário escolar trazem a data de expiração e apenas a emoção.
         const ultima = alunoAtual.historico.findLast(item => item.timestamp <= alunoAtual.ultimaEmocao)
             ?? alunoAtual.historico.at(-1);
         const emocao = emocaoSelecionada || ultima?.emocao;
-        const nivel = emocaoSelecionada ? Number(intensidade.value) : ultima?.intensidade;
+        const nivel = visitante || emocaoSelecionada ? Number(intensidade.value) : ultima?.intensidade;
         atualizarTermometroFect(termometro, nivel, nomesEmocoes[emocao] || 'Escolha uma emoção', emocao);
     }
     card.addEventListener('click', event => {
@@ -82,17 +87,85 @@ function montarTermometroIndividual(visitante) {
     return atualizar;
 }
 
+function habilitarAjusteTermometro(termometro, intensidade) {
+    const instrumento = termometro.querySelector('.fect-instrumento');
+    const tubo = instrumento.querySelector('.fect-tubo');
+    instrumento.classList.add('fect-instrumento-ajustavel');
+    instrumento.removeAttribute('aria-hidden');
+    instrumento.append(intensidade);
+    intensidade.classList.add('fect-ajuste-vertical');
+    intensidade.setAttribute('aria-orientation', 'vertical');
+
+    function ajustar(evento) {
+        const area = tubo.getBoundingClientRect();
+        const posicao = (area.bottom - evento.clientY) / area.height;
+        const nivel = Math.max(1, Math.min(5, Math.round(1 + (posicao - .08) / .22)));
+        if (Number(intensidade.value) === nivel) return;
+        intensidade.value = nivel;
+        intensidade.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+
+    instrumento.addEventListener('pointerdown', evento => {
+        if (!evento.isPrimary || evento.button !== 0 || intensidade.disabled) return;
+        instrumento.setPointerCapture(evento.pointerId);
+        intensidade.focus({ preventScroll: true });
+        ajustar(evento);
+    });
+    instrumento.addEventListener('pointermove', evento => {
+        if (instrumento.hasPointerCapture(evento.pointerId)) ajustar(evento);
+    });
+}
+
+function celebrarEmocaoFect(emocao) {
+    if (!Object.hasOwn(nomesEmocoes, emocao) || document.hidden || document.documentElement.dataset.movimento !== 'animado') return;
+    document.querySelector('.fect-celebracao')?.remove();
+    const camada = document.createElement('div');
+    camada.className = 'fect-celebracao';
+    camada.setAttribute('aria-hidden', 'true');
+    const centro = document.createElement('div');
+    centro.className = 'fect-celebracao-centro';
+    centro.append(criarImagemEmocao(emocao));
+    camada.append(centro);
+    for (let i = 0; i < 16; i++) {
+        const amora = criarImagemEmocao(emocao);
+        amora.classList.add('fect-celebracao-amora');
+        amora.style.setProperty('--chuva-x', `${4 + i * 6}vw`);
+        amora.style.setProperty('--chuva-espera', `${(i % 5) * 95}ms`);
+        amora.style.setProperty('--chuva-rotacao', `${(i % 2 ? 1 : -1) * (24 + (i % 4) * 16)}deg`);
+        amora.style.setProperty('--chuva-tamanho', `${26 + (i % 4) * 8}px`);
+        camada.append(amora);
+    }
+    document.body.append(camada);
+    setTimeout(() => camada.remove(), 2500);
+}
+
 function montarPainelFectProfessor(encerrarSessao) {
     const painel = document.getElementById('painelFect');
-    const termometro = criarTermometroFect();
-    painel.querySelector('.fect-mostrador').append(termometro);
+    const grade = document.getElementById('fectDistribuicao');
+    const termometros = new Map();
+    for (const [emocao, nome] of Object.entries(nomesEmocoes)) {
+        const cartao = document.createElement('article');
+        cartao.className = 'fect-medida-feira';
+        cartao.dataset.emocao = emocao;
+        const titulo = document.createElement('h3');
+        titulo.textContent = nome;
+        const termometro = criarTermometroFect();
+        atualizarTermometroFect(termometro, 0, '0 registros', emocao, 100);
+        cartao.append(titulo, termometro);
+        grade.append(cartao);
+        termometros.set(emocao, termometro);
+    }
     const status = painel.querySelector('.fect-atualizacao');
-    const totalEl = painel.querySelector('#fectTotal');
-    const legendaTotal = painel.querySelector('#fectLegendaTotal');
     let carregando = false;
+    let novaLeitura = false;
+    let fluxo;
 
     async function atualizar() {
-        if (carregando || document.hidden) return;
+        if (document.hidden) return;
+        if (carregando) {
+            novaLeitura = true;
+            return;
+        }
         carregando = true;
         try {
             const resposta = await fetch('/professor/fect', { headers: api.getHeaders() });
@@ -104,32 +177,92 @@ function montarPainelFectProfessor(encerrarSessao) {
             const contagens = await resposta.json();
             const total = contagens.reduce((soma, item) => soma + item.total, 0);
             const intensidade = contagens.reduce((soma, item) => soma + item.somaIntensidades, 0);
-            const maior = Math.max(0, ...contagens.map(item => item.total));
-            const lideres = contagens.filter(item => item.total === maior);
-            const principal = lideres.length === 1 ? EMOCAO_REVERSE[lideres[0].emocao] : undefined;
-            totalEl.textContent = total.toLocaleString('pt-BR');
-            legendaTotal.textContent = total === 1 ? 'registro' : 'registros';
-            atualizarTermometroFect(termometro, total ? intensidade / total : null, 'Intensidade média', principal);
-            const porEmocao = contarEmocoes([]);
-            for (const item of contagens) porEmocao[EMOCAO_REVERSE[item.emocao]] = item.total;
-            termometrosPercentuais('fectDistribuicao', medidasDasEmocoes(porEmocao, 'registros'),
-                'Os percentuais aparecem após a primeira participação.');
-            status.textContent = total
-                ? `Atualizado às ${new Date().toLocaleTimeString('pt-BR')}`
-                : 'Aguardando o primeiro registro da feira';
+            document.getElementById('fectTotal').textContent = total.toLocaleString('pt-BR');
+            document.getElementById('fectLegendaTotal').textContent = total === 1 ? 'registro' : 'registros';
+            document.getElementById('fectMedia').textContent = total ? fectDecimal.format(intensidade / total) : '—';
+            for (const [emocao, termometro] of termometros) {
+                const contagem = contagens.find(item => EMOCAO_REVERSE[item.emocao] === emocao)?.total ?? 0;
+                const rotulo = contagem === 1 ? '1 registro' : `${contagem.toLocaleString('pt-BR')} registros`;
+                atualizarTermometroFect(termometro, total ? contagem / total * 100 : 0, rotulo, emocao, 100);
+            }
+            status.textContent = total ? 'Acompanhando registros da feira' : 'Aguardando o primeiro registro da feira';
         } catch {
-            status.textContent = 'Atualização indisponível. Nova tentativa em instantes.';
+            status.textContent = 'Conexão interrompida. Tentando atualizar…';
         } finally {
             carregando = false;
+            if (novaLeitura) {
+                novaLeitura = false;
+                atualizar();
+            }
+        }
+    }
+
+    function receber(emocao) {
+        if (!Object.hasOwn(nomesEmocoes, emocao)) return;
+        celebrarEmocaoFect(emocao);
+        const cartao = termometros.get(emocao).parentElement;
+        cartao.classList.remove('fect-medida-chegou');
+        requestAnimationFrame(() => cartao.classList.add('fect-medida-chegou'));
+        atualizar();
+    }
+
+    async function acompanhar() {
+        if (fluxo || document.hidden) return;
+        const controle = new AbortController();
+        fluxo = controle;
+        try {
+            const resposta = await fetch('/professor/fect/ao-vivo', {
+                headers: { ...api.getHeaders(), Accept: 'text/event-stream' },
+                signal: controle.signal
+            });
+            if (resposta.status === 401 || resposta.status === 403) {
+                controle.abort();
+                encerrarSessao();
+                return;
+            }
+            if (!resposta.ok || !resposta.body) throw new Error(resposta.status);
+            atualizar();
+            const leitor = resposta.body.getReader();
+            const decoder = new TextDecoder();
+            let resto = '';
+            while (!controle.signal.aborted) {
+                const { value, done } = await leitor.read();
+                if (done) break;
+                const linhas = (resto + decoder.decode(value, { stream: true })).split('\n');
+                resto = linhas.pop();
+                for (const linha of linhas) {
+                    if (linha.startsWith('data:')) receber(EMOCAO_REVERSE[linha.slice(5).trim()]);
+                }
+            }
+        } catch {
+            if (!controle.signal.aborted) atualizar();
+        } finally {
+            if (fluxo === controle) fluxo = null;
+            if (!controle.signal.aborted) setTimeout(acompanhar, 1500);
         }
     }
 
     atualizar();
-    const intervalo = setInterval(atualizar, 5000);
-    document.addEventListener('visibilitychange', atualizar);
-    window.addEventListener('pagehide', event => {
-        if (!event.persisted) clearInterval(intervalo);
+    acompanhar();
+    const intervalo = setInterval(atualizar, 15000);
+    function pausarFluxo() {
+        const atual = fluxo;
+        fluxo = null;
+        atual?.abort();
+    }
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) pausarFluxo();
+        else {
+            atualizar();
+            acompanhar();
+        }
     });
+    window.addEventListener('pagehide', evento => {
+        pausarFluxo();
+        if (!evento.persisted) clearInterval(intervalo);
+    });
+    window.addEventListener('pageshow', () => { atualizar(); acompanhar(); });
 }
 
 function idRegistroFect() {
