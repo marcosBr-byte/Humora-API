@@ -126,11 +126,14 @@ function celebrarEmocaoFect(emocao) {
     centro.className = 'fect-celebracao-centro';
     centro.append(criarImagemEmocao(emocao));
     camada.append(centro);
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < 25; i++) {
+        const coluna = i % 5;
+        const fileira = Math.floor(i / 5);
         const amora = criarImagemEmocao(emocao);
         amora.classList.add('fect-celebracao-amora');
-        amora.style.setProperty('--chuva-x', `${4 + i * 6}vw`);
-        amora.style.setProperty('--chuva-espera', `${(i % 5) * 95}ms`);
+        amora.style.setProperty('--chuva-x', `${3 + coluna * 19 + (fileira % 3) * 3}vw`);
+        amora.style.setProperty('--chuva-espera', `-${120 + fileira * 435 + (coluna % 3) * 93}ms`);
+        amora.style.setProperty('--chuva-desvio', `${i % 2 ? 30 : -24}px`);
         amora.style.setProperty('--chuva-rotacao', `${(i % 2 ? 1 : -1) * (24 + (i % 4) * 16)}deg`);
         amora.style.setProperty('--chuva-tamanho', `${26 + (i % 4) * 8}px`);
         camada.append(amora);

@@ -688,13 +688,13 @@ html[data-movimento="parado"] .fect-celebracao { display: none; }
   width: var(--chuva-tamanho);
   aspect-ratio: 1;
   object-fit: contain;
-  animation: fect-chuva-amora 2s var(--chuva-espera) cubic-bezier(.27,.15,.62,1) both;
+  animation: fect-chuva-amora 2.4s var(--chuva-espera) linear both;
 }
 @keyframes fect-chuva-amora {
   0% { opacity: 0; transform: translate3d(0,-65px,0) rotate(calc(-1 * var(--chuva-rotacao))); }
   15% { opacity: .94; }
   76% { opacity: .86; }
-  100% { opacity: 0; transform: translate3d(22px,105dvh,0) rotate(var(--chuva-rotacao)); }
+  100% { opacity: 0; transform: translate3d(var(--chuva-desvio),105dvh,0) rotate(var(--chuva-rotacao)); }
 }
 @keyframes fect-amora-destaque {
   0% { opacity: 0; transform: translate3d(0,25px,0) scale(.56) rotate(-9deg); }
