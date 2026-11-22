@@ -61,7 +61,6 @@
   color: var(--fect-acao-texto);
 }
 .fect-acao:hover { filter: brightness(1.07); }
-.fect-acao-visitante { align-self: flex-start; margin-bottom: 6px; }
 .fect-link { @apply tw:text-sm tw:font-semibold tw:underline tw:underline-offset-4; color: var(--fect-roxo); }
 .fect-acao:focus-visible, .fect-link:focus-visible, .fect-formulario :is(input,select):focus-visible,
 .fect-painel :is(button,input,textarea):focus-visible {
