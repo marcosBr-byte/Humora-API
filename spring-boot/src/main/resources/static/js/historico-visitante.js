@@ -1,24 +1,3 @@
-function chaveHistoricoVisitante({ nome, cidade }) {
-    const normalizar = valor => valor.normalize('NFC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('pt-BR');
-    return 'humora:historico-visitante:' + JSON.stringify([normalizar(nome), normalizar(cidade)]);
-}
-
-function lerHistoricoVisitante(visitante) {
-    try {
-        const historico = JSON.parse(localStorage.getItem(chaveHistoricoVisitante(visitante)));
-        return Array.isArray(historico) ? historico : [];
-    } catch {
-        return [];
-    }
-}
-
-function gravarHistoricoVisitante(visitante, registro) {
-    const historico = lerHistoricoVisitante(visitante);
-    const { id, emocao, intensidade, data, hora, timestamp } = registro;
-    if (!historico.some(item => item.id === id)) historico.push({ id, emocao, intensidade, data, hora, timestamp });
-    localStorage.setItem(chaveHistoricoVisitante(visitante), JSON.stringify(historico));
-}
-
 function mostrarHistoricoVisitante(historico) {
     const lista = document.getElementById('historicoVisitante');
     const filtro = document.getElementById('diaHistoricoVisitante');

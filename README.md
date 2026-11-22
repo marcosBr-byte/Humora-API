@@ -67,7 +67,7 @@ Em bancos existentes, execute [o script SQL](spring-boot/sql/permitir-nomes-repe
 2. Informe o primeiro nome e a cidade. Escolha uma amora, arraste no termômetro para ajustar a intensidade de 1 a 5 e registre a emoção. O termômetro mostra a intensidade escolhida.
 3. Em outro navegador, escolha **Admin** e entre com uma conta de professor ou administrador. O **Termômetro da feira** mostra seis termômetros com os percentuais de cada emoção. Novos registros chegam ao vivo e acionam a animação da amora correspondente.
 
-O banco guarda as emoções e intensidades enviadas à FECT. As anotações e o diário ficam na sessão. Na aba Histórico, o visitante pode consultar os registros por dia. Se escolher guardar o histórico em aparelho pessoal, pode recuperá-lo no mesmo navegador usando o mesmo nome e cidade. Use a rede local do evento ou um endereço HTTPS para apresentar.
+O banco guarda as emoções e intensidades enviadas à FECT. As anotações e o diário ficam na sessão. Na aba Histórico, o visitante pode consultar os registros da sessão por dia. Use a rede local do evento ou um endereço HTTPS para apresentar.
 
 3. Iniciar o backend
 bash

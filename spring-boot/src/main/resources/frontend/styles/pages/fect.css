@@ -709,15 +709,6 @@ html[data-movimento="animado"] .fect-medida-chegou { animation: fect-medida-dest
 }
 
 [data-historico-visitante][hidden] { display: none !important; }
-.fect-formulario .fect-historico-opcao { display: flex; align-items: center; gap: 9px; padding: 7px 0; }
-.fect-formulario .fect-historico-opcao input {
-  width: 18px;
-  height: 18px;
-  min-height: auto;
-  flex: 0 0 auto;
-  accent-color: var(--fect-roxo);
-}
-.fect-formulario #notaHistoricoVisitante { margin: 0; }
 .historico-visitante-filtro { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .historico-visitante-filtro select { min-height: 44px; border: 1px solid var(--fect-borda); border-radius: 10px; padding: 0 8px; }
 .historico-visitante #resumoHistoricoVisitante { margin-block: 10px; }

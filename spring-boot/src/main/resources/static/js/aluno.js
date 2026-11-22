@@ -24,7 +24,7 @@ if (!alunoAtual) {
         email: usuarioLogado.email,
         turma: usuarioLogado.turma || "",
         avatar: "😊",
-        historico: modoVisitante && usuarioLogado.guardarHistorico ? lerHistoricoVisitante(usuarioLogado) : [],
+        historico: [],
         diario: [],
         conquistas: [],
         streak: 0,
@@ -256,12 +256,10 @@ async function enviarEmocao() {
             return notificarPainel(errorMsg, true);
         }
 
-        const id = registroFectPendente?.id;
         registroFectPendente = null;
 
         // Atualizar dados locais
         var registro = {
-            id,
             emocao: emocaoSelecionada,
             intensidade,
             descricao: document.getElementById("motivo").value.trim(),
@@ -290,14 +288,6 @@ async function enviarEmocao() {
 
         atualizarTermometroIndividual();
         if (modoVisitante) celebrarEmocaoFect(registro.emocao);
-        if (modoVisitante && usuarioLogado.guardarHistorico) {
-            try {
-                gravarHistoricoVisitante(usuarioLogado, registro);
-            } catch {
-                notificarPainel("Emoção registrada. O navegador não conseguiu guardar o histórico para outro dia.", true);
-                return;
-            }
-        }
         notificarPainel(modoVisitante ? "Emoção registrada no painel da FECT." : "Emoção registrada.");
 
     } catch (error) {
