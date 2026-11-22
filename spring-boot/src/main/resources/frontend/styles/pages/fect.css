@@ -153,7 +153,7 @@
 }
 .fect-leitura { @apply tw:min-w-0 tw:pl-2; }
 .fect-amora-leitura { height: 56px; }
-.fect-amora-leitura img { display: block; width: 54px; height: 54px; object-fit: contain; animation: fect-flutuar 3.8s ease-in-out infinite; }
+.fect-amora-leitura img { display: block; width: 54px; height: 54px; object-fit: contain; }
 .fect-valor { @apply tw:text-4xl tw:leading-none tw:font-bold tw:tracking-tight; }
 .fect-valor small, .fect-legenda { color: var(--fect-secundario); font-size: .875rem; }
 .fect-legenda { margin-top: 4px; }
@@ -172,9 +172,7 @@
   border-radius: 13px;
   color: var(--fect-texto);
 }
-.termometro-individual #emocoes .imagem-emocao { width: clamp(33px, 11vw, 61px); height: auto; aspect-ratio: 1; animation: fect-flutuar 4.2s ease-in-out infinite; }
-.termometro-individual #emocoes .emocao:nth-child(2n) img { animation-delay: -.9s; }
-.termometro-individual #emocoes .emocao:nth-child(3n) img { animation-delay: -2s; }
+.termometro-individual #emocoes .imagem-emocao { width: clamp(33px, 11vw, 61px); height: auto; aspect-ratio: 1; }
 .termometro-individual #emocoes .rotulo { color: var(--fect-texto); font-size: .78rem; }
 .termometro-individual #motivoContainer { margin: 0; padding: 11px 0 0; border: 0; border-top: 1px solid var(--fect-borda); border-radius: 0; box-shadow: none; }
 .termometro-individual #motivoContainer input[type="range"] { width: 100%; accent-color: var(--fect-roxo); }
@@ -307,9 +305,6 @@
 .humora-tema option { background: var(--fect-superficie); color: var(--fect-texto); }
 .humora-tema select:focus-visible { outline: 2px solid var(--fect-roxo); outline-offset: 1px; }
 [data-humora-painel] .topo-conteudo { border-color: var(--fect-borda); }
-@media (width > 1025px) {
-  [data-humora-painel] .topo-conteudo { padding-inline-end: 225px; }
-}
 
 @layer fect {
   [data-humora-painel] .humora-tema select { background: transparent !important; }
@@ -376,16 +371,6 @@
 @keyframes painel-revelar {
   from { opacity: 0; transform: translateY(9px); }
   to { opacity: 1; transform: translateY(0); }
-}
-@media (prefers-reduced-motion: no-preference) {
-  [data-humora-painel] .tab-content.ativo > :is(.topo-conteudo, .fect-painel, .card-painel, .estilo-graficos, .estilo-graficos-container) {
-    animation: painel-revelar 380ms var(--ui-ease) both;
-  }
-  [data-humora-painel] .tab-content.ativo > :nth-child(2) { animation-delay: 55ms; }
-  [data-humora-painel] .tab-content.ativo > :nth-child(3) { animation-delay: 100ms; }
-   .termometro-opcoes button[aria-pressed="true"] .imagem-emocao, #avatarAtual .imagem-emocao {
-    animation: fect-flutuar 4.6s ease-in-out infinite;
-  }
 }
 
 .termometro-explorador {
@@ -480,9 +465,7 @@
 @media (width <= 700px) {
   .respiracao-painel { grid-template-columns: minmax(0, 1fr); }
 }
-@media (prefers-reduced-motion: reduce) {
-  .respiracao-onda, .respiracao-palco img { transform: none; }
-}
+html[data-movimento="parado"] :is(.respiracao-onda, .respiracao-palco img) { transform: none; }
 
 .fect-amoras {
   isolation: isolate;
@@ -532,16 +515,64 @@
   0%, 100% { transform: translate(-50%, -50%) rotate(var(--amora-angulo, 0deg)); }
   50% { transform: translate(-50%, calc(-50% - 9px)) rotate(calc(var(--amora-angulo, 0deg) + 3deg)); }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .fect-amoras img { animation: amora-em-orbita 5.5s ease-in-out infinite; }
-  .fect-amoras img:nth-child(2n) { animation-delay: -1.25s; }
-  .fect-amoras img:nth-child(3n) { animation-delay: -2.5s; }
-  .amoras-secao img { animation: fect-flutuar 4.8s ease-in-out infinite; }
-  .amoras-secao img + img { animation-delay: -1.25s; }
-}
 
 .fect-acoes-entrada { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .fect-acoes-entrada .fect-botao-secundario { min-height: 44px; display: inline-flex; align-items: center; font-weight: 600; text-decoration: none; }
 .fect-acoes-entrada .fect-botao-secundario:is(:hover,:focus-visible) { border-color: var(--fect-roxo); color: var(--fect-roxo); }
 #tituloAcesso { scroll-margin-top: 70px; }
 .fect-perfis #btnAluno[aria-pressed="false"] { color: var(--fect-roxo); background: transparent; border-color: transparent; text-decoration: underline; text-underline-offset: 3px; }
+
+.humora-tema label { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.humora-movimento {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--fect-borda);
+  border-radius: 50%;
+  background: var(--fect-elevado);
+  color: var(--fect-roxo);
+  font: 700 .85rem/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+.humora-movimento:is(:hover,:focus-visible) { outline: 2px solid var(--fect-roxo); outline-offset: 1px; }
+@media (width > 1025px) {
+  [data-humora-painel] .topo-conteudo { padding-inline-end: 260px; }
+}
+@media (width <= 360px) {
+  .humora-tema { gap: 4px; }
+  .humora-tema select { max-width: 126px; }
+}
+
+@layer fect {
+  html[data-movimento="animado"] {
+    .fect-amoras img { animation: amora-em-orbita 5.5s ease-in-out infinite !important; }
+    .fect-amoras img:nth-child(2n) { animation-delay: -1.25s !important; }
+    .fect-amoras img:nth-child(3n) { animation-delay: -2.5s !important; }
+
+    :is(.amoras-secao, .fect-amora-leitura, .termometro-individual #emocoes) img,
+    .termometro-opcoes button[aria-pressed="true"] .imagem-emocao,
+    #avatarAtual .imagem-emocao {
+      animation: fect-flutuar 4.4s ease-in-out infinite !important;
+    }
+    .amoras-secao img + img, .termometro-individual #emocoes .emocao:nth-child(2n) img {
+      animation-delay: -1.25s !important;
+    }
+    .termometro-individual #emocoes .emocao:nth-child(3n) img { animation-delay: -2s !important; }
+
+    [data-humora-painel] .tab-content.ativo > :is(.topo-conteudo, .fect-painel, .card-painel, .estilo-graficos, .estilo-graficos-container) {
+      animation: painel-revelar 380ms var(--ui-ease) both !important;
+    }
+    [data-humora-painel] .tab-content.ativo > :nth-child(2) { animation-delay: 55ms !important; }
+    [data-humora-painel] .tab-content.ativo > :nth-child(3) { animation-delay: 100ms !important; }
+    .fect-liquido { transition: height .44s ease, background .25s ease !important; }
+  }
+
+  html[data-movimento="parado"] {
+    [data-humora-painel] .tab-content,
+    [data-humora-painel] .tab-content > * { animation: none !important; }
+    .fect-liquido { transition: none !important; }
+  }
+}
