@@ -31,10 +31,15 @@
         <input id="primeiroNome" name="primeiroNome" autocomplete="given-name" maxlength="40" required>
         <label for="cidade">Cidade</label>
         <input id="cidade" name="cidade" autocomplete="address-level2" maxlength="80" required>
+        <label class="fect-historico-opcao">
+          <input type="checkbox" name="guardarHistorico" aria-describedby="notaHistoricoVisitante">
+          Guardar meu histórico neste navegador
+        </label>
+        <p class="fect-nota" id="notaHistoricoVisitante">Use apenas em aparelho pessoal. Para consultar os registros em outro dia, informe o mesmo nome e cidade e marque esta opção novamente.</p>
         <button class="fect-acao" type="submit">Ir para o termômetro <span aria-hidden="true">→</span></button>
         <p id="feedbackVisitante" role="status"></p>
       </form>
-      <p class="fect-nota">Seu nome, sua cidade e seu diário ficam nesta sessão. O painel da feira recebe a emoção e a intensidade, sem identificação.</p>
+      <p class="fect-nota">Seu diário fica nesta sessão. O painel da feira recebe a emoção e a intensidade, sem identificação.</p>
     </section>
   </main>
 </body>

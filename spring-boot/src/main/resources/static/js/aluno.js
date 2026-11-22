@@ -24,7 +24,7 @@ if (!alunoAtual) {
         email: usuarioLogado.email,
         turma: usuarioLogado.turma || "",
         avatar: "😊",
-        historico: [],
+        historico: modoVisitante && usuarioLogado.guardarHistorico ? lerHistoricoVisitante(usuarioLogado) : [],
         diario: [],
         conquistas: [],
         streak: 0,
@@ -92,6 +92,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const diario = document.getElementById("tab-diario");
         diario.querySelectorAll('[data-apenas-aluno]').forEach(elemento => elemento.remove());
         document.querySelector('[onclick="abrirModalNotificacoes()"]').hidden = true;
+        document.querySelector('[onclick="abrirModalHistorico()"]').hidden = true;
+        document.querySelector('[data-historico-visitante]').hidden = false;
+        document.getElementById('diaHistoricoVisitante').addEventListener('change', () => mostrarHistoricoVisitante(alunoAtual.historico));
     } else {
         atualizarBadgeNotificacoes();
         iniciarMonitorBloqueio();
@@ -187,6 +190,7 @@ function trocarTab(nomeTab, elemento) {
     if (elemento) elemento.classList.add("ativo");
     sincronizarAbaPainel(tab, elemento);
     if (nomeTab === "termometros") atualizarTermometrosAluno();
+    if (nomeTab === "historico" && modoVisitante) mostrarHistoricoVisitante(alunoAtual.historico);
     if (nomeTab !== "respiracao") pausarRespiracao();
     if (nomeTab === "conquistas") carregarConquistasTab();
 }
@@ -252,10 +256,12 @@ async function enviarEmocao() {
             return notificarPainel(errorMsg, true);
         }
 
+        const id = registroFectPendente?.id;
         registroFectPendente = null;
 
         // Atualizar dados locais
         var registro = {
+            id,
             emocao: emocaoSelecionada,
             intensidade,
             descricao: document.getElementById("motivo").value.trim(),
@@ -284,6 +290,14 @@ async function enviarEmocao() {
 
         atualizarTermometroIndividual();
         if (modoVisitante) celebrarEmocaoFect(registro.emocao);
+        if (modoVisitante && usuarioLogado.guardarHistorico) {
+            try {
+                gravarHistoricoVisitante(usuarioLogado, registro);
+            } catch {
+                notificarPainel("Emoção registrada. O navegador não conseguiu guardar o histórico para outro dia.", true);
+                return;
+            }
+        }
         notificarPainel(modoVisitante ? "Emoção registrada no painel da FECT." : "Emoção registrada.");
 
     } catch (error) {

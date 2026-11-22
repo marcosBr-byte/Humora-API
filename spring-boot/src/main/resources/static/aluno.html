@@ -64,6 +64,9 @@
         <button class="menu-item estilo-menu-item" onclick="trocarTab('conquistas', this)">
           <span class="ui-icon ui-icon--trophy ui-icon--nav estilo-ui-icon--trophy" aria-hidden="true"></span> Conquistas
         </button>
+        <button type="button" class="menu-item estilo-menu-item" data-historico-visitante hidden onclick="trocarTab('historico', this)">
+          <span class="ui-icon ui-icon--history ui-icon--nav estilo-ui-icon--history" aria-hidden="true"></span> Histórico
+        </button>
       </nav>
       <button
               class="menu-item menu-item-notif estilo-menu-item-2"
@@ -172,6 +175,23 @@
           <div id="termometroFrequencia"></div>
         </div>
       </div>
+    </div>
+
+    <div id="tab-historico" class="tab-content estilo-tab-inicio">
+      <header class="topo-conteudo estilo-topo-conteudo">
+        <div>
+          <h1 class="estilo-topo-conteudo-titulo">Meu histórico</h1>
+          <p class="subtitulo estilo-subtitulo">Veja as emoções registradas em cada dia.</p>
+        </div>
+      </header>
+      <section class="fect-painel historico-visitante" aria-label="Registros por dia">
+        <div class="historico-visitante-filtro">
+          <label for="diaHistoricoVisitante">Dia do registro</label>
+          <select id="diaHistoricoVisitante"><option value="">Todos os dias</option></select>
+        </div>
+        <p id="resumoHistoricoVisitante" class="fect-nota" role="status"></p>
+        <div id="historicoVisitante"></div>
+      </section>
     </div>
 
     <div id="tab-diario" class="tab-content estilo-tab-inicio">
@@ -483,6 +503,7 @@
 <script src="js/estados-visuais.js"></script>
 <script src="js/fect.js"></script>
 <script src="js/termometros.js"></script>
+<script src="js/historico-visitante.js"></script>
 <script src="js/aluno.js"></script>
 <script src="js/respiracao.js"></script>
 
