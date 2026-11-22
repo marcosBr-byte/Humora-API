@@ -58,9 +58,6 @@ const api = {
         });
     },
 
-    async getAllAlunos() {
-        return fetch(`${API_URL}/professor/alunos`, { headers: this.getHeaders() });
-    },
     async getPerfil(tipo) {
         const rota = tipo === 'aluno' ? '/aluno/me' : '/professor/me';
         return fetch(`${API_URL}${rota}`, { headers: this.getHeaders() });

@@ -82,7 +82,7 @@ function montarTermometroIndividual(visitante) {
     return atualizar;
 }
 
-function montarPainelFectProfessor() {
+function montarPainelFectProfessor(encerrarSessao) {
     const painel = document.getElementById('painelFect');
     const termometro = criarTermometroFect();
     painel.querySelector('.fect-mostrador').append(termometro);
@@ -96,6 +96,10 @@ function montarPainelFectProfessor() {
         carregando = true;
         try {
             const resposta = await fetch('/professor/fect', { headers: api.getHeaders() });
+            if (resposta.status === 401 || resposta.status === 403) {
+                encerrarSessao();
+                return;
+            }
             if (!resposta.ok) throw new Error(resposta.status);
             const contagens = await resposta.json();
             const total = contagens.reduce((soma, item) => soma + item.total, 0);
