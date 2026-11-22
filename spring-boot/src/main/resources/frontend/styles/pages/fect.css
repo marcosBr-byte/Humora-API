@@ -677,6 +677,7 @@ html[data-movimento="parado"] .fect-celebracao { display: none; }
 }
 .fect-celebracao-centro img {
   width: 57%;
+  height: auto;
   aspect-ratio: 1;
   object-fit: contain;
   filter: drop-shadow(0 10px 20px var(--fect-sombra));
@@ -686,6 +687,7 @@ html[data-movimento="parado"] .fect-celebracao { display: none; }
   top: 0;
   left: var(--chuva-x);
   width: var(--chuva-tamanho);
+  height: auto;
   aspect-ratio: 1;
   object-fit: contain;
   animation: fect-chuva-amora 2.4s var(--chuva-espera) linear both;
