@@ -32,12 +32,10 @@
       <input type="email" id="email" autocomplete="username" required>
       <label for="senha">Senha</label>
       <input type="password" id="senha" minlength="8" autocomplete="current-password" required>
-      <div class="fect-perfis" role="group" aria-label="Tipo de conta">
-        <button type="button" id="btnProfessor" aria-pressed="true">Admin</button>
-        <button type="button" id="btnAluno" aria-pressed="false">Acesso do aluno</button>
+      <div class="fect-perfis">
+        <button class="fect-acao" type="button" onclick="login()" aria-label="Admin">Admin <span aria-hidden="true">→</span></button>
+        <a class="fect-botao-secundario" href="cadastroVisitante.html">Visitante</a>
       </div>
-      <input type="hidden" id="tipoUsuario" value="professor">
-      <button class="fect-acao" type="button" onclick="login()">Entrar <span aria-hidden="true">→</span></button>
       <p id="feedbackFormulario" role="status" hidden></p>
     </section>
   </main>
