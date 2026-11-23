@@ -3,20 +3,19 @@
     @apply tw:[:where(&)_*]:m-0 tw:[:where(&)_*]:p-0 tw:[:where(&)_*]:box-border
       tw:[:where(&)_*]:[font-family:'Poppins',_sans-serif] tw:m-0 tw:p-0 tw:box-border
       tw:[font-family:'Poppins',_sans-serif] tw:[-webkit-text-size-adjust:100%]
-      tw:motion-reduce:[:where(&)_*]:[animation-duration:0.001ms]!
-      tw:motion-reduce:[:where(&)_*]:[transition-duration:0.001ms]! tw:motion-reduce:[animation-duration:0.001ms]!
-      tw:motion-reduce:[transition-duration:0.001ms]!
-      tw:motion-reduce:[:where(&)_*::before]:[animation-duration:0.001ms]!
-      tw:motion-reduce:[:where(&)_*::before]:[transition-duration:0.001ms]!
-      tw:motion-reduce:[:where(&)_*::after]:[animation-duration:0.001ms]!
-      tw:motion-reduce:[:where(&)_*::after]:[transition-duration:0.001ms]!
+
+
+
+
+
+
+
       tw:[--ui-ease:cubic-bezier(0.2,_0.75,_0.25,_1)] tw:[--ui-interaction:180ms] tw:[--ui-lavender:#d8b4fe]
-      tw:motion-reduce:[:where(&)_*]:animate-none! tw:motion-reduce:[:where(&)_*]:transition-none!
-      tw:motion-reduce:[:where(&)_*]:scroll-auto! tw:motion-reduce:animate-none! tw:motion-reduce:transition-none!
-      tw:motion-reduce:scroll-auto! tw:motion-reduce:[:where(&)_*::before]:animate-none!
-      tw:motion-reduce:[:where(&)_*::before]:transition-none! tw:motion-reduce:[:where(&)_*::before]:scroll-auto!
-      tw:motion-reduce:[:where(&)_*::after]:animate-none! tw:motion-reduce:[:where(&)_*::after]:transition-none!
-      tw:motion-reduce:[:where(&)_*::after]:scroll-auto!;
+
+
+
+
+;
   }
 
   .estilo-fundo-index {
@@ -107,8 +106,8 @@
       tw:[background:linear-gradient(115deg,#6940b3,#8a4fd1)]! tw:text-white!
       tw:[box-shadow:0_8px_22px_#09061555,inset_0_1px_0_#ffffff26]!
       tw:hover:[background:linear-gradient(115deg,#7549c1,#945bdd)]! tw:disabled:[background:#2c2740]!
-      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
-      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:transition-[transform,background-color,box-shadow,opacity] tw:duration-200
+      tw:ease-humora-resposta tw:active:scale-[.97] tw:disabled:cursor-not-allowed
       tw:disabled:opacity-60;
   }
 

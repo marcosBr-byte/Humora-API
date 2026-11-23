@@ -1,12 +1,12 @@
 @layer components {
   .estilo-fundo-aluno {
     @apply tw:h-screen tw:overflow-hidden tw:text-white tw:[background:linear-gradient(135deg,_#2e0854_0%,_#18032b_100%)]
-      tw:[:where(&)_.emocao_.emoji]:text-[36px] tw:[:where(&)_.bola-game]:w-[55px]
-      tw:[:where(&)_.bola-game]:h-[55px] tw:[:where(&)_.bola-game]:[border-radius:50%]
+      tw:[:where(&)_.emocao_.emoji]:text-[36px] tw:[:where(&)_.bola-game]:w-full
+      tw:[:where(&)_.bola-game]:aspect-square tw:[:where(&)_.bola-game]:[border-radius:50%]
       tw:[:where(&)_.bola-game]:cursor-pointer tw:[:where(&)_.bola-game]:[transition:0.2s]
       tw:[:where(&)_.bola-game]:[box-shadow:inset_0_3px_6px_rgba(255,_255,_255,_0.3),_0_4px_8px_rgba(0,_0,_0,_0.4)]
       tw:[:where(&)_.bola-game:hover]:[transform:scale(1.1)] tw:[:where(&)_.erro-shake]:animate-shake
-      tw:[:where(&)_.carta-memoria]:w-[75px] tw:[:where(&)_.carta-memoria]:h-[75px]
+      tw:[:where(&)_.carta-memoria]:w-full tw:[:where(&)_.carta-memoria]:aspect-square
       tw:[:where(&)_.carta-memoria]:[background:rgba(168,_85,_247,_0.3)]
       tw:[:where(&)_.carta-memoria]:[border:2px_solid_#a855f7] tw:[:where(&)_.carta-memoria]:rounded-[12px]
       tw:[:where(&)_.carta-memoria]:cursor-pointer tw:[:where(&)_.carta-memoria]:flex
@@ -16,7 +16,7 @@
       tw:[:where(&)_.carta-memoria.virada]:border-humora-soft
       tw:[:where(&)_.carta-memoria.par]:[background:rgba(34,_197,_94,_0.4)]
       tw:[:where(&)_.carta-memoria.par]:[border-color:#22c55e] tw:[:where(&)_.carta-memoria.par]:cursor-default
-      tw:[:where(&)_.celula-caca]:w-[32px] tw:[:where(&)_.celula-caca]:h-[32px] tw:[:where(&)_.celula-caca]:flex
+      tw:[:where(&)_.celula-caca]:w-full tw:[:where(&)_.celula-caca]:aspect-square tw:[:where(&)_.celula-caca]:flex
       tw:[:where(&)_.celula-caca]:justify-center tw:[:where(&)_.celula-caca]:items-center
       tw:[:where(&)_.celula-caca]:text-[16px] tw:[:where(&)_.celula-caca]:font-bold
       tw:[:where(&)_.celula-caca]:[background:rgba(22,_9,_44,_0.8)]
@@ -35,7 +35,8 @@
       tw:[:where(&)_.palavra-item.encontrada]:[background:rgba(34,_197,_94,_0.2)]
       tw:[:where(&)_.palavra-item.encontrada]:[border-color:#22c55e]
       tw:[:where(&)_.palavra-item.encontrada]:[text-decoration:line-through]
-      tw:[:where(&)_.palavra-item.encontrada]:[color:#22c55e] tw:max-[769px]:overflow-auto
+      tw:[:where(&)_.palavra-item.encontrada]:[color:#22c55e]
+      tw:max-[1025px]:h-auto tw:max-[1025px]:min-h-dvh tw:max-[1025px]:overflow-visible
       tw:[:where(&)_video]:[max-width:100%] tw:[:where(&)_svg]:[max-width:100%] tw:[:where(&)_a]:[font:inherit]
       tw:[:where(&)_select]:[font:inherit] tw:max-[769px]:[:where(&)_.emocao_.emoji]:[font-size:1.8rem]
       tw:max-[481px]:[:where(&)_.emocao_.emoji]:[font-size:1.6rem]
@@ -98,7 +99,7 @@
       tw:[:where(&).menu-item.ativo]:[background:rgba(168,_85,_247,_0.25)] tw:[:where(&).menu-item.ativo]:text-white
       tw:[:where(&).menu-item.ativo]:border-humora-accent
       tw:[:where(&).menu-item.ativo]:[box-shadow:0_0_15px_rgba(168,_85,_247,_0.3)]
-      tw:[button:where(&)]:[font:inherit] tw:min-h-10 tw:max-[1025px]:min-h-11 tw:motion-safe:active:scale-[.98]
+      tw:[button:where(&)]:[font:inherit] tw:min-h-10 tw:max-[1025px]:min-h-11 tw:active:scale-[.98]
       tw:[&.ativo]:[background:linear-gradient(110deg,#4b2f71,#332644)]! tw:[&.ativo]:[border-color:#a984da85]!
       tw:hover:text-white!;
   }
@@ -166,8 +167,8 @@
       tw:[background:linear-gradient(145deg,#2a203c,#21182f)]! tw:[border-color:#9e79c44f]!
       tw:[&.selecionada]:[background:linear-gradient(145deg,#573883,#35244c)]!
       tw:[&.selecionada]:[border-color:#dab3ff]! tw:[&.selecionada]:[box-shadow:0_0_0_2px_#b889ff4f]!
-      tw:motion-safe:transition-[transform,background-color,box-shadow] tw:motion-safe:duration-200
-      tw:motion-safe:active:scale-[.96] tw:hover:[border-color:#b999e1]! tw:min-h-[78px];
+      tw:transition-[transform,background-color,box-shadow] tw:duration-200
+      tw:active:scale-[.96] tw:hover:[border-color:#b999e1]! tw:min-h-[78px];
   }
 
   .estilo-rotulo {
@@ -208,7 +209,7 @@
       tw:[textarea:where(&):focus]:border-humora-accent tw:[textarea:where(&)]:[font:inherit]
       tw:[background:#181225]! tw:[border-color:#8a71a45c]! tw:placeholder:text-[#9e90b0]!
       tw:focus:[border-color:#b89be9]! tw:focus:[box-shadow:0_0_0_3px_#b68bfc26]!
-      tw:motion-safe:transition-[border-color,box-shadow,background-color] tw:motion-safe:duration-200;
+      tw:transition-[border-color,box-shadow,background-color] tw:duration-200;
   }
 
   .estilo-btn-enviar-emocao {
@@ -222,8 +223,8 @@
       tw:[background:linear-gradient(115deg,#6940b3,#8a4fd1)]! tw:text-white!
       tw:[box-shadow:0_8px_22px_#09061555,inset_0_1px_0_#ffffff26]!
       tw:hover:[background:linear-gradient(115deg,#7549c1,#945bdd)]! tw:disabled:[background:#2c2740]!
-      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
-      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:transition-[transform,background-color,box-shadow,opacity] tw:duration-200
+      tw:ease-humora-resposta tw:active:scale-[.97] tw:disabled:cursor-not-allowed
       tw:disabled:opacity-60 tw:min-h-11;
   }
 
@@ -278,8 +279,8 @@
       tw:cursor-pointer tw:[button:where(&)]:[font:inherit] tw:[background:linear-gradient(115deg,#6940b3,#8a4fd1)]!
       tw:text-white! tw:[box-shadow:0_8px_22px_#09061555,inset_0_1px_0_#ffffff26]!
       tw:hover:[background:linear-gradient(115deg,#7549c1,#945bdd)]! tw:disabled:[background:#2c2740]!
-      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
-      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:transition-[transform,background-color,box-shadow,opacity] tw:duration-200
+      tw:ease-humora-resposta tw:active:scale-[.97] tw:disabled:cursor-not-allowed
       tw:disabled:opacity-60 tw:min-h-11;
   }
 
@@ -364,8 +365,8 @@
       tw:[button:where(&)]:[font:inherit] tw:[background:linear-gradient(115deg,#6940b3,#8a4fd1)]! tw:text-white!
       tw:[box-shadow:0_8px_22px_#09061555,inset_0_1px_0_#ffffff26]!
       tw:hover:[background:linear-gradient(115deg,#7549c1,#945bdd)]! tw:disabled:[background:#2c2740]!
-      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
-      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:transition-[transform,background-color,box-shadow,opacity] tw:duration-200
+      tw:ease-humora-resposta tw:active:scale-[.97] tw:disabled:cursor-not-allowed
       tw:disabled:opacity-60 tw:min-h-11;
   }
 
@@ -373,8 +374,8 @@
     @apply tw:[padding:12px_30px] tw:[border:none] tw:rounded-[14px] tw:cursor-pointer tw:font-semibold tw:text-[15px]
       tw:[transition:all_0.3s_ease] tw:[background:linear-gradient(135deg,_#e74c3c,_#c0392b)] tw:text-white
       tw:[button:where(&)]:[font:inherit] tw:[background:#2b2440]! tw:[border-color:#80709b55]! tw:text-[#efe6ff]!
-      tw:hover:[background:#3d3055]! tw:motion-safe:transition-[transform,background-color,box-shadow,opacity]
-      tw:motion-safe:duration-200 tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97]
+      tw:hover:[background:#3d3055]! tw:transition-[transform,background-color,box-shadow,opacity]
+      tw:duration-200 tw:ease-humora-resposta tw:active:scale-[.97]
       tw:disabled:cursor-not-allowed tw:disabled:opacity-60 tw:min-h-11;
   }
 
@@ -414,8 +415,8 @@
       tw:mt-[20px] tw:[transition:0.3s] tw:shrink-0
       tw:[:where(&).btn-fechar-modal:hover]:[background:linear-gradient(135deg,_#c084fc,_#8b5cf6)]
       tw:[button:where(&)]:[font:inherit] tw:[background:#2b2440]! tw:[border-color:#80709b55]! tw:text-[#efe6ff]!
-      tw:hover:[background:#3d3055]! tw:motion-safe:transition-[transform,background-color,box-shadow,opacity]
-      tw:motion-safe:duration-200 tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97]
+      tw:hover:[background:#3d3055]! tw:transition-[transform,background-color,box-shadow,opacity]
+      tw:duration-200 tw:ease-humora-resposta tw:active:scale-[.97]
       tw:disabled:cursor-not-allowed tw:disabled:opacity-60 tw:min-h-11;
   }
 

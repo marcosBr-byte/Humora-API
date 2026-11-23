@@ -32,7 +32,7 @@
   color: var(--fect-texto);
   margin-bottom: clamp(20px, 5vw, 56px);
 }
-.fect-marca img { width: 36px; height: 36px; object-fit: contain; }
+.fect-marca img { display: block; width: clamp(128px, 24vw, 176px); height: auto; max-width: 100%; border-radius: 12px; }
 .fect-etiqueta { @apply tw:text-xs tw:font-bold tw:tracking-[.18em]; color: var(--fect-roxo); margin: 0 0 5px; }
 .fect-boas-vindas h1 {
   @apply tw:m-0 tw:font-bold tw:leading-[1.08] tw:tracking-tight;
@@ -184,9 +184,6 @@
 #gridMemoria .carta-memoria:focus-visible, #gridBolasGame .bola-game:focus-visible { outline: 2px solid var(--fect-roxo); outline-offset: 2px; }
 
 @keyframes fect-flutuar { 0%, 100% { transform: translateY(1px); } 50% { transform: translateY(-6px); } }
-@media (prefers-reduced-motion: reduce) {
-  .fect-painel *, .fect-amoras img { animation: none !important; transition: none !important; }
-}
 @media (width <= 420px) {
   .fect-painel { padding: 13px; }
   .fect-cabecalho { gap: 8px; }
@@ -261,7 +258,6 @@
   animation: fect-girar .8s linear infinite;
 }
 @keyframes fect-girar { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .fect-carregando { animation: none; } }
 
 /* Um contorno suave e um reflexo interno dão profundidade às superfícies. */
 .fect-acesso, .fect-formulario-unico, .fect-painel {
@@ -459,7 +455,6 @@
 @media (width <= 700px) {
   .respiracao-painel { grid-template-columns: minmax(0, 1fr); }
 }
-html[data-movimento="parado"] :is(.respiracao-onda, .respiracao-palco img) { transform: none; }
 
 .fect-amoras {
   isolation: isolate;
@@ -488,7 +483,10 @@ html[data-movimento="parado"] :is(.respiracao-onda, .respiracao-palco img) { tra
   object-fit: contain;
   transform: translate(-50%, -50%) rotate(var(--amora-angulo, 0deg));
   filter: drop-shadow(0 9px 10px var(--fect-sombra));
+  animation: amora-em-orbita 5.5s ease-in-out infinite;
 }
+.fect-amoras img:nth-child(2n) { animation-delay: -1.25s; }
+.fect-amoras img:nth-child(3n) { animation-delay: -2.5s; }
 .fect-amoras img:nth-child(1) { --amora-x: 49%; --amora-y: 49%; --amora-largura: 33%; z-index: 1; }
 .fect-amoras img:nth-child(2) { --amora-x: 22%; --amora-y: 28%; --amora-angulo: -12deg; }
 .fect-amoras img:nth-child(3) { --amora-x: 76%; --amora-y: 28%; --amora-angulo: 13deg; }
@@ -516,21 +514,6 @@ html[data-movimento="parado"] :is(.respiracao-onda, .respiracao-palco img) { tra
 #tituloAcesso { scroll-margin-top: 70px; }
 
 .humora-tema label { display: flex; align-items: center; gap: 4px; min-width: 0; }
-.humora-movimento {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  padding: 0;
-  width: 36px;
-  height: 36px;
-  border: 1px solid var(--fect-borda);
-  border-radius: 50%;
-  background: var(--fect-elevado);
-  color: var(--fect-roxo);
-  font: 700 .85rem/1 system-ui, sans-serif;
-  cursor: pointer;
-}
-.humora-movimento:is(:hover,:focus-visible) { outline: 2px solid var(--fect-roxo); outline-offset: 1px; }
 @media (width > 1025px) {
   [data-humora-painel] .topo-conteudo { padding-inline-end: 260px; }
 }
@@ -540,34 +523,22 @@ html[data-movimento="parado"] :is(.respiracao-onda, .respiracao-palco img) { tra
 }
 
 @layer fect {
-  html[data-movimento="animado"] {
-    .fect-amoras img { animation: amora-em-orbita 5.5s ease-in-out infinite !important; }
-    .fect-amoras img:nth-child(2n) { animation-delay: -1.25s !important; }
-    .fect-amoras img:nth-child(3n) { animation-delay: -2.5s !important; }
-
-    :is(.amoras-secao, .fect-amora-leitura, .termometro-individual #emocoes) img,
-    .termometro-opcoes button[aria-pressed="true"] .imagem-emocao,
-    #avatarAtual .imagem-emocao {
-      animation: fect-flutuar 4.4s ease-in-out infinite !important;
-    }
-    .amoras-secao img + img, .termometro-individual #emocoes .emocao:nth-child(2n) img {
-      animation-delay: -1.25s !important;
-    }
-    .termometro-individual #emocoes .emocao:nth-child(3n) img { animation-delay: -2s !important; }
-
-    [data-humora-painel] .tab-content.ativo > :is(.topo-conteudo, .fect-painel, .card-painel, .estilo-graficos, .estilo-graficos-container) {
-      animation: painel-revelar 380ms var(--ui-ease) both !important;
-    }
-    [data-humora-painel] .tab-content.ativo > :nth-child(2) { animation-delay: 55ms !important; }
-    [data-humora-painel] .tab-content.ativo > :nth-child(3) { animation-delay: 100ms !important; }
-    .fect-liquido { transition: height .44s ease, background .25s ease !important; }
+  :is(.amoras-secao, .fect-amora-leitura, .termometro-individual #emocoes) img,
+  .termometro-opcoes button[aria-pressed="true"] .imagem-emocao,
+  #avatarAtual .imagem-emocao {
+    animation: fect-flutuar 4.4s ease-in-out infinite !important;
   }
-
-  html[data-movimento="parado"] {
-    [data-humora-painel] .tab-content,
-    [data-humora-painel] .tab-content > * { animation: none !important; }
-    .fect-liquido { transition: none !important; }
+  .amoras-secao img + img, .termometro-individual #emocoes .emocao:nth-child(2n) img {
+    animation-delay: -1.25s !important;
   }
+  .termometro-individual #emocoes .emocao:nth-child(3n) img { animation-delay: -2s !important; }
+
+  [data-humora-painel] .tab-content.ativo > :is(.topo-conteudo, .fect-painel, .card-painel, .estilo-graficos, .estilo-graficos-container) {
+    animation: painel-revelar 380ms var(--ui-ease) both !important;
+  }
+  [data-humora-painel] .tab-content.ativo > :nth-child(2) { animation-delay: 55ms !important; }
+  [data-humora-painel] .tab-content.ativo > :nth-child(3) { animation-delay: 100ms !important; }
+  .fect-liquido { transition: height .44s ease, background .25s ease !important; }
 }
 
 .fect-admin-pagina {
@@ -578,12 +549,13 @@ html[data-movimento="parado"] :is(.respiracao-onda, .respiracao-palco img) { tra
 .fect-admin-conteudo { width: min(1200px, calc(100% - 32px)); margin: auto; padding: 70px 0 24px; }
 .fect-admin-topo { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .fect-admin-topo .fect-marca { margin: 0; }
+.fect-admin-topo .fect-marca img { width: 128px; }
 .fect-admin-topo button { min-height: 44px; font: inherit; }
 .fect-admin-titulo { margin: 17px 0; font-size: clamp(1.6rem, 4vw, 2.65rem); }
 .fect-admin-pagina :is(.fect-cabecalho h2,.fect-cabecalho p,.fect-controles h3,.fect-valor,.fect-legenda) { margin-block: 0; }
 .fect-admin-pagina .fect-controles h3 { margin-bottom: .6rem; }
 @layer fect {
-  html[data-movimento="animado"] .fect-admin-pagina .fect-painel {
+  .fect-admin-pagina .fect-painel {
     animation: painel-revelar 380ms ease-out both;
   }
 }
@@ -655,6 +627,28 @@ html[data-movimento="parado"] :is(.respiracao-onda, .respiracao-palco img) { tra
   .fect-medida-feira .fect-reservatorio { width: 32px; height: 32px; }
 }
 
+@media (width <= 767px) {
+  .fect-entrada { align-items: start; }
+  .fect-acesso > *, .fect-formulario form > * { min-width: 0; }
+  .fect-admin-topo .fect-botao-secundario { min-height: 44px; }
+}
+
+@media (width <= 420px) {
+  .fect-entrada { padding-inline: 12px; }
+  .fect-boas-vindas, .fect-formulario { padding: 24px 18px; }
+  .fect-acoes-entrada { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
+  .fect-acoes-entrada > a { justify-content: center; }
+}
+
+@media (width <= 360px) {
+  .fect-termometros-feira { grid-template-columns: minmax(0, 1fr); }
+  .fect-medida-feira { padding-inline: 12px; }
+}
+
+@media (pointer: coarse) {
+  .humora-tema select { min-height: 44px; font-size: 1rem; }
+}
+
 .fect-celebracao {
   position: fixed;
   inset: 0;
@@ -664,7 +658,6 @@ html[data-movimento="parado"] :is(.respiracao-onda, .respiracao-palco img) { tra
   overflow: hidden;
   pointer-events: none;
 }
-html[data-movimento="parado"] .fect-celebracao { display: none; }
 .fect-celebracao-centro {
   position: absolute;
   display: grid;
@@ -673,7 +666,6 @@ html[data-movimento="parado"] .fect-celebracao { display: none; }
   aspect-ratio: 1;
   border-radius: 50%;
   background: radial-gradient(circle, color-mix(in srgb, var(--fect-roxo) 32%, transparent), transparent 69%);
-  animation: fect-amora-destaque 1650ms cubic-bezier(.2,.72,.24,1) both;
 }
 .fect-celebracao-centro img {
   width: 57%;
@@ -690,7 +682,10 @@ html[data-movimento="parado"] .fect-celebracao { display: none; }
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
-  animation: fect-chuva-amora 2.4s var(--chuva-espera) linear both;
+}
+@layer fect {
+  .fect-celebracao-centro { animation: fect-amora-destaque 1650ms cubic-bezier(.2,.72,.24,1) both !important; }
+  .fect-celebracao-amora { animation: fect-chuva-amora 2.4s var(--chuva-espera) linear both !important; }
 }
 @keyframes fect-chuva-amora {
   0% { opacity: 0; transform: translate3d(0,-65px,0) rotate(calc(-1 * var(--chuva-rotacao))); }
@@ -704,7 +699,7 @@ html[data-movimento="parado"] .fect-celebracao { display: none; }
   70% { opacity: .95; transform: translate3d(0,-18px,0) scale(.95) rotate(0); }
   100% { opacity: 0; transform: translate3d(0,-52px,0) scale(.78); }
 }
-html[data-movimento="animado"] .fect-medida-chegou { animation: fect-medida-destaque 1.4s ease-out; }
+.fect-medida-chegou { animation: fect-medida-destaque 1.4s ease-out; }
 @keyframes fect-medida-destaque {
   20% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--fect-roxo) 55%, transparent); }
   100% { box-shadow: none; }

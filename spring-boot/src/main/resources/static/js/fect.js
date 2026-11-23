@@ -117,7 +117,7 @@ function habilitarAjusteTermometro(termometro, intensidade) {
 }
 
 function celebrarEmocaoFect(emocao) {
-    if (!Object.hasOwn(nomesEmocoes, emocao) || document.hidden || document.documentElement.dataset.movimento !== 'animado') return;
+    if (!Object.hasOwn(nomesEmocoes, emocao) || document.hidden) return;
     document.querySelector('.fect-celebracao')?.remove();
     const camada = document.createElement('div');
     camada.className = 'fect-celebracao';

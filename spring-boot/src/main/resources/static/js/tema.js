@@ -3,8 +3,6 @@ const temasHumora = Object.freeze({
     ameixa: 'Ameixa (escuro)'
 });
 const chaveTemaHumora = 'humoraTema';
-const chaveMovimentoHumora = 'humoraMovimento';
-const movimentoReduzido = matchMedia('(prefers-reduced-motion: reduce)');
 const raizTemaHumora = document.documentElement;
 
 function aplicarTemaHumora(tema) {
@@ -19,15 +17,7 @@ function lerPreferenciaHumora(chave) {
     }
 }
 
-function aplicarMovimentoHumora() {
-    const salvo = lerPreferenciaHumora(chaveMovimentoHumora);
-    const animado = salvo === 'animado' || (salvo !== 'parado' && !movimentoReduzido.matches);
-    raizTemaHumora.dataset.movimento = animado ? 'animado' : 'parado';
-    return animado;
-}
-
 aplicarTemaHumora(lerPreferenciaHumora(chaveTemaHumora));
-aplicarMovimentoHumora();
 
 document.addEventListener('DOMContentLoaded', () => {
     const barra = document.createElement('div');
@@ -51,36 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // O tema continua disponível nesta página quando o armazenamento está bloqueado.
         }
     });
-    const botaoMovimento = document.createElement('button');
-    botaoMovimento.type = 'button';
-    botaoMovimento.className = 'humora-movimento';
-    botaoMovimento.setAttribute('aria-label', 'Animações');
-
-    function atualizarBotaoMovimento(animado) {
-        botaoMovimento.setAttribute('aria-pressed', String(animado));
-        botaoMovimento.title = animado ? 'Pausar animações' : 'Ativar animações';
-        botaoMovimento.textContent = animado ? 'Ⅱ' : '▶';
-    }
-
-    botaoMovimento.addEventListener('click', () => {
-        const animado = raizTemaHumora.dataset.movimento !== 'animado';
-        const estado = animado ? 'animado' : 'parado';
-        raizTemaHumora.dataset.movimento = estado;
-        try {
-            localStorage.setItem(chaveMovimentoHumora, estado);
-        } catch {
-            // A escolha continua válida nesta página.
-        }
-        atualizarBotaoMovimento(animado);
-    });
-    movimentoReduzido.addEventListener?.('change', () => atualizarBotaoMovimento(aplicarMovimentoHumora()));
     window.addEventListener('storage', evento => {
         if (evento.key === chaveTemaHumora || evento.key === null) atualizar(lerPreferenciaHumora(chaveTemaHumora));
-        if (evento.key === chaveMovimentoHumora || evento.key === null) atualizarBotaoMovimento(aplicarMovimentoHumora());
     });
     seletor.append(texto, opcoes);
-    barra.append(seletor, botaoMovimento);
+    barra.append(seletor);
     document.body.prepend(barra);
-    atualizarBotaoMovimento(raizTemaHumora.dataset.movimento === 'animado');
     atualizar(raizTemaHumora.dataset.tema);
 });

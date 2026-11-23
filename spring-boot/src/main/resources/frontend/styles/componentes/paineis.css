@@ -9,7 +9,7 @@
       tw:[:where(&).menu-item.ativo]:[background:rgba(168,_85,_247,_0.25)] tw:[:where(&).menu-item.ativo]:text-white
       tw:[:where(&).menu-item.ativo]:border-humora-accent
       tw:[:where(&).menu-item.ativo]:[box-shadow:0_0_15px_rgba(168,_85,_247,_0.3)]
-      tw:[button:where(&)]:[font:inherit] tw:min-h-10 tw:max-[1025px]:min-h-11 tw:motion-safe:active:scale-[.98]
+      tw:[button:where(&)]:[font:inherit] tw:min-h-10 tw:max-[1025px]:min-h-11 tw:active:scale-[.98]
       tw:[&.ativo]:[background:linear-gradient(110deg,#4b2f71,#332644)]! tw:[&.ativo]:[border-color:#a984da85]!
       tw:hover:text-white!;
   }
@@ -85,15 +85,15 @@
       tw:max-[1025px]:justify-center tw:max-[481px]:[top:8px] tw:max-[481px]:[left:8px] tw:max-[481px]:[width:42px]
       tw:max-[481px]:[height:42px] tw:min-h-11 tw:min-w-11 tw:[background:#2b2440]! tw:[border-color:#80709b55]!
       tw:text-[#efe6ff]! tw:hover:[background:#3d3055]!
-      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
-      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:transition-[transform,background-color,box-shadow,opacity] tw:duration-200
+      tw:ease-humora-resposta tw:active:scale-[.97] tw:disabled:cursor-not-allowed
       tw:disabled:opacity-60;
   }
 
   .estilo-aviso-painel {
     @apply tw:fixed tw:inset-x-3 tw:bottom-4 tw:z-[1200] tw:rounded-xl tw:border tw:border-violet-300/35 tw:bg-[#2b203e]
       tw:px-4 tw:py-3 tw:text-sm tw:text-[#f5eaff] tw:shadow-xl tw:sm:left-auto tw:sm:right-6 tw:sm:max-w-[26rem]
-      tw:motion-safe:animate-humora-aviso tw:data-[erro=true]:border-rose-300/45;
+      tw:animate-humora-aviso tw:data-[erro=true]:border-rose-300/45;
   }
 
   .estilo-perfil {
@@ -102,7 +102,8 @@
   }
 
   .estilo-topo-sidebar {
-    @apply tw:flex tw:flex-col tw:gap-[12px] tw:[flex:1] tw:overflow-hidden;
+    @apply tw:flex tw:flex-col tw:gap-[12px] tw:[flex:1] tw:overflow-hidden
+      tw:max-[1025px]:flex-none tw:max-[1025px]:overflow-visible;
   }
 
   .estilo-sidebar-aluno {
@@ -135,7 +136,8 @@
   }
 
   .estilo-pagina {
-    @apply tw:flex tw:h-screen tw:w-full tw:overflow-hidden tw:max-[769px]:flex-col tw:max-[1025px]:block;
+    @apply tw:flex tw:h-screen tw:w-full tw:overflow-hidden
+      tw:max-[1025px]:block tw:max-[1025px]:h-auto tw:max-[1025px]:min-h-dvh tw:max-[1025px]:overflow-visible;
   }
 
   .estilo-ui-icon--chart {
@@ -152,8 +154,8 @@
   }
 
   .estilo-modal-historico {
-    @apply tw:fixed tw:top-0 tw:left-0 tw:w-screen tw:h-screen tw:[background:rgba(0,_0,_0,_0.85)] tw:hidden
-      tw:justify-center tw:items-center tw:z-[1000] tw:animate-humora-fundo tw:backdrop-blur-[4px] tw:[padding:12px]
+    @apply tw:fixed tw:inset-0 tw:[background:rgba(0,_0,_0,_0.85)] tw:hidden
+      tw:justify-center tw:items-center tw:z-[1150] tw:animate-humora-fundo tw:backdrop-blur-[4px] tw:[padding:12px]
       tw:max-sm:[padding:10px] tw:data-[exibicao=nenhum]:hidden! tw:data-[exibicao=bloco]:block!
       tw:data-[exibicao=flex]:flex! tw:data-[exibicao=grade]:grid!;
   }
@@ -163,12 +165,11 @@
       tw:[:where(&)_*]:[font-family:'Poppins',_sans-serif] tw:m-0 tw:p-0 tw:box-border
       tw:[font-family:'Poppins',_sans-serif] tw:[-webkit-text-size-adjust:100%]
       tw:[--ui-ease:cubic-bezier(0.2,_0.75,_0.25,_1)] tw:[--ui-interaction:180ms] tw:[--ui-lavender:#d8b4fe]
-      tw:motion-reduce:[:where(&)_*]:animate-none! tw:motion-reduce:[:where(&)_*]:transition-none!
-      tw:motion-reduce:[:where(&)_*]:scroll-auto! tw:motion-reduce:animate-none! tw:motion-reduce:transition-none!
-      tw:motion-reduce:scroll-auto! tw:motion-reduce:[:where(&)_*::before]:animate-none!
-      tw:motion-reduce:[:where(&)_*::before]:transition-none! tw:motion-reduce:[:where(&)_*::before]:scroll-auto!
-      tw:motion-reduce:[:where(&)_*::after]:animate-none! tw:motion-reduce:[:where(&)_*::after]:transition-none!
-      tw:motion-reduce:[:where(&)_*::after]:scroll-auto!;
+
+
+
+
+;
   }
 
   .estilo-ui-icon--trophy {
@@ -193,7 +194,7 @@
   }
 
   .estilo-marca-sidebar {
-    @apply tw:[img:where(&)]:[max-width:100%] tw:[width:1.3em] tw:[height:1.3em] tw:object-contain;
+    @apply tw:block tw:w-32 tw:max-w-full tw:h-auto tw:rounded-xl;
   }
 
   .estilo-jogo-icone-detalhe-2 {
@@ -219,12 +220,11 @@
   }
 
   .estilo-grid-bolas-game {
-    @apply tw:grid tw:[grid-template-columns:repeat(4,_1fr)] tw:gap-[12px] tw:mb-[15px]
-      tw:max-[769px]:[grid-template-columns:repeat(4,_1fr)]!;
+    @apply tw:grid tw:w-full tw:max-w-[256px] tw:grid-cols-4 tw:gap-3 tw:mb-[15px];
   }
 
   .estilo-grade-caca-palavras {
-    @apply tw:grid tw:grid-cols-[repeat(10,32px)] tw:gap-[2px] tw:my-[15px] tw:mx-auto tw:select-none;
+    @apply tw:grid tw:w-full tw:max-w-[338px] tw:grid-cols-10 tw:gap-[2px] tw:my-[15px] tw:mx-auto tw:select-none;
   }
 
   .estilo-jogos-grid {
@@ -300,8 +300,8 @@
       tw:[:where(&).jogo-card:hover]:[transform:translateY(-5px)]
       tw:[:where(&).jogo-card:hover]:[box-shadow:0_10px_30px_rgba(168,_85,_247,_0.2)]
       tw:max-[481px]:[padding:16px_12px] tw:[background:linear-gradient(150deg,#2b203d,#22182f)]!
-      tw:[border-color:#8872a958]! tw:motion-safe:transition-[transform,box-shadow] tw:motion-safe:duration-300
-      tw:motion-safe:hover:-translate-y-1 tw:motion-safe:active:scale-[.98]
+      tw:[border-color:#8872a958]! tw:transition-[transform,box-shadow] tw:duration-300
+      tw:hover:-translate-y-1 tw:active:scale-[.98]
       tw:hover:[box-shadow:0_12px_26px_#0a061650]! tw:focus-visible:outline-2 tw:focus-visible:outline-offset-4
       tw:focus-visible:outline-violet-200;
   }
@@ -348,8 +348,8 @@
       tw:[background:#e74c3c] tw:font-semibold tw:[transition:0.3s] tw:shrink-0
       tw:[:where(&).btn-sair:hover]:[background:#c0392b] tw:[button:where(&)]:[font:inherit]
       tw:[background:#2b2440]! tw:[border-color:#80709b55]! tw:text-[#efe6ff]! tw:hover:[background:#3d3055]!
-      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
-      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:transition-[transform,background-color,box-shadow,opacity] tw:duration-200
+      tw:ease-humora-resposta tw:active:scale-[.97] tw:disabled:cursor-not-allowed
       tw:disabled:opacity-60 tw:min-h-11;
   }
 
@@ -359,7 +359,8 @@
 
   .estilo-topo-conteudo {
     @apply tw:flex tw:justify-between tw:items-center tw:mb-[25px] tw:flex-wrap tw:gap-[15px]
-      tw:[border-bottom:1px_solid_#9e79c436] tw:pb-4 tw:max-sm:pb-3;
+      tw:[border-bottom:1px_solid_#9e79c436] tw:pb-4 tw:max-sm:pb-3
+      tw:[&>div]:min-w-0 tw:[&>div]:[overflow-wrap:anywhere];
   }
 
   .estilo-ui-icon--edit {
@@ -410,8 +411,7 @@
   }
 
   .estilo-grid-memoria {
-    @apply tw:grid tw:[grid-template-columns:repeat(4,_1fr)] tw:gap-[10px] tw:[margin:20px_0]
-      tw:max-[769px]:[grid-template-columns:repeat(4,_1fr)]!;
+    @apply tw:grid tw:w-full tw:max-w-[330px] tw:grid-cols-4 tw:gap-[10px] tw:[margin:20px_0];
   }
 
   .estilo-modal-content-div {
@@ -430,6 +430,7 @@
       tw:[:where(&).conteudo::-webkit-scrollbar-thumb]:[background:rgba(168,_85,_247,_0.5)]
       tw:[:where(&).conteudo::-webkit-scrollbar-thumb]:rounded-[10px] tw:max-[769px]:h-auto
       tw:max-[1367px]:[padding:24px] tw:max-[1025px]:ml-0 tw:max-[1025px]:[padding:72px_20px_20px]
+      tw:max-[1025px]:h-auto tw:max-[1025px]:overflow-visible
       tw:max-[1025px]:w-full tw:max-[769px]:[padding:68px_14px_20px] tw:max-[481px]:[padding:64px_10px_16px]
       tw:min-w-0;
   }

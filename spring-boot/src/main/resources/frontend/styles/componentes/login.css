@@ -97,8 +97,8 @@
       tw:max-[769px]:[.login-card_button:where(&)]:w-full
       tw:max-[769px]:[.login-card_button:where(&)]:[padding:14px] tw:max-[769px]:[flex:1]
       tw:max-[769px]:[padding:10px_8px] tw:max-[769px]:[font-size:0.9rem] tw:min-h-11
-      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
-      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:transition-[transform,background-color,box-shadow,opacity] tw:duration-200
+      tw:ease-humora-resposta tw:active:scale-[.97] tw:disabled:cursor-not-allowed
       tw:disabled:opacity-60;
   }
 
@@ -129,8 +129,8 @@
       tw:[.cadastro_:where(&).btn-cadastro]:[background:rgba(255,_255,_255,_0.05)]
       tw:[.cadastro_:where(&).btn-cadastro]:[border:1px_solid_rgba(255,_255,_255,_0.1)] tw:max-[769px]:w-full
       tw:max-[769px]:[text-align:center] tw:min-h-11 tw:leading-relaxed
-      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
-      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:transition-[transform,background-color,box-shadow,opacity] tw:duration-200
+      tw:ease-humora-resposta tw:active:scale-[.97] tw:disabled:cursor-not-allowed
       tw:disabled:opacity-60;
   }
 
@@ -144,8 +144,8 @@
       tw:[.cadastro_:where(&).btn-cadastro]:[border:1px_solid_rgba(255,_255,_255,_0.1)]
       tw:[.cadastro_:where(&).btn-espacado]:mt-[6px] tw:max-[769px]:w-full tw:max-[769px]:[text-align:center]
       tw:max-[769px]:[margin-left:0] tw:min-h-11 tw:leading-relaxed
-      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
-      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:transition-[transform,background-color,box-shadow,opacity] tw:duration-200
+      tw:ease-humora-resposta tw:active:scale-[.97] tw:disabled:cursor-not-allowed
       tw:disabled:opacity-60;
   }
 }

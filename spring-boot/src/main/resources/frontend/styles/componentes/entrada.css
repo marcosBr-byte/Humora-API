@@ -13,7 +13,7 @@
   }
 
   .estilo-medalhao {
-    @apply tw:grid tw:size-10 tw:place-items-center tw:motion-safe:animate-humora-emocao
+    @apply tw:grid tw:size-10 tw:place-items-center tw:animate-humora-emocao
       tw:sm:size-12;
   }
 
@@ -25,9 +25,8 @@
     @apply tw:flex tw:w-max tw:animate-humora-esteira! tw:data-[fileira=0]:[animation-duration:44s]!
       tw:data-[fileira=0]:[animation-delay:-11s]! tw:data-[fileira=1]:[animation-duration:58s]!
       tw:data-[fileira=1]:[animation-delay:-24s]! tw:data-[fileira=2]:[animation-duration:50s]!
-      tw:data-[fileira=2]:[animation-delay:-34s]! tw:motion-reduce:data-[fileira=0]:[animation-duration:96s]!
-      tw:motion-reduce:data-[fileira=1]:[animation-duration:116s]!
-      tw:motion-reduce:data-[fileira=2]:[animation-duration:104s]!;
+      tw:data-[fileira=2]:[animation-delay:-34s]!
+;
   }
 
   .estilo-grupo-emojis {
@@ -64,7 +63,7 @@
       tw:[input:where(&)]:[font:inherit] tw:max-[769px]:[input:where(&)]:[padding:12px_14px]
       tw:max-[769px]:[input:where(&)]:[font-size:16px] tw:[background:#181225]! tw:[border-color:#8a71a45c]!
       tw:placeholder:text-[#9e90b0]! tw:focus:[border-color:#b89be9]! tw:focus:[box-shadow:0_0_0_3px_#b68bfc26]!
-      tw:motion-safe:transition-[border-color,box-shadow,background-color] tw:motion-safe:duration-200 tw:min-h-11;
+      tw:transition-[border-color,box-shadow,background-color] tw:duration-200 tw:min-h-11;
   }
 
   .estilo-icone {
@@ -82,7 +81,7 @@
 
   .estilo-feedback-formulario {
     @apply tw:mt-3 tw:rounded-xl tw:border tw:px-3 tw:py-2.5 tw:text-sm tw:leading-relaxed
-      tw:motion-safe:animate-humora-aviso tw:data-[erro=true]:border-rose-300/35 tw:data-[erro=true]:bg-rose-400/10
+      tw:animate-humora-aviso tw:data-[erro=true]:border-rose-300/35 tw:data-[erro=true]:bg-rose-400/10
       tw:data-[erro=true]:text-rose-100 tw:data-[erro=false]:border-emerald-300/30
       tw:data-[erro=false]:bg-emerald-400/10 tw:data-[erro=false]:text-emerald-100;
   }
@@ -91,20 +90,19 @@
     @apply tw:[:where(&)_*]:m-0 tw:[:where(&)_*]:p-0 tw:[:where(&)_*]:box-border
       tw:[:where(&)_*]:[font-family:'Segoe_UI',_Tahoma,_Geneva,_Verdana,_sans-serif] tw:m-0 tw:p-0 tw:box-border
       tw:[font-family:'Segoe_UI',_Tahoma,_Geneva,_Verdana,_sans-serif] tw:[-webkit-text-size-adjust:100%]
-      tw:motion-reduce:[:where(&)_*]:[animation-duration:0.001ms]!
-      tw:motion-reduce:[:where(&)_*]:[transition-duration:0.001ms]! tw:motion-reduce:[animation-duration:0.001ms]!
-      tw:motion-reduce:[transition-duration:0.001ms]!
-      tw:motion-reduce:[:where(&)_*::before]:[animation-duration:0.001ms]!
-      tw:motion-reduce:[:where(&)_*::before]:[transition-duration:0.001ms]!
-      tw:motion-reduce:[:where(&)_*::after]:[animation-duration:0.001ms]!
-      tw:motion-reduce:[:where(&)_*::after]:[transition-duration:0.001ms]!
+
+
+
+
+
+
+
       tw:[--ui-ease:cubic-bezier(0.2,_0.75,_0.25,_1)] tw:[--ui-interaction:180ms] tw:[--ui-lavender:#d8b4fe]
-      tw:motion-reduce:[:where(&)_*]:animate-none! tw:motion-reduce:[:where(&)_*]:transition-none!
-      tw:motion-reduce:[:where(&)_*]:scroll-auto! tw:motion-reduce:animate-none! tw:motion-reduce:transition-none!
-      tw:motion-reduce:scroll-auto! tw:motion-reduce:[:where(&)_*::before]:animate-none!
-      tw:motion-reduce:[:where(&)_*::before]:transition-none! tw:motion-reduce:[:where(&)_*::before]:scroll-auto!
-      tw:motion-reduce:[:where(&)_*::after]:animate-none! tw:motion-reduce:[:where(&)_*::after]:transition-none!
-      tw:motion-reduce:[:where(&)_*::after]:scroll-auto!;
+
+
+
+
+;
   }
 
   .estilo-texto {
@@ -142,17 +140,16 @@
       tw:[input:where(&)]:[font:inherit] tw:max-[769px]:[input:where(&)]:[padding:12px_14px]
       tw:max-[769px]:[input:where(&)]:[font-size:16px] tw:[background:#181225]! tw:[border-color:#8a71a45c]!
       tw:placeholder:text-[#9e90b0]! tw:focus:[border-color:#b89be9]! tw:focus:[box-shadow:0_0_0_3px_#b68bfc26]!
-      tw:motion-safe:transition-[border-color,box-shadow,background-color] tw:motion-safe:duration-200 tw:min-h-11;
+      tw:transition-[border-color,box-shadow,background-color] tw:duration-200 tw:min-h-11;
   }
 
   .estilo-modelo-indicador-formulario-detalhe {
     @apply tw:mr-2 tw:inline-block tw:size-4 tw:rounded-full tw:border-2 tw:border-white/35 tw:border-t-white
-      tw:align-[-.125em] tw:motion-safe:animate-spin;
+      tw:align-[-.125em] tw:animate-spin;
   }
 
   .estilo-logo-imagem {
-    @apply tw:[.logo_img:where(&)]:w-[40px] tw:[.logo_img:where(&)]:h-[40px] tw:[img:where(&)]:[max-width:100%]
-      tw:[img:where(&)]:h-auto tw:max-[481px]:[.logo_img:where(&)]:[width:60px];
+    @apply tw:block tw:w-40 tw:max-w-full tw:h-auto tw:rounded-xl;
   }
 
   .estilo-emoji-fileira-1 {
@@ -195,8 +192,8 @@
       tw:[background:linear-gradient(115deg,#6940b3,#8a4fd1)]! tw:text-white!
       tw:[box-shadow:0_8px_22px_#09061555,inset_0_1px_0_#ffffff26]!
       tw:hover:[background:linear-gradient(115deg,#7549c1,#945bdd)]! tw:disabled:[background:#2c2740]!
-      tw:motion-safe:transition-[transform,background-color,box-shadow,opacity] tw:motion-safe:duration-200
-      tw:motion-safe:ease-humora-resposta tw:motion-safe:active:scale-[.97] tw:disabled:cursor-not-allowed
+      tw:transition-[transform,background-color,box-shadow,opacity] tw:duration-200
+      tw:ease-humora-resposta tw:active:scale-[.97] tw:disabled:cursor-not-allowed
       tw:disabled:opacity-60 tw:min-h-12;
   }
 
