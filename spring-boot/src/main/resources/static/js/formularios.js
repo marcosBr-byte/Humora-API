@@ -56,3 +56,16 @@ function concluirCadastro() {
     sessionStorage.setItem('humoraCadastroConcluido', 'true');
     window.location.href = 'login.html';
 }
+
+document.querySelectorAll('.campo-senha__alternar').forEach(botao => {
+    const campo = document.getElementById(botao.getAttribute('aria-controls'));
+
+    function definirVisibilidade(visivel) {
+        campo.type = visivel ? 'text' : 'password';
+        botao.setAttribute('aria-pressed', String(visivel));
+    }
+
+    botao.addEventListener('click', () => definirVisibilidade(campo.type === 'password'));
+    campo.form?.addEventListener('reset', () => definirVisibilidade(false));
+    botao.hidden = false;
+});

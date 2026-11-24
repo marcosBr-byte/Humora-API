@@ -1,0 +1,73 @@
+.campo-senha {
+    display: grid;
+    width: 100%;
+}
+
+.campo-senha > input,
+.campo-senha > .campo-senha__alternar {
+    grid-area: 1 / 1;
+}
+
+.campo-senha > input {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding-inline-end: 3rem;
+}
+
+.campo-senha > .campo-senha__alternar {
+    position: relative;
+    z-index: 1;
+    place-self: center end;
+    margin: 0 0.25rem;
+    padding: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 0;
+    border-radius: 0.5rem;
+    background: transparent;
+    box-shadow: none;
+    color: inherit;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+
+.campo-senha > .campo-senha__alternar[hidden] {
+    display: none;
+}
+
+.campo-senha > .campo-senha__alternar:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: -3px;
+}
+
+.campo-senha__icone {
+    position: relative;
+    box-sizing: border-box;
+    width: 0.9rem;
+    height: 0.9rem;
+    border: 2px solid currentColor;
+    border-radius: 70% 0;
+    transform: rotate(45deg);
+    display: grid;
+    place-items: center;
+}
+
+.campo-senha__icone::before {
+    content: '';
+    width: 0.3rem;
+    height: 0.3rem;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.campo-senha__alternar[aria-pressed="true"] .campo-senha__icone::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 50%;
+    width: 2px;
+    height: 1.35rem;
+    background: currentColor;
+    transform: translateX(-50%);
+}

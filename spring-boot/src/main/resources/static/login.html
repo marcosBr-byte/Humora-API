@@ -7,6 +7,7 @@
   <title>Humora | Login</title>
   <script src="js/tema.js"></script>
   <link rel="stylesheet" href="css/fect.css">
+  <link rel="stylesheet" href="css/campo-senha.css">
   <script src="js/api.js" defer></script>
   <script src="js/formularios.js" defer></script>
   <script src="js/login.js" defer></script>
@@ -30,7 +31,12 @@
       <label for="email">E-mail</label>
       <input type="email" id="email" autocomplete="username" required>
       <label for="senha">Senha</label>
-      <input type="password" id="senha" minlength="8" autocomplete="current-password" required>
+      <div class="campo-senha">
+        <input type="password" id="senha" minlength="8" autocomplete="current-password" required>
+        <button type="button" class="campo-senha__alternar" aria-label="Mostrar senha" aria-controls="senha" aria-pressed="false" hidden>
+          <span class="campo-senha__icone" aria-hidden="true"></span>
+        </button>
+      </div>
       <div class="fect-perfis">
         <button class="fect-acao" type="button" onclick="login()" aria-label="Admin">Admin <span aria-hidden="true">→</span></button>
         <a class="fect-botao-secundario" href="cadastroVisitante.html">Visitante</a>

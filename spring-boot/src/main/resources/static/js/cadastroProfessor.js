@@ -17,7 +17,7 @@ async function verificarCadastroProfessor() {
 
 formProfessor.addEventListener('submit', async event => {
     event.preventDefault();
-    const botao = formProfessor.querySelector('button');
+    const botao = formProfessor.querySelector('button[type="submit"]');
     botao.disabled = true;
     const dados = Object.fromEntries(new FormData(formProfessor));
     dados.nome = dados.nome.trim();

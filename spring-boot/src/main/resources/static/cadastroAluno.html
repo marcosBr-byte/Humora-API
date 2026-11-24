@@ -7,6 +7,7 @@
   <title>Humora | Cadastro de Aluno</title>
 
   <link rel="stylesheet" href="css/cadastroAluno.css" />
+  <link rel="stylesheet" href="css/campo-senha.css">
 </head>
 
 <body class="estilo-fundo-cadastro-aluno">
@@ -48,11 +49,16 @@
 
     <input class="estilo-email" type="email" id="email" placeholder="E-mail" aria-label="E-mail" autocomplete="email" required />
 
-    <input class="estilo-senha"
-            type="password"
-            id="senha"
-            placeholder="Senha (mínimo 8 caracteres)"
-            minlength="8" aria-label="Senha" autocomplete="new-password" required />
+    <div class="campo-senha">
+      <input class="estilo-senha"
+              type="password"
+              id="senha"
+              placeholder="Senha (mínimo 8 caracteres)"
+              minlength="8" aria-label="Senha" autocomplete="new-password" required />
+      <button type="button" class="campo-senha__alternar" aria-label="Mostrar senha" aria-controls="senha" aria-pressed="false" hidden>
+        <span class="campo-senha__icone" aria-hidden="true"></span>
+      </button>
+    </div>
 
     <select class="estilo-sala" id="sala" aria-label="Turma" required>
       <option class="estilo-sala-opcao" value="">Selecione sua turma</option>

@@ -6,7 +6,9 @@
   <title>Humora | Cadastro de professor</title>
   <script src="js/tema.js"></script>
   <link rel="stylesheet" href="css/fect.css">
+  <link rel="stylesheet" href="css/campo-senha.css">
   <script src="js/api.js" defer></script>
+  <script src="js/formularios.js" defer></script>
   <script src="js/cadastroProfessor.js" defer></script>
   <script src="js/amoras.js" defer></script>
 </head>
@@ -21,7 +23,12 @@
       <label for="email">E-mail</label>
       <input id="email" name="email" type="email" autocomplete="off" required>
       <label for="senha">Senha inicial</label>
-      <input id="senha" name="senha" type="password" minlength="8" autocomplete="new-password" required>
+      <div class="campo-senha">
+        <input id="senha" name="senha" type="password" minlength="8" autocomplete="new-password" required>
+        <button type="button" class="campo-senha__alternar" aria-label="Mostrar senha" aria-controls="senha" aria-pressed="false" hidden>
+          <span class="campo-senha__icone" aria-hidden="true"></span>
+        </button>
+      </div>
       <label for="area">Disciplina</label>
       <select id="area" name="materia" required>
         <option value="">Selecione</option>
