@@ -439,9 +439,8 @@
   }
 
   .estilo-canvas-subir {
-    @apply tw:[canvas:where(&)]:[max-width:100%] tw:max-[769px]:[canvas:where(&)#canvasSubir]:w-full!
-      tw:max-[769px]:[canvas:where(&)#canvasSubir]:h-auto! tw:border-2 tw:border-solid tw:border-humora-accent
-      tw:rounded-[12px] tw:bg-humora-game tw:my-[10px] tw:mx-0;
+    @apply tw:block tw:shrink-0 tw:border-2 tw:border-solid tw:border-humora-accent tw:rounded-[12px]
+      tw:bg-humora-game tw:mx-auto;
   }
 
   .estilo-grid-avatars {

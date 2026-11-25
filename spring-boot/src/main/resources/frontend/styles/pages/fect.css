@@ -180,6 +180,23 @@
 
 .fect-jogo-controles { @apply tw:mt-3 tw:flex tw:justify-center tw:gap-3; }
 .fect-jogo-controles button { @apply tw:min-h-11 tw:min-w-14 tw:rounded-xl tw:border tw:font-bold; background: var(--fect-elevado); color: var(--fect-roxo); border-color: var(--fect-borda-destaque); touch-action: none; }
+#modalSubir .modal-content { padding: clamp(12px, 3vmin, 30px); }
+#modalSubir .estilo-game-placar { margin-block: 6px; }
+.fect-subir-tabuleiro { width: 100%; }
+#canvasSubir {
+  width: min(100%, 400px, clamp(128px, calc(88dvh - 230px), 400px));
+  height: auto;
+}
+@media (width >= 560px) and (height <= 500px) {
+  .fect-subir-tabuleiro {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+  }
+  #canvasSubir { width: min(100%, clamp(128px, calc(88dvh - 150px), 290px)); }
+  .fect-subir-tabuleiro .fect-jogo-controles { margin-top: 0; }
+}
 .fect-jogo-feedback { color: var(--fect-roxo); min-height: 1.5em; margin-top: 5px; }
 .fect-visitante .carta-memoria { color: var(--fect-roxo); }
 #gridMemoria .carta-memoria:focus-visible, #gridBolasGame .bola-game:focus-visible { outline: 2px solid var(--fect-roxo); outline-offset: 2px; }
@@ -515,7 +532,7 @@
 #tituloAcesso { scroll-margin-top: 70px; }
 
 .humora-tema label { display: flex; align-items: center; gap: 4px; min-width: 0; }
-@media (width > 1025px) {
+@media (width >= 1025px) {
   [data-humora-painel] .topo-conteudo { padding-inline-end: 260px; }
 }
 @media (width <= 360px) {
@@ -593,7 +610,9 @@
 .fect-resumo-feira, .fect-termometros-feira { display: grid; gap: 12px; }
 .fect-resumo-feira { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 14px; }
 .fect-resumo-feira .fect-total { margin: 0; }
-.fect-termometros-feira { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.fect-termometros-feira {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(150px, (100% - 24px) / 3)), 1fr));
+}
 .fect-medida-feira {
   min-width: 0;
   padding: 14px;
@@ -616,10 +635,10 @@
 .fect-medida-feira .fect-reservatorio { width: 39px; height: 39px; }
 .fect-medida-feira .fect-valor { font-size: clamp(1.15rem, 3.5vw, 2.1rem); white-space: nowrap; }
 .fect-medida-feira .fect-legenda { font-size: .75rem; }
+.fect-medida-feira .fect-legenda,
+.fect-resumo-feira .fect-total { overflow-wrap: anywhere; }
 .fect-medida-feira .fect-amora-leitura, .fect-medida-feira .fect-amora-leitura img { height: 38px; width: 38px; }
 @media (width <= 680px) {
-  .fect-termometros-feira { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
-  .fect-resumo-feira { gap: 7px; }
   .fect-resumo-feira .fect-total { padding-inline: 8px; }
   .fect-medida-feira { padding: 8px 6px; }
   .fect-medida-feira .fect-leitura { padding-left: 1px; }
@@ -639,11 +658,6 @@
   .fect-boas-vindas, .fect-formulario { padding: 24px 18px; }
   .fect-acoes-entrada { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
   .fect-acoes-entrada > a { justify-content: center; }
-}
-
-@media (width <= 360px) {
-  .fect-termometros-feira { grid-template-columns: minmax(0, 1fr); }
-  .fect-medida-feira { padding-inline: 12px; }
 }
 
 @media (pointer: coarse) {

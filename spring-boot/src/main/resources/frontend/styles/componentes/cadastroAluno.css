@@ -75,7 +75,7 @@
       tw:[.login-card_input:where(&):focus]:border-humora-accent
       tw:[.login-card_input:where(&):focus]:[box-shadow:0_0_10px_rgba(168,_85,_247,_0.4)]
       tw:[input:where(&)]:[font:inherit] tw:max-[769px]:[input:where(&)]:[padding:12px_14px]
-      tw:max-[769px]:[input:where(&)]:[font-size:16px] tw:[background:#181225]! tw:[border-color:#8a71a45c]!
+      tw:max-[769px]:[input:where(&)]:[font-size:16px]! tw:[background:#181225]! tw:[border-color:#8a71a45c]!
       tw:placeholder:text-[#9e90b0]! tw:focus:[border-color:#b89be9]! tw:focus:[box-shadow:0_0_0_3px_#b68bfc26]!
       tw:transition-[border-color,box-shadow,background-color] tw:duration-200 tw:min-h-11;
   }
@@ -90,7 +90,7 @@
       tw:[.login-card_select:where(&):focus]:border-humora-accent
       tw:[.login-card_select:where(&):focus]:[box-shadow:0_0_10px_rgba(168,_85,_247,_0.4)]
       tw:[select:where(&)]:[font:inherit] tw:max-[769px]:[select:where(&)]:[padding:12px_14px]
-      tw:max-[769px]:[select:where(&)]:[font-size:16px] tw:max-[481px]:[select:where(&)]:[font-size:15px]
+      tw:max-[769px]:[select:where(&)]:[font-size:16px]!
       tw:[background:#181225]! tw:[border-color:#8a71a45c]! tw:placeholder:text-[#9e90b0]!
       tw:focus:[border-color:#b89be9]! tw:focus:[box-shadow:0_0_0_3px_#b68bfc26]!
       tw:transition-[border-color,box-shadow,background-color] tw:duration-200 tw:min-h-11;

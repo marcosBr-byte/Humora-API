@@ -1,8 +1,10 @@
 const botaoMenu = document.getElementById('menuToggleMobile');
 const menuLateral = document.getElementById(botaoMenu.getAttribute('aria-controls'));
 const fundoMenu = document.getElementById('menuOverlayMobile');
+const telaComMenuRecolhido = matchMedia('(width < 1025px)');
 
 function mostrarMenu(aberto) {
+    document.documentElement.classList.toggle('menu-mobile-aberto', aberto);
     menuLateral.classList.toggle('sidebar-aberta', aberto);
     fundoMenu.classList.toggle('ativo', aberto);
     botaoMenu.setAttribute('aria-expanded', String(aberto));
@@ -10,19 +12,25 @@ function mostrarMenu(aberto) {
 }
 
 botaoMenu.addEventListener('click', () => mostrarMenu(!menuLateral.classList.contains('sidebar-aberta')));
-fundoMenu.addEventListener('click', () => mostrarMenu(false));
+function fecharMenuERestaurarFoco() {
+    mostrarMenu(false);
+    botaoMenu.focus({ preventScroll: true });
+}
 
-menuLateral.querySelector('.menu-sidebar').addEventListener('click', event => {
-    if (event.target.closest('.menu-item')) mostrarMenu(false);
-});
+fundoMenu.addEventListener('click', fecharMenuERestaurarFoco);
 
-document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && menuLateral.classList.contains('sidebar-aberta')) {
-        mostrarMenu(false);
-        botaoMenu.focus();
+menuLateral.addEventListener('click', evento => {
+    if (menuLateral.classList.contains('sidebar-aberta') && evento.target.closest('.menu-item')) {
+        fecharMenuERestaurarFoco();
+    }
+}, { capture: true });
+
+document.addEventListener('keydown', evento => {
+    if (evento.key === 'Escape' && menuLateral.classList.contains('sidebar-aberta')) {
+        fecharMenuERestaurarFoco();
     }
 });
 
-matchMedia('(max-width: 1024px)').addEventListener('change', evento => {
+telaComMenuRecolhido.addEventListener('change', evento => {
     if (!evento.matches) mostrarMenu(false);
 });

@@ -102,17 +102,16 @@
   }
 
   .estilo-topo-sidebar {
-    @apply tw:flex tw:flex-col tw:gap-[12px] tw:[flex:1] tw:overflow-hidden
-      tw:max-[1025px]:flex-none tw:max-[1025px]:overflow-visible;
+    @apply tw:flex tw:flex-col tw:gap-[12px] tw:[flex:1_0_auto];
   }
 
   .estilo-sidebar-aluno {
     @apply tw:w-[280px] tw:[min-width:280px] tw:max-w-[280px] tw:[padding:20px_18px]
       tw:[background:rgba(20,_5,_38,_0.97)] tw:[border-right:1px_solid_rgba(168,_85,_247,_0.3)] tw:h-screen tw:flex
-      tw:flex-col tw:justify-between tw:fixed tw:left-0 tw:top-0 tw:z-[100] tw:overflow-hidden
+      tw:flex-col tw:justify-between tw:fixed tw:left-0 tw:top-0 tw:z-[100] tw:overflow-y-auto tw:overscroll-y-contain
       tw:max-[769px]:[min-width:100%] tw:max-[769px]:shrink-0 tw:max-[1367px]:[width:260px] tw:max-[1025px]:fixed
       tw:max-[1025px]:top-0 tw:max-[1025px]:[left:-300px] tw:max-[1025px]:w-[280px] tw:max-[1025px]:[max-width:85vw]
-      tw:max-[1025px]:[height:100dvh] tw:max-[1025px]:overflow-y-auto tw:max-[1025px]:z-[1050]
+      tw:max-[1025px]:[height:100dvh] tw:max-[1025px]:z-[1050]
       tw:max-[1025px]:[transition:left_0.3s_ease] tw:max-[1025px]:[:where(&).sidebar.sidebar-aberta]:left-0
       tw:max-[1025px]:[.pagina_:where(&).sidebar]:left-0 tw:max-[1025px]:[.pagina_:where(&).sidebar]:invisible
       tw:max-[1025px]:[.pagina_:where(&).sidebar]:[transform:translateX(-100%)]

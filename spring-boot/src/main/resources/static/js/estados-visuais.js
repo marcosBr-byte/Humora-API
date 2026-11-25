@@ -125,7 +125,7 @@ function sincronizarAbaPainel(aba, botao) {
 
     const conteudo = aba.closest('.conteudo');
     if (conteudo) conteudo.scrollTop = 0;
-    if (matchMedia('(max-width: 1024px)').matches) window.scrollTo({ top: 0, behavior: 'instant' });
+    if (telaComMenuRecolhido.matches) window.scrollTo({ top: 0, behavior: 'instant' });
     const titulo = aba.querySelector('h1');
     if (titulo) {
         titulo.tabIndex = -1;

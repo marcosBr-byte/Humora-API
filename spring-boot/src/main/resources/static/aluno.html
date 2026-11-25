@@ -386,13 +386,12 @@
       <div>🧠 Pontos: <span id="pontosSubir">0</span></div>
       <div>🏆 Melhor: <span id="melhorSubir">0</span></div>
     </div>
-    <canvas
-            id="canvasSubir"
-            width="400"
-            height="400" class="estilo-canvas-subir"></canvas>
-    <div class="fect-jogo-controles">
-      <button type="button" data-direcao="ArrowLeft" aria-label="Mover à esquerda">←</button>
-      <button type="button" data-direcao="ArrowRight" aria-label="Mover à direita">→</button>
+    <div class="fect-subir-tabuleiro">
+      <canvas id="canvasSubir" width="400" height="400" class="estilo-canvas-subir"></canvas>
+      <div class="fect-jogo-controles">
+        <button type="button" data-direcao="ArrowLeft" aria-label="Mover à esquerda">←</button>
+        <button type="button" data-direcao="ArrowRight" aria-label="Mover à direita">→</button>
+      </div>
     </div>
     <p id="resultadoSubir" class="fect-jogo-feedback" role="status"></p>
     <button class="btn-fechar-modal estilo-btn-fechar-modal" type="button" onclick="abrirJogoSubir()">Recomeçar</button>
