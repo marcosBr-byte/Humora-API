@@ -89,7 +89,8 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 HttpMethod.POST,
-                                "/fect/registros"
+                                "/fect/registros",
+                                "/fect/visitantes"
                         ).permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/fect/ao-vivo").permitAll()

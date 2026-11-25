@@ -1,11 +1,15 @@
 package br.com.projetoSpringBoot.spring_boot.controllers;
 
 import br.com.projetoSpringBoot.spring_boot.enumeradores.Emocoes;
+import br.com.projetoSpringBoot.spring_boot.model.Visitante;
 import br.com.projetoSpringBoot.spring_boot.repositories.RegistroFectRepository;
+import br.com.projetoSpringBoot.spring_boot.repositories.VisitanteRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
@@ -24,14 +28,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @RequiredArgsConstructor
 public class FectController {
     private final RegistroFectRepository registros;
+    private final VisitanteRepository visitantes;
     private final List<SseEmitter> conexoes = new CopyOnWriteArrayList<>();
 
     public record Registro(@NotNull UUID id, @NotNull Emocoes emocao, @Min(1) @Max(5) int intensidade) {}
     public record Contagem(Emocoes emocao, long total, long somaIntensidades) {}
+    public record CadastroVisitante(
+            @NotBlank @Size(max = 40) String primeiroNome,
+            @NotBlank @Size(max = 80) String cidade
+    ) {}
 
     @GetMapping("/visitante.html")
     public String painelVisitante() {
         return "forward:/aluno.html";
+    }
+
+    @PostMapping("/fect/visitantes")
+    public ResponseEntity<Void> cadastrarVisitante(@Valid @RequestBody CadastroVisitante cadastro) {
+        visitantes.save(new Visitante(cadastro.primeiroNome().strip(), cadastro.cidade().strip()));
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/fect/registros")
